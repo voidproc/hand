@@ -53,8 +53,7 @@ namespace hand
 
 	void Bird1::draw() const
 	{
-		const int birdFrame = static_cast<int>(Clamp(3 * Periodic::Sawtooth0_1(0.4s, time_.sF()), 0.0, 2.0));
-		TextureAsset(U"Bird")(16 * birdFrame, 0, 16, 20).drawAt(pos_, Palette::White);
+		SpriteSheet::DrawAt(TextureAsset(U"Bird"), 3, pos_, Palette::White, 0.4s, time_.sF());
 
 		Enemy::draw();
 	}
@@ -79,8 +78,6 @@ namespace hand
 	void Bird2::draw() const
 	{
 		SpriteSheet::DrawAt(TextureAsset(U"Bird"), 3, pos_, Palette::White, 0.4s, time_.sF());
-		//const int birdFrame = static_cast<int>(Clamp(3 * Periodic::Sawtooth0_1(0.4s, time_.sF()), 0.0, 2.0));
-		//TextureAsset(U"Bird")(16 * birdFrame, 0, 16, 20).drawAt(pos_, Palette::White);
 
 		Enemy::draw();
 	}
