@@ -33,6 +33,8 @@ namespace hand
 		hands_{ hands },
 		pos_{},
 		vel_{},
+		life_{ 10 },
+		karma_{ 50 },
 		timeAppear_{ StartImmediately::No },
 		timerSmoke_{ 1s, StartImmediately::Yes },
 		effect_{}
@@ -89,10 +91,15 @@ namespace hand
 			pos_ += vel_ * (60.0 / 4.0) * Scene::DeltaTime();
 			pos_.clamp(SceneRect.stretched(-20, -12, -12, -12));
 
-			// Hand
+			// 他の Hand が存在していないとき、カルマを 5 消費して Hand を生成できる
+			// ミリ残しでも OK
 			if (KeySpace.down())
 			{
-				hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));
+				if (hands_.isEmpty() && karma_ > 0)
+				{
+					karma_ = Clamp(karma_ - 5, 0, 100);
+					hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));
+				}
 			}
 		}
 
@@ -125,6 +132,30 @@ namespace hand
 	RectF Player::collision() const
 	{
 		return RectF{ Arg::center = pos_, 12.0 };
+	}
+
+	int Player::life() const
+	{
+		return life_;
+	}
+
+	int Player::karma() const
+	{
+		return karma_;
+	}
+
+	void Player::damage(int damageAmount)
+	{
+		if (life_ > 0)
+		{
+			life_ -= damageAmount;
+
+			if (life_ <= 0)
+			{
+				// ゲームオーバー？
+				//...
+			}
+		}
 	}
 
 	void Player::appear_()

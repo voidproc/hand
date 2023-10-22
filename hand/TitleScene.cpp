@@ -41,9 +41,11 @@ namespace hand
 
 		{
 			const int alpha = timeEnter_.isStarted() ? Periodic::Square0_1(0.2s) * 255 : 255;
+			const int alpha2 = (not timeEnter_.isStarted()) ? Periodic::Square0_1(0.75s) * 255 : alpha;
 
-			const auto region = FontAsset(U"Sub")(U"Press Enter Key").drawAt(SceneCenter.movedBy(0, 32), Theme::Black.withAlpha(alpha));
-			region.bottom().moveBy(0, 1).draw(Theme::Darker.withAlpha(alpha));
+			const auto text = FontAsset(U"Sub")(U"Press Enter Key");
+			const auto region = text.regionAt(SceneCenter.movedBy(0, 32));
+			text.draw(region.pos, Theme::Black.withAlpha(alpha).withAlpha(alpha2));
 		}
 		
 	}

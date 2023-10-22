@@ -1,12 +1,16 @@
 ﻿#include "MainScene.h"
 #include "SceneSize.h"
 #include "Theme.h"
-#include "Hand.h"
 
 namespace hand
 {
 	MainScene::MainScene(const InitData& init)
-		: IScene{ init }, player_{ hands_ }, hands_{}, time_{ StartImmediately::Yes }
+		:
+		IScene{ init },
+		player_{ hands_ },
+		hands_{},
+		time_{ StartImmediately::Yes },
+		timerSpawnEnemy_{ 5s, StartImmediately::Yes }
 	{
 	}
 
@@ -19,11 +23,46 @@ namespace hand
 			hand->update();
 		}
 
+		for (auto& enemy : enemies_)
+		{
+			enemy->update();
+		}
+
+		// 衝突判定 - Hand vs Enemy
+		for (auto& hand : hands_)
+		{
+			for (auto& enemy : enemies_)
+			{
+				if (hand->collision().intersects(enemy->collision()))
+				{
+					enemy->damage(100);
+				}
+			}
+		}
+
+		// 衝突判定 - Hand vs Enemy
+		for (auto& enemy : enemies_)
+		{
+			if (player_.collision().intersects(enemy->collision()))
+			{
+				player_.damage(1);
+			}
+		}
+
 		// 期限切れの Hand を破棄
 		hands_.remove_if([](const auto& hand) { return not hand->isAlive(); });
 
+		// 期限切れの Enemy を破棄
+		enemies_.remove_if([](const auto& enemy) { return not enemy->isAlive(); });
 
-		PutText(Format(hands_.size()), Vec2{ 8, 8 });
+
+		// [DEBUG] 敵をランダムに生成
+		if (timerSpawnEnemy_.reachedZero())
+		{
+			timerSpawnEnemy_.restart(SecondsF{ Random(0.5, 2.0) });
+
+			enemies_.emplace_back(std::make_unique<Enemy>(Vec2{ SceneWidth + 16, Random(32.0, SceneHeight - 32.0) }, EnemyType::Bird1));
+		}
 	}
 
 	void MainScene::draw() const
@@ -62,22 +101,37 @@ namespace hand
 			hand->draw();
 		}
 
+		// 敵や弾
+		for (const auto& enemy : enemies_)
+		{
+			enemy->draw();
+		}
+
 		// ステージ表記
 		if (time_ < 3s)
 		{
 			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - time_.sF() / 0.6), 0.0, 1.0);
 			const double xOut = (time_ > 2.4s) ? 200 * EaseInCubic((time_.sF() - 2.4) / 0.6) : 0.0;
 
-			FontAsset(U"StageTitle")(U"ＳＴＡＧＥ １").drawAt(x - xOut + 1, SceneCenter.y + 1, Theme::Lighter);
-			FontAsset(U"StageTitle")(U"ＳＴＡＧＥ １").drawAt(x - xOut, SceneCenter.y, Theme::Black);
+			const String stageText = U"ＳＴＡＧＥ １";
+			FontAsset(U"StageTitle")(stageText).drawAt(x - xOut + 1, SceneCenter.y + 1 - 8, Theme::Lighter);
+			FontAsset(U"StageTitle")(stageText).drawAt(x - xOut, SceneCenter.y - 8, Theme::Black);
+			FontAsset(U"Sub")(U"- Sunny Day -").drawAt(x - xOut, SceneCenter.y + 20 - 8, Theme::Black);
 		}
 
 		// ステータス
 		{
+			// カルマ
 			FontAsset(U"Goh")(U"業").draw(2, 0, Theme::Darker);
 			const auto region1 = FontAsset(U"Goh")(U"業").draw(1, 0, Theme::Black);
-
 			const auto region2 = FontAsset(U"Sub")(U"KARMA").draw(14, 7, Theme::Black);
+
+			// カルマゲージ
+			TextureAsset(U"KarmaGaugeFrame").draw(15, 1);
+			TextureAsset(U"KarmaGauge")(0, 0, 42 * player_.karma() / 100.0, 10).draw(16, 1);
+
+			//FontAsset(U"Goh")(U"快").draw(Arg::topRight = Vec2{ SceneWidth - 1, 0 }, Theme::Darker);
+			//FontAsset(U"Goh")(U"快").draw(Arg::topRight = Vec2{ SceneWidth, 0 }, Theme::Black);
 		}
 	}
 }

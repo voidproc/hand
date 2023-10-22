@@ -26,6 +26,9 @@ void LoadAssets()
 	TextureAsset::Register(U"BgMountain", U"texture/bg_mountain.png");
 	TextureAsset::Register(U"BgMountain2", U"texture/bg_mountain2.png");
 	TextureAsset::Register(U"BgTree", U"texture/bg_tree.png");
+	TextureAsset::Register(U"KarmaGaugeFrame", U"texture/karma_gauge_frame.png");
+	TextureAsset::Register(U"KarmaGauge", U"texture/karma_gauge.png");
+	TextureAsset::Register(U"Bird", U"texture/bird.png");
 }
 
 void Main()

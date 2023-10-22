@@ -98,7 +98,7 @@ float4 PS_Texture(s3d::PSInput input) : SV_TARGET
     const float2 ba = g_texture0.Sample(g_sampler0, input.uv + float2(PH/1.5, 0.0)).ba;
     const float a = (ra.y + ga.y + ba.y) / 3;
 	
-    const float4 texColor = g_texture0.Sample(g_sampler0, input.uv) * 0.5 + float4(ra.x, ga.x, ba.x, a) * 0.5;
+    const float4 texColor = g_texture0.Sample(g_sampler0, input.uv) * 0.7 + float4(ra.x, ga.x, ba.x, a) * 0.3;
 	
     return ((texColor * scanline * input.color) + g_colorAdd);
 }
