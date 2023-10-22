@@ -18,7 +18,7 @@ namespace hand
 	void Enemy::draw() const
 	{
 		// [DEBUG] 当たり判定
-		collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
+		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
 	}
 
 	RectF Enemy::collision() const
@@ -52,7 +52,7 @@ namespace hand
 
 	void Bird1::draw() const
 	{
-		const int birdFrame = static_cast<int>(Clamp(3 * Periodic::Sawtooth0_1(0.4s), 0.0, 2.0));
+		const int birdFrame = static_cast<int>(Clamp(3 * Periodic::Sawtooth0_1(0.4s, time_.sF()), 0.0, 2.0));
 		TextureAsset(U"Bird")(16 * birdFrame, 0, 16, 20).drawAt(pos_, Palette::White);
 
 		Enemy::draw();
@@ -72,12 +72,12 @@ namespace hand
 	void Bird2::update()
 	{
 		pos_.x -= 0.8 * 60 * Scene::DeltaTime();
-		pos_.y += 16.0 * Periodic::Sine1_1(1.8s) * Scene::DeltaTime();
+		pos_.y += 16.0 * Periodic::Sine1_1(1.8s, time_.sF()) * Scene::DeltaTime();
 	}
 
 	void Bird2::draw() const
 	{
-		const int birdFrame = static_cast<int>(Clamp(3 * Periodic::Sawtooth0_1(0.4s), 0.0, 2.0));
+		const int birdFrame = static_cast<int>(Clamp(3 * Periodic::Sawtooth0_1(0.4s, time_.sF()), 0.0, 2.0));
 		TextureAsset(U"Bird")(16 * birdFrame, 0, 16, 20).drawAt(pos_, Palette::White);
 
 		Enemy::draw();
