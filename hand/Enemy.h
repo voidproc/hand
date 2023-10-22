@@ -2,36 +2,51 @@
 
 namespace hand
 {
-	enum class EnemyType
-	{
-		Bird1,
-
-		Bullet1,
-	};
-
 	class Enemy
 	{
 	public:
-		Enemy(const Vec2& pos, EnemyType type);
+		Enemy(const Vec2& pos);
 
-		void update();
+		virtual void update();
 
-		void draw() const;
+		virtual void draw() const;
+
+		virtual RectF collision() const;
 
 		bool isAlive() const;
 
-		RectF collision() const;
-
 		void damage(int damageAmount);
 
-	private:
+	protected:
 		Vec2 pos_;
-
-		EnemyType type_;
 
 		int life_;
 
 		Stopwatch time_;
+	};
+
+	class Bird1 : public Enemy
+	{
+	public:
+		Bird1(const Vec2& pos);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+	};
+
+	class Bird2 : public Enemy
+	{
+	public:
+		Bird2(const Vec2& pos);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
 	};
 
 	using EnemyPtr = std::unique_ptr<Enemy>;

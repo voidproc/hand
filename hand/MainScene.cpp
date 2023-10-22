@@ -61,7 +61,7 @@ namespace hand
 		{
 			timerSpawnEnemy_.restart(SecondsF{ Random(0.5, 2.0) });
 
-			enemies_.emplace_back(std::make_unique<Enemy>(Vec2{ SceneWidth + 16, Random(32.0, SceneHeight - 32.0) }, EnemyType::Bird1));
+			enemies_.emplace_back(std::make_unique<Bird2>(Vec2{ SceneWidth + 16, Random(32.0, SceneHeight - 32.0) }));
 		}
 	}
 
