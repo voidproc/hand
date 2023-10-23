@@ -30,6 +30,7 @@ void LoadAssets()
 	TextureAsset::Register(U"KarmaGauge", U"texture/karma_gauge.png");
 	TextureAsset::Register(U"Bird", U"texture/bird.png");
 	TextureAsset::Register(U"Money", U"texture/money.png");
+	TextureAsset::Register(U"Bullet", U"texture/bullet.png");
 }
 
 void Main()

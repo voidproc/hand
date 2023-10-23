@@ -26,9 +26,10 @@ namespace hand
 			hand->update();
 		}
 
-		for (auto& enemy : enemies_)
+		//for (auto& enemy : enemies_)
+		for (int iEnemy = 0; iEnemy < enemies_.size(); ++iEnemy)
 		{
-			enemy->update();
+			enemies_[iEnemy]->update();
 		}
 
 		for (auto& item : items_)
@@ -48,9 +49,12 @@ namespace hand
 					// 敵の撃破後にお金が散らばる
 					if (not enemy->isAlive())
 					{
-						for (int iMoney : step(4))
+						if (IsEnemy(enemy->type()))
 						{
-							items_.emplace_back(MakeItem(ItemType::Money, effect_, enemy->pos()));
+							for (int iMoney : step(4))
+							{
+								items_.emplace_back(MakeItem<ItemMoney, ItemType::Money>(effect_, enemy->pos()));
+							}
 						}
 					}
 				}
@@ -97,7 +101,7 @@ namespace hand
 		{
 			timerSpawnEnemy_.restart(SecondsF{ Random(0.5, 2.0) });
 
-			enemies_.emplace_back(std::make_unique<Bird2>(effect_, Vec2{ SceneWidth + 16, Random(32.0, SceneHeight - 32.0) }));
+			enemies_.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(effect_, enemies_, Vec2{SceneWidth + 16, Random(32.0, SceneHeight - 32.0)}));
 		}
 	}
 

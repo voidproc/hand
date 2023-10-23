@@ -5,6 +5,33 @@
 
 namespace hand
 {
+	bool IsEnemy(EnemyType type)
+	{
+		switch (type)
+		{
+		case EnemyType::Bird1:
+		case EnemyType::Bird2:
+		case EnemyType::Bird3:
+			return true;
+		}
+
+		return false;
+	}
+
+	bool IsBullet(EnemyType type)
+	{
+		switch (type)
+		{
+		case EnemyType::Bullet1:
+		case EnemyType::Bullet2:
+		case EnemyType::Bullet3:
+			return true;
+		}
+
+		return false;
+	}
+
+
 	// 爆発エフェクト
 	// 爆発の破片
 	struct ExplodeFragmentEffect : IEffect
@@ -41,8 +68,8 @@ namespace hand
 	// 爆発の中心
 	struct ExplodeEffect : IEffect
 	{
-		ExplodeEffect(const Vec2& pos)
-			: pos_{ pos }
+		ExplodeEffect(const Vec2& pos, double scale = 1.0)
+			: pos_{ pos }, scale_{ scale }
 		{
 		}
 
@@ -50,7 +77,7 @@ namespace hand
 		{
 			constexpr double Lifetime = 0.24;
 			const double alpha = Periodic::Pulse0_1(0.08s, 0.75 - 0.50 * t / Lifetime);
-			const double size = EaseOutCubic(t / Lifetime) * 14.0;
+			const double size = EaseOutCubic(t / Lifetime) * 14.0 * scale_;
 
 			Circle{ pos_, size }
 				//.draw(ColorF{ Theme::Lighter, alpha })
@@ -60,6 +87,7 @@ namespace hand
 		}
 
 		Vec2 pos_;
+		double scale_;
 	};
 
 	void AddExplodeEffect(Effect& effect, const Vec2& pos)
@@ -72,14 +100,26 @@ namespace hand
 		}
 	}
 
+	void AddExplodeEffectForBullet(Effect& effect, const Vec2& pos)
+	{
+		effect.add<ExplodeEffect>(pos, 0.5);
+	}
 
-	Enemy::Enemy(Effect& effect, const Vec2& pos)
+
+	Enemy::Enemy(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos)
 		:
+		type_{ type },
 		effect_{ effect },
+		enemies_{ enemies },
 		pos_{ pos },
 		life_{ 10 },
 		time_{ StartImmediately::Yes }
 	{
+	}
+
+	EnemyType Enemy::type() const
+	{
+		return type_;
 	}
 
 	void Enemy::update()
@@ -97,6 +137,11 @@ namespace hand
 		return RectF{ Arg::center = pos_, 12 };
 	}
 
+	void Enemy::explode()
+	{
+		AddExplodeEffect(effect_, pos_);
+	}
+
 	bool Enemy::isAlive() const
 	{
 		return (life_ > 0) && SceneRect.stretched(32).intersects(pos_);
@@ -111,7 +156,7 @@ namespace hand
 			// 爆発エフェクト
 			if (life_ <= 0)
 			{
-				AddExplodeEffect(effect_, pos_);
+				explode();
 			}
 		}
 	}
@@ -121,9 +166,9 @@ namespace hand
 		return pos_;
 	}
 
-	Bird1::Bird1(Effect& effect, const Vec2& pos)
+	Bird1::Bird1(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos)
 		:
-		Enemy{ effect, pos }
+		Enemy{ type, effect, enemies, pos }
 	{
 	}
 
@@ -144,9 +189,10 @@ namespace hand
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
 	}
 
-	Bird2::Bird2(Effect& effect, const Vec2& pos)
+	Bird2::Bird2(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos)
 		:
-		Enemy{ effect, pos }
+		Enemy{ type, effect, enemies, pos },
+		timerFire_{ 1.5s, StartImmediately::Yes }
 	{
 	}
 
@@ -154,6 +200,12 @@ namespace hand
 	{
 		pos_.x -= 0.8 * 60 * Scene::DeltaTime();
 		pos_.y += 16.0 * Periodic::Sine1_1(1.8s, time_.sF()) * Scene::DeltaTime();
+
+		if (timerFire_.reachedZero())
+		{
+			timerFire_.reset();
+			enemies_.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(effect_, enemies_, pos_, Circular{ 1.2, 270_deg }));
+		}
 	}
 
 	void Bird2::draw() const
@@ -168,4 +220,32 @@ namespace hand
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
 	}
 
+	Bullet1::Bullet1(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos, const Vec2& vel)
+		:
+		Enemy{ type, effect, enemies, pos },
+		vel_{ vel }
+	{
+	}
+
+	void Bullet1::update()
+	{
+		pos_ += vel_ * 60.0 * Scene::DeltaTime();
+	}
+
+	void Bullet1::draw() const
+	{
+		SpriteSheet::DrawAt(TextureAsset(U"Bullet"), 4, pos_, Palette::White, 0.4s, time_.sF());
+
+		Enemy::draw();
+	}
+
+	RectF Bullet1::collision() const
+	{
+		return RectF{ Arg::center = pos_, 6 };
+	}
+
+	void Bullet1::explode()
+	{
+		AddExplodeEffectForBullet(effect_, pos_);
+	}
 }

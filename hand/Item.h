@@ -7,6 +7,9 @@ namespace hand
 		Money,
 	};
 
+	class Item;
+	using ItemPtr = std::unique_ptr<Item>;
+
 	class Item
 	{
 	public:
@@ -52,16 +55,9 @@ namespace hand
 		Vec2 vel_;
 	};
 
-	using ItemPtr = std::unique_ptr<Item>;
-
-	template <class ... Args>
-	ItemPtr MakeItem(ItemType type, Args&& ... args)
+	template <class T, ItemType I, class ... Args>
+	ItemPtr MakeItem(Args&& ... args)
 	{
-		switch (type)
-		{
-		case ItemType::Money: return std::make_unique<ItemMoney>(type, std::forward<Args>(args)...);
-		}
-
-		return std::make_unique<ItemMoney>(type, std::forward<Args>(args)...);
+		return std::make_unique<T>(I, std::forward<Args>(args)...);
 	}
 }
