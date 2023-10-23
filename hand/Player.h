@@ -17,6 +17,9 @@ namespace hand
 
 		static inline constexpr double KarmaCostOnAction = 12;
 
+		static inline constexpr double TimeDamageInvSec = 2.0;
+		static inline constexpr double TimeKnockBackSec = 0.55;
+
 	public:
 		Player(Array<HandPtr>& hands);
 
@@ -33,6 +36,8 @@ namespace hand
 		void addKarma(double amount);
 
 		void damage(int damageAmount);
+
+		bool isInvincible() const;
 
 	private:
 		void appear_();
@@ -55,6 +60,9 @@ namespace hand
 
 		// カルマ回復用
 		Timer timerRecoverKarma_;
+
+		// ダメージ用
+		Timer timerDamage_;
 
 		// 各種エフェクト用
 		Effect effect_;

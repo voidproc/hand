@@ -43,6 +43,7 @@ namespace hand
 		timeAppear_{ StartImmediately::No },
 		timerSmoke_{ 1s, StartImmediately::Yes },
 		timerRecoverKarma_{ 1s, StartImmediately::No },
+		timerDamage_{ SecondsF{ TimeDamageInvSec }, StartImmediately::No },
 		effect_{}
 	{
 		appear_();
@@ -50,12 +51,20 @@ namespace hand
 
 	void Player::update()
 	{
+		// ダメージ用タイマーのリセット
+		if (timerDamage_.reachedZero())
+		{
+			timerDamage_.reset();
+		}
+
 		// 画面外から登場する
 		if (timeAppear_.isRunning())
 		{
-			if (timeAppear_ < 1.5s)
+			constexpr double TimeAppearSec = 1.5;
+
+			if (timeAppear_.sF() < TimeAppearSec)
 			{
-				pos_.x = -24 + ((24 + 28) * EaseOutSine(timeAppear_.sF() / 1.5));
+				pos_.x = -24 + ((24 + 28) * EaseOutSine(timeAppear_.sF() / TimeAppearSec));
 			}
 			else
 			{
@@ -81,6 +90,12 @@ namespace hand
 			if (KeyUp.pressed()) vel.y = -1;
 			if (KeyDown.pressed()) vel.y = 1;
 			vel.limitLengthSelf(1.0);
+
+			// ダメージ中は入力無効
+			if (timerDamage_.isRunning() && timerDamage_.sF() > TimeDamageInvSec - TimeKnockBackSec)
+			{
+				vel.setLength(0);
+			}
 
 			if (vel.length() > 1e-3)
 			{
@@ -132,7 +147,13 @@ namespace hand
 		// 煙エフェクト
 		effect_.update();
 
-		const Color color = (timeAppear_.isRunning()) ? Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.1s)) : Palette::White;
+		// ステージ開始時の点滅
+		const Color colorAppear = Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.1s));
+
+		// 無敵時間中の点滅
+		const Color colorInvinclble = (timerDamage_.sF() > TimeDamageInvSec - TimeKnockBackSec) ? ColorF{colorAppear} : AlphaF(0.7 - 0.6 * Periodic::Square0_1(0.12s));
+
+		const Color color = timeAppear_.isRunning() ? colorAppear : (timerDamage_.isRunning() ? colorInvinclble : Palette::White);
 
 		// 紙飛行機
 		TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
@@ -170,12 +191,24 @@ namespace hand
 		{
 			life_ -= damageAmount;
 
+			vel_.x -= 8.0;
+
 			if (life_ <= 0)
 			{
 				// ゲームオーバー？
 				//...
+				timerDamage_.reset();
+			}
+			else
+			{
+				timerDamage_.restart();
 			}
 		}
+	}
+
+	bool Player::isInvincible() const
+	{
+		return timerDamage_.isRunning();
 	}
 
 	void Player::appear_()

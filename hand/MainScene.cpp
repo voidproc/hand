@@ -46,9 +46,9 @@ namespace hand
 				{
 					enemy->damage(100);
 
-					// 敵の撃破後にお金が散らばる
 					if (not enemy->isAlive())
 					{
+						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
 						{
 							for (int iMoney : step(4))
@@ -64,7 +64,7 @@ namespace hand
 		// 衝突判定 - Player vs Enemy
 		for (auto& enemy : enemies_)
 		{
-			if (player_.collision().intersects(enemy->collision()))
+			if (not player_.isInvincible() && player_.collision().intersects(enemy->collision()))
 			{
 				player_.damage(1);
 			}

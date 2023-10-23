@@ -55,6 +55,8 @@ namespace hand
 		Stopwatch time_;
 	};
 
+	// 敵（鳥）
+	// 直進する
 	class Bird1 : public Enemy
 	{
 	public:
@@ -67,6 +69,8 @@ namespace hand
 		RectF collision() const override;
 	};
 
+	// 敵（鳥）
+	// ゆらゆら
 	class Bird2 : public Enemy
 	{
 	public:
@@ -82,6 +86,8 @@ namespace hand
 		Timer timerFire_;
 	};
 
+	// 敵弾（小）
+	// 直進する
 	class Bullet1 : public Enemy
 	{
 	public:
