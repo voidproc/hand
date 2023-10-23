@@ -148,7 +148,7 @@ namespace hand
 		effect_.update();
 
 		// ステージ開始時の点滅
-		const Color colorAppear = Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.1s));
+		const Color colorAppear = Palette::White.lerp(Theme::Darker, Periodic::Square0_1(0.1s));
 
 		// 無敵時間中の点滅
 		const Color colorInvinclble = (timerDamage_.sF() > TimeDamageInvSec - TimeKnockBackSec) ? ColorF{colorAppear} : AlphaF(0.7 - 0.6 * Periodic::Square0_1(0.12s));

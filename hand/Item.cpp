@@ -45,7 +45,7 @@ namespace hand
 	}
 
 	ItemMoney::ItemMoney(ItemType type, Effect& effect, const Vec2& pos)
-		: Item{ type, effect, pos }, vel_{ Circular{ Random(1.0, 2.4), Random(-20_deg, 20_deg) }}
+		: Item{ type, effect, pos }, vel_{ Circular{ Random(1.0, 2.4), Random(-20_deg, 20_deg) } }, animSpeed_{ Random(0.2, 0.8) }
 	{
 	}
 
@@ -58,7 +58,7 @@ namespace hand
 
 	void ItemMoney::draw() const
 	{
-		SpriteSheet::DrawAt(TextureAsset(U"Money"), 6, pos_, Palette::White, 0.5s, time_.sF());
+		SpriteSheet::DrawAt(TextureAsset(U"Money"), 6, pos_, Palette::White, SecondsF{ animSpeed_ }, time_.sF());
 
 		Item::draw();
 	}

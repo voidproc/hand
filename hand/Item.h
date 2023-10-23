@@ -53,6 +53,7 @@ namespace hand
 
 	private:
 		Vec2 vel_;
+		double animSpeed_;
 	};
 
 	template <class T, ItemType I, class ... Args>
