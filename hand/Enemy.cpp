@@ -20,8 +20,7 @@ namespace hand
 		{
 			vel_.y += 4.0 * Scene::DeltaTime();
 
-			pos_.x += vel_.x * 60.0 * Scene::DeltaTime();
-			pos_.y += vel_.y * 60.0 * Scene::DeltaTime();
+			pos_ += vel_ * 60.0 * Scene::DeltaTime();
 
 			const double alpha = Periodic::Square0_1(0.07s);
 			const double size = EaseOutCubic(1.0 - t / lifetime_) * 4.0;
@@ -115,6 +114,11 @@ namespace hand
 				AddExplodeEffect(effect_, pos_);
 			}
 		}
+	}
+
+	const Vec2& Enemy::pos() const
+	{
+		return pos_;
 	}
 
 	Bird1::Bird1(Effect& effect, const Vec2& pos)

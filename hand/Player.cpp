@@ -33,18 +33,6 @@ namespace hand
 	};
 
 
-	namespace
-	{
-		constexpr int LifeMax = 10;
-		constexpr int DefaultLife = 10;
-
-		constexpr int KarmaMax = 100;
-		constexpr int DefaultKarma = 50;
-		constexpr int KarmaRecoveryPerSec = 2;
-
-		constexpr int KarmaCostOnAction = 12;
-	}
-
 	Player::Player(Array<HandPtr>& hands)
 		:
 		hands_{ hands },
@@ -118,7 +106,7 @@ namespace hand
 			{
 				if (hands_.isEmpty() && karma_ > 0)
 				{
-					karma_ = Clamp(karma_ - KarmaCostOnAction, 0, KarmaMax);
+					karma_ = Clamp(karma_ - KarmaCostOnAction, 0.0, KarmaMax);
 					hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));
 				}
 			}
@@ -135,7 +123,7 @@ namespace hand
 		if (timerRecoverKarma_.reachedZero())
 		{
 			timerRecoverKarma_.restart();
-			karma_ = Clamp(karma_ + KarmaRecoveryPerSec, 0, KarmaMax);
+			karma_ = Clamp(karma_ + KarmaRecoveryPerSec, 0.0, KarmaMax);
 		}
 	}
 
@@ -169,6 +157,11 @@ namespace hand
 	int Player::karma() const
 	{
 		return karma_;
+	}
+
+	void Player::addKarma(double amount)
+	{
+		karma_ = Clamp(karma_ + amount, 0.0, KarmaMax);
 	}
 
 	void Player::damage(int damageAmount)

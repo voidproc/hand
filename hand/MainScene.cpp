@@ -10,6 +10,8 @@ namespace hand
 		effect_{},
 		player_{ hands_ },
 		hands_{},
+		enemies_{},
+		items_{},
 		time_{ StartImmediately::Yes },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes }
 	{
@@ -29,19 +31,33 @@ namespace hand
 			enemy->update();
 		}
 
+		for (auto& item : items_)
+		{
+			item->update();
+		}
+
 		// 衝突判定 - Hand vs Enemy
 		for (auto& hand : hands_)
 		{
 			for (auto& enemy : enemies_)
 			{
-				if (hand->collision().intersects(enemy->collision()))
+				if (enemy->isAlive() && hand->collision().intersects(enemy->collision()))
 				{
 					enemy->damage(100);
+
+					// 敵の撃破後にお金が散らばる
+					if (not enemy->isAlive())
+					{
+						for (int iMoney : step(4))
+						{
+							items_.emplace_back(MakeItem(ItemType::Money, effect_, enemy->pos()));
+						}
+					}
 				}
 			}
 		}
 
-		// 衝突判定 - Hand vs Enemy
+		// 衝突判定 - Player vs Enemy
 		for (auto& enemy : enemies_)
 		{
 			if (player_.collision().intersects(enemy->collision()))
@@ -50,11 +66,30 @@ namespace hand
 			}
 		}
 
+		// 衝突判定 - Player vs Item
+		for (auto& item : items_)
+		{
+			if (player_.collision().intersects(item->collision()))
+			{
+				switch (item->type())
+				{
+				case ItemType::Money:
+					player_.addKarma(Player::KarmaRecoveryOnGetMoney);
+					break;
+				}
+
+				item->kill();
+			}
+		}
+
 		// 期限切れの Hand を破棄
 		hands_.remove_if([](const auto& hand) { return not hand->isAlive(); });
 
 		// 期限切れの Enemy を破棄
 		enemies_.remove_if([](const auto& enemy) { return not enemy->isAlive(); });
+
+		// 期限切れの Item を破棄
+		items_.remove_if([](const auto& item) { return not item->isAlive(); });
 
 
 		// [DEBUG] 敵をランダムに生成
@@ -109,6 +144,12 @@ namespace hand
 		for (const auto& enemy : enemies_)
 		{
 			enemy->draw();
+		}
+
+		// アイテム
+		for (const auto& item : items_)
+		{
+			item->draw();
 		}
 
 		// ステージ表記

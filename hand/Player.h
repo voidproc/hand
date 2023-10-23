@@ -7,6 +7,17 @@ namespace hand
 	class Player
 	{
 	public:
+		static inline constexpr int LifeMax = 10;
+		static inline constexpr int DefaultLife = 10;
+
+		static inline constexpr double KarmaMax = 100;
+		static inline constexpr double DefaultKarma = 50;
+		static inline constexpr double KarmaRecoveryPerSec = 0.3;
+		static inline constexpr double KarmaRecoveryOnGetMoney = 4;
+
+		static inline constexpr double KarmaCostOnAction = 12;
+
+	public:
 		Player(Array<HandPtr>& hands);
 
 		void update();
@@ -18,6 +29,8 @@ namespace hand
 		int life() const;
 
 		int karma() const;
+
+		void addKarma(double amount);
 
 		void damage(int damageAmount);
 
@@ -32,7 +45,7 @@ namespace hand
 
 		int life_;
 
-		int karma_;
+		double karma_;
 
 		// シーン開始時に画面外から登場する用
 		Stopwatch timeAppear_;

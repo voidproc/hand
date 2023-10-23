@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Hand.h"
 #include "Enemy.h"
+#include "Item.h"
 
 namespace hand
 {
@@ -20,6 +21,7 @@ namespace hand
 		Player player_;
 		Array<HandPtr> hands_;
 		Array<EnemyPtr> enemies_;
+		Array<ItemPtr> items_;
 		Stopwatch time_;
 
 		Timer timerSpawnEnemy_;

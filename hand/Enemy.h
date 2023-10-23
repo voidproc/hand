@@ -17,6 +17,8 @@ namespace hand
 
 		void damage(int damageAmount);
 
+		const Vec2& pos() const;
+
 	protected:
 		Effect& effect_;
 
