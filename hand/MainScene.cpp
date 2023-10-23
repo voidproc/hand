@@ -7,6 +7,7 @@ namespace hand
 	MainScene::MainScene(const InitData& init)
 		:
 		IScene{ init },
+		effect_{},
 		player_{ hands_ },
 		hands_{},
 		time_{ StartImmediately::Yes },
@@ -61,7 +62,7 @@ namespace hand
 		{
 			timerSpawnEnemy_.restart(SecondsF{ Random(0.5, 2.0) });
 
-			enemies_.emplace_back(std::make_unique<Bird2>(Vec2{ SceneWidth + 16, Random(32.0, SceneHeight - 32.0) }));
+			enemies_.emplace_back(std::make_unique<Bird2>(effect_, Vec2{ SceneWidth + 16, Random(32.0, SceneHeight - 32.0) }));
 		}
 	}
 
@@ -100,6 +101,9 @@ namespace hand
 		{
 			hand->draw();
 		}
+
+		// エフェクト
+		effect_.update();
 
 		// 敵や弾
 		for (const auto& enemy : enemies_)

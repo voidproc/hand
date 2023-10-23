@@ -5,7 +5,7 @@ namespace hand
 	class Enemy
 	{
 	public:
-		Enemy(const Vec2& pos);
+		Enemy(Effect& effect, const Vec2& pos);
 
 		virtual void update();
 
@@ -18,6 +18,8 @@ namespace hand
 		void damage(int damageAmount);
 
 	protected:
+		Effect& effect_;
+
 		Vec2 pos_;
 
 		int life_;
@@ -28,7 +30,7 @@ namespace hand
 	class Bird1 : public Enemy
 	{
 	public:
-		Bird1(const Vec2& pos);
+		Bird1(Effect& effect, const Vec2& pos);
 
 		void update() override;
 
@@ -40,7 +42,7 @@ namespace hand
 	class Bird2 : public Enemy
 	{
 	public:
-		Bird2(const Vec2& pos);
+		Bird2(Effect& effect, const Vec2& pos);
 
 		void update() override;
 

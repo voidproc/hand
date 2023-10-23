@@ -16,6 +16,7 @@ namespace hand
 		void draw() const override;
 
 	private:
+		Effect effect_;
 		Player player_;
 		Array<HandPtr> hands_;
 		Array<EnemyPtr> enemies_;

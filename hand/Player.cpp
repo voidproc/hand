@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 #include "SceneSize.h"
 #include "Theme.h"
+#include "SpriteSheet.h"
 
 namespace hand
 {
@@ -125,8 +126,9 @@ namespace hand
 		TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
 
 		// Girl
-		const int girlFrame = static_cast<int>(Clamp(2 * Periodic::Sawtooth0_1(0.2s), 0.0, 1.0));
-		TextureAsset(U"Girl")(16 * girlFrame, 0, 16, 16).drawAt(pos_, color);
+		SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.2s);
+		//const int girlFrame = static_cast<int>(Clamp(2 * Periodic::Sawtooth0_1(0.2s), 0.0, 1.0));
+		//TextureAsset(U"Girl")(16 * girlFrame, 0, 16, 16).drawAt(pos_, color);
 
 		// [DEBUG] 当たり判定
 		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
