@@ -32,15 +32,29 @@ namespace hand
 		double lifetime_;
 	};
 
+
+	namespace
+	{
+		constexpr int LifeMax = 10;
+		constexpr int DefaultLife = 10;
+
+		constexpr int KarmaMax = 100;
+		constexpr int DefaultKarma = 50;
+		constexpr int KarmaRecoveryPerSec = 2;
+
+		constexpr int KarmaCostOnAction = 12;
+	}
+
 	Player::Player(Array<HandPtr>& hands)
 		:
 		hands_{ hands },
 		pos_{},
 		vel_{},
-		life_{ 10 },
-		karma_{ 50 },
+		life_{ DefaultLife },
+		karma_{ DefaultKarma },
 		timeAppear_{ StartImmediately::No },
 		timerSmoke_{ 1s, StartImmediately::Yes },
+		timerRecoverKarma_{ 1s, StartImmediately::No },
 		effect_{}
 	{
 		appear_();
@@ -59,6 +73,9 @@ namespace hand
 			{
 				// 画面外からの登場終了
 				timeAppear_.reset();
+
+				// カルマ回復開始
+				timerRecoverKarma_.start();
 			}
 		}
 
@@ -95,13 +112,13 @@ namespace hand
 			pos_ += vel_ * (60.0 / 4.0) * Scene::DeltaTime();
 			pos_.clamp(SceneRect.stretched(-20, -12, -12, -12));
 
-			// 他の Hand が存在していないとき、カルマを 5 消費して Hand を生成できる
+			// 他の Hand が存在していないとき、カルマを一定量消費して Hand を生成できる
 			// ミリ残しでも OK
 			if (KeySpace.down())
 			{
 				if (hands_.isEmpty() && karma_ > 0)
 				{
-					karma_ = Clamp(karma_ - 5, 0, 100);
+					karma_ = Clamp(karma_ - KarmaCostOnAction, 0, KarmaMax);
 					hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));
 				}
 			}
@@ -112,6 +129,13 @@ namespace hand
 		{
 			timerSmoke_.restart(SecondsF{ Random(0.1, 0.3) });
 			effect_.add<SmokeEffect>(pos_.movedBy(-8, 8), vel_);
+		}
+
+		// 一定時間ごとにカルマが回復する
+		if (timerRecoverKarma_.reachedZero())
+		{
+			timerRecoverKarma_.restart();
+			karma_ = Clamp(karma_ + KarmaRecoveryPerSec, 0, KarmaMax);
 		}
 	}
 
@@ -127,8 +151,6 @@ namespace hand
 
 		// Girl
 		SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.2s);
-		//const int girlFrame = static_cast<int>(Clamp(2 * Periodic::Sawtooth0_1(0.2s), 0.0, 1.0));
-		//TextureAsset(U"Girl")(16 * girlFrame, 0, 16, 16).drawAt(pos_, color);
 
 		// [DEBUG] 当たり判定
 		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));

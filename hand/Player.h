@@ -40,6 +40,9 @@ namespace hand
 		// 煙用
 		Timer timerSmoke_;
 
+		// カルマ回復用
+		Timer timerRecoverKarma_;
+
 		// 各種エフェクト用
 		Effect effect_;
 	};
