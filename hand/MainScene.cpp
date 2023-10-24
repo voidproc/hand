@@ -14,7 +14,8 @@ namespace hand
 		items_{},
 		time_{ StartImmediately::Yes },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes },
-		timePlayerDead_{ StartImmediately::No }
+		timePlayerDead_{ StartImmediately::No },
+		timerShake_{ 0.4s, StartImmediately::No }
 	{
 		getData().currentStage += 1;
 	}
@@ -86,6 +87,8 @@ namespace hand
 			{
 				if (not player_.isInvincible() && player_.collision().intersects(enemy->collision()))
 				{
+					shake_();
+
 					player_.damage(20.0);
 
 					if (not player_.isAlive())
@@ -107,7 +110,7 @@ namespace hand
 		items_.remove_if([](const auto& item) { return not item->isAlive(); });
 
 		// プレイヤーが倒されてから数秒後にシーン移行
-		if (timePlayerDead_ >= 2.3s)
+		if (timePlayerDead_ >= 4s)
 		{
 			changeScene(U"GameOverScene", 0s);
 			return;
@@ -126,6 +129,9 @@ namespace hand
 	{
 		// BG
 		Scene::Rect().draw(Theme::White);
+
+
+		const Transformer2D shaker{ Mat3x2::Translate(RandomVec2(timerShake_.isRunning() ? 4.0 * EaseInCubic(timerShake_.progress1_0()) : 0.0))};
 
 		// BG Texture
 		{
@@ -207,11 +213,16 @@ namespace hand
 		}
 
 		// ゲームオーバーへ移行直前のフェードアウト
-		if (timePlayerDead_ > 1.0s)
+		if (timePlayerDead_ > 2.0s)
 		{
-			constexpr double FadeTime = 1.0;
-			const double t = Clamp((timePlayerDead_.sF() - 1.0) / FadeTime, 0.0, 1.0);
+			constexpr double FadeTime = 2.0;
+			const double t = Clamp((timePlayerDead_.sF() - 2.0) / FadeTime, 0.0, 1.0);
 			SceneRect.draw(ColorF{ Theme::Black, t });
 		}
+	}
+
+	void MainScene::shake_()
+	{
+		timerShake_.restart();
 	}
 }

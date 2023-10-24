@@ -17,6 +17,8 @@ namespace hand
 		void draw() const override;
 
 	private:
+		void shake_();
+
 		Effect effect_;
 		Player player_;
 		Array<HandPtr> hands_;
@@ -25,5 +27,6 @@ namespace hand
 		Stopwatch time_;
 		Timer timerSpawnEnemy_;
 		Stopwatch timePlayerDead_;
+		Timer timerShake_;
 	};
 }

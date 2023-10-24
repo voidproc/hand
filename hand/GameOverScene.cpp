@@ -26,6 +26,9 @@ namespace hand
 	{
 		SceneRect.draw(Theme::Black);
 
-		FontAsset(U"StageTitle")(U"ＧＡＭＥ ＯＶＥＲ").drawAt(SceneCenter, Theme::White);
+		if (time_ > 1s)
+		{
+			FontAsset(U"StageTitle")(U"ＧＡＭＥ ＯＶＥＲ").drawAt(SceneCenter, Theme::White);
+		}
 	}
 }

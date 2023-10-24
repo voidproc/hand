@@ -154,7 +154,7 @@ namespace hand
 		// 死んでる？
 		if (timeDead_.isRunning())
 		{
-			const Color color = Palette::White.lerp(Theme::Black, EaseInQuad(Clamp(timeDead_.sF() / 1.8, 0.0, 1.0)));
+			const Color color = Palette::White.lerp(Theme::Black, EaseInQuad(Clamp(timeDead_.sF() / 1.0, 0.0, 1.0)));
 			TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
 			SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.5s);
 			return;
