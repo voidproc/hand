@@ -80,7 +80,6 @@ namespace hand
 			const double size = EaseOutCubic(t / Lifetime) * 14.0 * scale_;
 
 			Circle{ pos_, size }
-				//.draw(ColorF{ Theme::Lighter, alpha })
 				.drawFrame(8.0 - 8.0 * t / Lifetime, ColorF{ Theme::Darker, alpha });
 
 			return t < Lifetime;

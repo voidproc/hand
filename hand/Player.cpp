@@ -18,11 +18,11 @@ namespace hand
 		bool update(double t) override
 		{
 			const double t0_1 = t / lifetime_;
-			const int alpha = 255 * Periodic::Square0_1(0.08s);
+			const double alpha = Periodic::Square0_1(0.08s);
 
 			Circle{ pos_.movedBy((-12 + playerVel_.x * 2.0) * EaseOutCubic(t0_1), 0), 2 + 3 * t0_1 }
-				.draw(Theme::Lighter.withAlpha(alpha))
-				.drawFrame(4.0 - 4.0 * t0_1, 0.0, Theme::Darker.withAlpha(alpha));
+				.draw(ColorF{ Theme::Lighter, alpha })
+				.drawFrame(4.0 - 4.0 * t0_1, 0.0, ColorF{ Theme::Darker, alpha });
 
 			return t < lifetime_;
 		}
@@ -175,7 +175,7 @@ namespace hand
 		return life_;
 	}
 
-	int Player::karma() const
+	double Player::karma() const
 	{
 		return karma_;
 	}

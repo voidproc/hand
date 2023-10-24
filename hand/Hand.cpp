@@ -16,8 +16,8 @@ namespace hand
 
 	void Hand::draw() const
 	{
-		const int alpha = (time_ > 0.75s) ? Periodic::Square0_1(0.08s) * 255 : 255;
-		const Color color = Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.13s)).withAlpha(alpha);
+		const double alpha = (time_ > 0.75s) ? Periodic::Square0_1(0.08s) : 1.0;
+		const ColorF color{ Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.13s)), alpha };
 
 		TextureAsset(U"Hand").drawAt(pos_, color);
 

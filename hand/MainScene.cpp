@@ -15,6 +15,7 @@ namespace hand
 		time_{ StartImmediately::Yes },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes }
 	{
+		getData().currentStage += 1;
 	}
 
 	void MainScene::update()
@@ -162,25 +163,31 @@ namespace hand
 			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - time_.sF() / 0.6), 0.0, 1.0);
 			const double xOut = (time_ > 2.4s) ? 200 * EaseInCubic((time_.sF() - 2.4) / 0.6) : 0.0;
 
-			const String stageText = U"ＳＴＡＧＥ １";
-			FontAsset(U"StageTitle")(stageText).drawAt(x - xOut + 1, SceneCenter.y + 1 - 8, Theme::Lighter);
-			FontAsset(U"StageTitle")(stageText).drawAt(x - xOut, SceneCenter.y - 8, Theme::Black);
-			FontAsset(U"Sub")(U"- Sunny Day -").drawAt(x - xOut, SceneCenter.y + 20 - 8, Theme::Black);
+			const auto stageText = [](int stage) {
+				switch (stage)
+				{
+				case 1: return std::make_pair<String, String>(U"ＳＴＡＧＥ １", U"- Pleasant Sunny Day -");
+				case 2: return std::make_pair<String, String>(U"ＳＴＡＧＥ ２", U"- Tearful Rain Passage -");
+				case 3: return std::make_pair<String, String>(U"ＳＴＡＧＥ ３", U"- Back to Nostalgic Day -");
+				}
+				return std::make_pair<String, String>(U"", U"");
+				}(getData().currentStage);
+
+			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut + 1, SceneCenter.y + 1 - 8, Theme::Lighter);
+			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut, SceneCenter.y - 8, Theme::Black);
+			FontAsset(U"Sub")(stageText.second).drawAt(x - xOut, SceneCenter.y + 20 - 8, Theme::Black);
 		}
 
 		// ステータス
 		{
 			// カルマ
 			FontAsset(U"Goh")(U"業").draw(2, 0, Theme::Darker);
-			const auto region1 = FontAsset(U"Goh")(U"業").draw(1, 0, Theme::Black);
-			const auto region2 = FontAsset(U"Sub")(U"KARMA").draw(14, 7, Theme::Black);
+			FontAsset(U"Goh")(U"業").draw(1, 0, Theme::Black);
+			FontAsset(U"Sub")(U"KARMA").draw(14, 7, Theme::Black);
 
 			// カルマゲージ
 			TextureAsset(U"KarmaGaugeFrame").draw(15, 1);
 			TextureAsset(U"KarmaGauge")(0, 0, 42 * player_.karma() / 100.0, 10).draw(16, 1);
-
-			//FontAsset(U"Goh")(U"快").draw(Arg::topRight = Vec2{ SceneWidth - 1, 0 }, Theme::Darker);
-			//FontAsset(U"Goh")(U"快").draw(Arg::topRight = Vec2{ SceneWidth, 0 }, Theme::Black);
 		}
 	}
 }

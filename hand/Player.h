@@ -31,7 +31,7 @@ namespace hand
 
 		int life() const;
 
-		int karma() const;
+		double karma() const;
 
 		void addKarma(double amount);
 

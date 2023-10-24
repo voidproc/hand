@@ -23,7 +23,6 @@ namespace hand
 		Array<EnemyPtr> enemies_;
 		Array<ItemPtr> items_;
 		Stopwatch time_;
-
 		Timer timerSpawnEnemy_;
 	};
 }
