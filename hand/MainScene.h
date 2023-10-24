@@ -24,5 +24,6 @@ namespace hand
 		Array<ItemPtr> items_;
 		Stopwatch time_;
 		Timer timerSpawnEnemy_;
+		Stopwatch timePlayerDead_;
 	};
 }

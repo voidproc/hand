@@ -38,12 +38,12 @@ namespace hand
 		hands_{ hands },
 		pos_{},
 		vel_{},
-		life_{ DefaultLife },
 		karma_{ DefaultKarma },
 		timeAppear_{ StartImmediately::No },
 		timerSmoke_{ 1s, StartImmediately::Yes },
 		timerRecoverKarma_{ 1s, StartImmediately::No },
 		timerDamage_{ SecondsF{ TimeDamageInvSec }, StartImmediately::No },
+		timeDead_{ StartImmediately::No },
 		effect_{}
 	{
 		appear_();
@@ -51,6 +51,13 @@ namespace hand
 
 	void Player::update()
 	{
+		// 死んでる？
+		if (timeDead_.isRunning())
+		{
+			vel_.setLength(0);
+			return;
+		}
+
 		// ダメージ用タイマーのリセット
 		if (timerDamage_.reachedZero())
 		{
@@ -119,9 +126,9 @@ namespace hand
 			// ミリ残しでも OK
 			if (KeySpace.down())
 			{
-				if (hands_.isEmpty() && karma_ > 0)
+				if (hands_.isEmpty() && karma_ >= 1.0)
 				{
-					karma_ = Clamp(karma_ - KarmaCostOnAction, 0.0, KarmaMax);
+					karma_ = Clamp(karma_ - KarmaCostOnAction, 0.1, KarmaMax);
 					hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));
 				}
 			}
@@ -144,6 +151,15 @@ namespace hand
 
 	void Player::draw() const
 	{
+		// 死んでる？
+		if (timeDead_.isRunning())
+		{
+			const Color color = Palette::White.lerp(Theme::Black, EaseInQuad(Clamp(timeDead_.sF() / 1.8, 0.0, 1.0)));
+			TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
+			SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.5s);
+			return;
+		}
+
 		// 煙エフェクト
 		effect_.update();
 
@@ -170,9 +186,9 @@ namespace hand
 		return RectF{ Arg::center = pos_, 12.0 };
 	}
 
-	int Player::life() const
+	bool Player::isAlive() const
 	{
-		return life_;
+		return not timeDead_.isRunning();
 	}
 
 	double Player::karma() const
@@ -182,22 +198,22 @@ namespace hand
 
 	void Player::addKarma(double amount)
 	{
-		karma_ = Clamp(karma_ + amount, 0.0, KarmaMax);
+		karma_ = Clamp(karma_ + amount, 0.1, KarmaMax);
 	}
 
-	void Player::damage(int damageAmount)
+	void Player::damage(double damageAmount)
 	{
-		if (life_ > 0)
+		if (karma_ >= 0.1)
 		{
-			life_ -= damageAmount;
+			karma_ = Clamp(karma_ - damageAmount, 0.0, KarmaMax);
 
 			vel_.x -= 8.0;
 
-			if (life_ <= 0)
+			if (karma_ < 1e-3)
 			{
-				// ゲームオーバー？
-				//...
+				// ゲームオーバー
 				timerDamage_.reset();
+				timeDead_.start();
 			}
 			else
 			{

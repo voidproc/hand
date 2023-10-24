@@ -2,10 +2,12 @@
 #include "SceneSize.h"
 #include "TitleScene.h"
 #include "MainScene.h"
+#include "GameOverScene.h"
+#include "Theme.h"
 
 void InitSivSystem()
 {
-	Scene::SetBackground(Palette::Black);
+	Scene::SetBackground(hand::Theme::Black);
 
 	Window::SetTitle(U"The HAND of Salvation - 救いの手 | v1.0.0");
 
@@ -55,7 +57,8 @@ void Main()
 	App app;
 	app.add<TitleScene>(U"TitleScene");
 	app.add<MainScene>(U"MainScene");
-	app.setFadeColor(Palette::White);
+	app.add<GameOverScene>(U"GameOverScene");
+	app.setFadeColor(Theme::Black);
 
 	//app.init(U"TitleScene", 0s);
 	app.init(U"MainScene", 0s);

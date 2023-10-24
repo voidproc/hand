@@ -13,7 +13,8 @@ namespace hand
 		enemies_{},
 		items_{},
 		time_{ StartImmediately::Yes },
-		timerSpawnEnemy_{ 5s, StartImmediately::Yes }
+		timerSpawnEnemy_{ 5s, StartImmediately::Yes },
+		timePlayerDead_{ StartImmediately::No }
 	{
 		getData().currentStage += 1;
 	}
@@ -27,7 +28,6 @@ namespace hand
 			hand->update();
 		}
 
-		//for (auto& enemy : enemies_)
 		for (int iEnemy = 0; iEnemy < enemies_.size(); ++iEnemy)
 		{
 			enemies_[iEnemy]->update();
@@ -62,28 +62,38 @@ namespace hand
 			}
 		}
 
-		// 衝突判定 - Player vs Enemy
-		for (auto& enemy : enemies_)
+		// Player の衝突判定は、Player が生きてる時だけ
+		if (player_.isAlive())
 		{
-			if (not player_.isInvincible() && player_.collision().intersects(enemy->collision()))
+			// 衝突判定 - Player vs Item
+			for (auto& item : items_)
 			{
-				player_.damage(1);
-			}
-		}
-
-		// 衝突判定 - Player vs Item
-		for (auto& item : items_)
-		{
-			if (player_.collision().intersects(item->collision()))
-			{
-				switch (item->type())
+				if (player_.collision().intersects(item->collision()))
 				{
-				case ItemType::Money:
-					player_.addKarma(Player::KarmaRecoveryOnGetMoney);
-					break;
-				}
+					switch (item->type())
+					{
+					case ItemType::Money:
+						player_.addKarma(Player::KarmaRecoveryOnGetMoney);
+						break;
+					}
 
-				item->kill();
+					item->kill();
+				}
+			}
+
+			// 衝突判定 - Player vs Enemy
+			for (auto& enemy : enemies_)
+			{
+				if (not player_.isInvincible() && player_.collision().intersects(enemy->collision()))
+				{
+					player_.damage(20.0);
+
+					if (not player_.isAlive())
+					{
+						timePlayerDead_.start();
+						break;
+					}
+				}
 			}
 		}
 
@@ -96,6 +106,12 @@ namespace hand
 		// 期限切れの Item を破棄
 		items_.remove_if([](const auto& item) { return not item->isAlive(); });
 
+		// プレイヤーが倒されてから数秒後にシーン移行
+		if (timePlayerDead_ >= 2.3s)
+		{
+			changeScene(U"GameOverScene", 0s);
+			return;
+		}
 
 		// [DEBUG] 敵をランダムに生成
 		if (timerSpawnEnemy_.reachedZero())
@@ -188,6 +204,14 @@ namespace hand
 			// カルマゲージ
 			TextureAsset(U"KarmaGaugeFrame").draw(15, 1);
 			TextureAsset(U"KarmaGauge")(0, 0, 42 * player_.karma() / 100.0, 10).draw(16, 1);
+		}
+
+		// ゲームオーバーへ移行直前のフェードアウト
+		if (timePlayerDead_ > 1.0s)
+		{
+			constexpr double FadeTime = 1.0;
+			const double t = Clamp((timePlayerDead_.sF() - 1.0) / FadeTime, 0.0, 1.0);
+			SceneRect.draw(ColorF{ Theme::Black, t });
 		}
 	}
 }

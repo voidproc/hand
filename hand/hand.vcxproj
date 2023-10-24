@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="Hand.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -325,6 +326,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameData.h" />
+    <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="Hand.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="MainScene.h" />
