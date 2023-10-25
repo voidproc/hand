@@ -15,7 +15,9 @@ namespace hand
 		time_{ StartImmediately::Yes },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes },
 		timePlayerDead_{ StartImmediately::No },
-		timerShake_{ 0.4s, StartImmediately::No }
+		timerShake_{ 0.4s, StartImmediately::No },
+		scoreRate_{ 1.0 },
+		timerDecrScoreRate_{ 0.1s, StartImmediately::Yes }
 	{
 		getData().currentStage += 1;
 	}
@@ -37,6 +39,17 @@ namespace hand
 		for (auto& item : items_)
 		{
 			item->update();
+		}
+
+		// スコアレート
+		if (not hands_.isEmpty())
+		{
+			scoreRate_ = hands_[0]->getScoreRate();
+		}
+		else if (timerDecrScoreRate_.reachedZero())
+		{
+			timerDecrScoreRate_.restart();
+			scoreRate_ = Clamp(scoreRate_ - 0.1, 1.0, 8.0);
 		}
 
 		// 衝突判定 - Hand vs Enemy
@@ -234,6 +247,9 @@ namespace hand
 			const String scoreText = U"{:08d}"_fmt(getData().score);
 			FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 1, 6 + 1, Theme::Lighter);
 			FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 0, 6 + 0, Theme::Black);
+
+			// 倍率
+			FontAsset(U"Sub")(U"x{:.1f}"_fmt(scoreRate_)).drawAt(SceneWidth - 10, 6 + 0, Theme::Black);
 		}
 
 		// ゲームオーバーへ移行直前のフェードアウト

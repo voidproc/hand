@@ -15,10 +15,17 @@ namespace hand
 
 		RectF collision() const;
 
+		void kill();
+
+		// Hand の生存時間に応じてスコアにかかる倍率が高まっていく
+		double getScoreRate() const;
+
 	private:
 		Vec2 pos_;
 
 		Stopwatch time_;
+
+		bool killed_;
 	};
 
 	using HandPtr = std::unique_ptr<Hand>;

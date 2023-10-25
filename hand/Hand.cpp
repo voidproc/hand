@@ -5,7 +5,7 @@
 namespace hand
 {
 	Hand::Hand(const Vec2& pos)
-		: pos_{ pos }, time_{ StartImmediately::Yes }
+		: pos_{ pos }, time_{ StartImmediately::Yes }, killed_{ false }
 	{
 	}
 
@@ -27,11 +27,33 @@ namespace hand
 
 	bool Hand::isAlive() const
 	{
-		return time_ < 1.5s;
+		if (killed_) return false;
+
+		if (time_ < 0.3s) return true;
+
+		if (not KeySpace.pressed()) return false;
+
+		//return time_ < 1.5s;
+		return true;
 	}
 
 	RectF Hand::collision() const
 	{
 		return RectF{ Arg::center = pos_.movedBy(0, -2), SizeF{16, 40}};
+	}
+
+	void Hand::kill()
+	{
+		killed_ = true;
+	}
+
+	double Hand::getScoreRate() const
+	{
+		const double t = EaseInSine(Clamp(time_.sF(), 0.0, 4.0) / 4.0);
+		double rate = 1.0 + 7.0 * t;
+
+		if (8.0 - rate < 1e-3) return 8.0;
+
+		return static_cast<int>(rate * 10) / 10.0;
 	}
 }

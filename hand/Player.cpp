@@ -122,7 +122,7 @@ namespace hand
 			pos_ += vel_ * (60.0 / 4.0) * Scene::DeltaTime();
 			pos_.clamp(SceneRect.stretched(-20, -12, -12, -12));
 
-			// 他の Hand が存在していないとき、カルマを一定量消費して Hand を生成できる
+			// 他の Hand が存在していないとき、Hand を生成できる
 			if (KeySpace.down())
 			{
 				if (hands_.isEmpty() && karma_ >= KarmaEmptyThreshold)
@@ -131,6 +131,22 @@ namespace hand
 					hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));
 				}
 			}
+
+			// カルマが切れるかボタンが離されたらすべての Hand を破棄
+			if (not KeySpace.pressed() || karma_ < KarmaEmptyThreshold)
+			{
+				for (auto& hand : hands_)
+				{
+					hand->kill();
+				}
+			}
+
+			// カルマがある限り、ボタンおしっぱで Hand を維持し続けられる
+			if (not hands_.isEmpty())
+			{
+				karma_ = Clamp(karma_ - KarmaCostOnActionPerSec * Scene::DeltaTime(), 0.1, KarmaMax);
+			}
+
 		}
 
 		// 飛行機から煙が出る

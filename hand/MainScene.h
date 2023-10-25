@@ -28,5 +28,7 @@ namespace hand
 		Timer timerSpawnEnemy_;
 		Stopwatch timePlayerDead_;
 		Timer timerShake_;
+		double scoreRate_;
+		Timer timerDecrScoreRate_;
 	};
 }
