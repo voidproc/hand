@@ -24,7 +24,7 @@ namespace hand
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes },
 		timePlayerDead_{ StartImmediately::No },
 		timerShake_{ 0.4s, StartImmediately::No },
-		scoreRate_{ ScoreRateMin },
+		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No },
 		timerDecrScoreRate_{ ScoreRateDecrSpeed, StartImmediately::Yes }
 	{
@@ -140,7 +140,7 @@ namespace hand
 
 			// 加算する倍率
 			const double rateIncr = 16.0 * EaseInSine(Clamp(timeIncrScoreRate_.sF(), 0.0, 4.0) / 4.0) * Scene::DeltaTime();
-			scoreRate_ = Clamp(scoreRate_ + rateIncr, ScoreRateMin, ScoreRateMax);
+			scoreRateRaw_ = Clamp(scoreRateRaw_ + rateIncr, ScoreRateMin, ScoreRateMax);
 		}
 		else
 		{
@@ -149,7 +149,7 @@ namespace hand
 			if (timerDecrScoreRate_.reachedZero())
 			{
 				timerDecrScoreRate_.restart();
-				scoreRate_ = Clamp(scoreRate_ - ScoreRateDecrOnTimer, ScoreRateMin, ScoreRateMax);
+				scoreRateRaw_ = Clamp(scoreRateRaw_ - ScoreRateDecrOnTimer, ScoreRateMin, ScoreRateMax);
 			}
 		}
 	}
@@ -168,7 +168,7 @@ namespace hand
 					if (not enemy->isAlive())
 					{
 						// 敵を撃破したのでスコアを加算する
-						getData().score += EnemyScore(enemy->type()) * scoreRate_;
+						addScore_(EnemyScore(enemy->type()) * scoreRate_());
 
 						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
@@ -189,7 +189,8 @@ namespace hand
 			// 衝突判定 - Player vs Item
 			for (auto& item : items_)
 			{
-				if (player_.collision().intersects(item->collision()))
+				if (player_.collision().intersects(item->collision()) ||
+					player_.collisionAirplane().intersects(item->collision()))
 				{
 					switch (item->type())
 					{
@@ -199,7 +200,7 @@ namespace hand
 					}
 
 					// アイテムを取得したのでスコアを加算する
-					getData().score += ItemScore(item->type()) * scoreRate_;
+					addScore_(ItemScore(item->type()) * scoreRate_());
 
 					item->kill();
 				}
@@ -307,11 +308,21 @@ namespace hand
 		FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 0, 6 + 0, Theme::Black);
 
 		// 倍率
-		FontAsset(U"Sub")(U"x{:.1f}"_fmt(scoreRate_)).drawAt(SceneWidth - 10, 6 + 0, Theme::Black);
+		FontAsset(U"Sub")(U"x{:.1f}"_fmt(scoreRateRaw_)).drawAt(SceneWidth - 10, 6 + 0, Theme::Black);
 	}
 
 	void MainScene::shake_()
 	{
 		timerShake_.restart();
+	}
+
+	double MainScene::scoreRate_() const
+	{
+		return static_cast<int>(scoreRateRaw_ * 10) / 10.0;
+	}
+
+	void MainScene::addScore_(double score)
+	{
+		getData().score += static_cast<int>(score / 10) * 10;
 	}
 }

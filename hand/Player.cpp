@@ -32,6 +32,27 @@ namespace hand
 		double lifetime_;
 	};
 
+	struct HandEffect : IEffect
+	{
+		HandEffect(const Vec2& pos)
+			: pos_{ pos }
+		{
+		}
+
+		bool update(double t) override
+		{
+			constexpr double Lifetime = 0.2;
+
+			pos_.x += 60 * (1.0 - EaseOutSine(t / Lifetime)) * Scene::DeltaTime();
+
+			TextureAsset(U"Hand").drawAt(pos_, AlphaF(0.7 - 0.7 * t / Lifetime));
+
+			return t < Lifetime;
+		}
+
+		Vec2 pos_;
+	};
+
 
 	Player::Player(Array<HandPtr>& hands)
 		:
@@ -128,7 +149,12 @@ namespace hand
 				if (hands_.isEmpty() && karma_ >= KarmaEmptyThreshold)
 				{
 					karma_ = Clamp(karma_ - KarmaCostOnAction, 0.1, KarmaMax);
-					hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));
+
+					const Vec2 handPos = pos_.movedBy(24, 0);
+					hands_.emplace_back(std::make_unique<Hand>(handPos));
+
+					// エフェクト
+					effect_.add<HandEffect>(handPos);
 				}
 			}
 
@@ -199,11 +225,17 @@ namespace hand
 
 		// [DEBUG] 当たり判定
 		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
+		//collisionAirplane().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
 	}
 
 	RectF Player::collision() const
 	{
 		return RectF{ Arg::center = pos_, 12.0 };
+	}
+
+	RectF Player::collisionAirplane() const
+	{
+		return RectF(Arg::center = pos_.movedBy(0, 6), SizeF{ 22, 8 });
 	}
 
 	bool Player::isAlive() const

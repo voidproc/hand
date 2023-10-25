@@ -28,6 +28,12 @@ namespace hand
 		// 画面を振動させる
 		void shake_();
 
+		// スコアレート（補正後）
+		double scoreRate_() const;
+
+		// スコア加算
+		void addScore_(double score);
+
 		Effect effect_;
 
 		// 画面内のオブジェクト
@@ -52,7 +58,7 @@ namespace hand
 		// 敵の撃破時やアイテム取得時に加算されるスコアにかかる倍率（1.0～8.0）
 		// Handを維持するとレートが増加する
 		// Handがない状態ではレートが減少する
-		double scoreRate_;
+		double scoreRateRaw_;
 		Stopwatch timeIncrScoreRate_;
 		Timer timerDecrScoreRate_;
 	};

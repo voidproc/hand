@@ -29,6 +29,8 @@ namespace hand
 
 		RectF collision() const;
 
+		RectF collisionAirplane() const;
+
 		bool isAlive() const;
 
 		double karma() const;

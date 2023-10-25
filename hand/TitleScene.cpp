@@ -7,6 +7,7 @@ namespace hand
 	TitleScene::TitleScene(const InitData& init)
 		: IScene{ init }, time_{ StartImmediately::Yes }, timeEnter_{ StartImmediately::No }
 	{
+		getData().score = 0;
 	}
 
 	void TitleScene::update()
