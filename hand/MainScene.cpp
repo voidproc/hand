@@ -50,6 +50,9 @@ namespace hand
 
 					if (not enemy->isAlive())
 					{
+						// 敵を撃破したのでスコアを加算する
+						getData().score += EnemyScore(enemy->type());
+
 						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
 						{
@@ -226,6 +229,11 @@ namespace hand
 			}
 
 			TextureAsset(U"KarmaGauge")(0, 0, gaugeWidth, 10).draw(16, 1);
+
+			// スコア
+			const String scoreText = U"{:08d}"_fmt(getData().score);
+			FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 1, 6 + 1, Theme::Lighter);
+			FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 0, 6 + 0, Theme::Black);
 		}
 
 		// ゲームオーバーへ移行直前のフェードアウト
@@ -233,7 +241,7 @@ namespace hand
 		{
 			constexpr double FadeTime = 2.0;
 			const double t = Clamp((timePlayerDead_.sF() - 2.0) / FadeTime, 0.0, 1.0);
-			SceneRect.draw(Theme::Colors[3 - 3 * t]);
+			SceneRect.draw(ColorF{ Theme::Black, t });
 		}
 	}
 

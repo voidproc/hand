@@ -122,6 +122,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SandboxScene.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -331,6 +332,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="SandboxScene.h" />
     <ClInclude Include="SceneSize.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="stdafx.h" />

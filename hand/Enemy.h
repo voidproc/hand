@@ -17,6 +17,9 @@ namespace hand
 
 	bool IsBullet(EnemyType type);
 
+	int EnemyScore(EnemyType type);
+
+
 	class Enemy;
 	using EnemyPtr = std::unique_ptr<Enemy>;
 

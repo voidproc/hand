@@ -3,6 +3,7 @@
 #include "TitleScene.h"
 #include "MainScene.h"
 #include "GameOverScene.h"
+#include "SandboxScene.h"
 #include "Theme.h"
 
 void InitSivSystem()
@@ -21,6 +22,7 @@ void LoadAssets()
 	FontAsset::Register(U"Sub", 8, U"font/misaki_mincho.ttf", FontStyle::Bitmap);
 	FontAsset::Register(U"Goh", 12, U"font/JF-Dot-ShinonomeMin12.ttf", FontStyle::Bitmap);
 	FontAsset::Register(U"StageTitle", 12, U"font/JF-Dot-ShinonomeMin12.ttf", FontStyle::BoldBitmap);
+	FontAsset::Register(U"Score", 8, U"font/Score.ttf", FontStyle::Bitmap);
 
 	TextureAsset::Register(U"Girl", U"texture/girl.png");
 	TextureAsset::Register(U"Airplane", U"texture/airplane.png");
@@ -58,10 +60,12 @@ void Main()
 	app.add<TitleScene>(U"TitleScene");
 	app.add<MainScene>(U"MainScene");
 	app.add<GameOverScene>(U"GameOverScene");
+	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
 	//app.init(U"TitleScene", 0s);
 	app.init(U"MainScene", 0s);
+	//app.init(U"SandboxScene", 0s);
 
 	// Config
 	auto data = app.get().get();

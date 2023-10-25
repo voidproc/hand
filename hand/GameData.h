@@ -8,6 +8,10 @@ namespace hand
 	{
 		Config config;
 
+		// 現在のステージ
 		int currentStage = 0;
+
+		// スコア
+		int score = 0;
 	};
 }

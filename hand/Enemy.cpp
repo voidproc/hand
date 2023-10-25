@@ -31,6 +31,21 @@ namespace hand
 		return false;
 	}
 
+	int EnemyScore(EnemyType type)
+	{
+		switch (type)
+		{
+		case EnemyType::Bird1:return 200;
+		case EnemyType::Bird2:return 200;
+		case EnemyType::Bird3:return 200;
+		case EnemyType::Bullet1: return 50;
+		case EnemyType::Bullet2: return 50;
+		case EnemyType::Bullet3: return 50;
+		}
+
+		return 0;
+	}
+
 
 	// 爆発エフェクト
 	// 爆発の破片
