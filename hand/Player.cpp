@@ -182,9 +182,14 @@ namespace hand
 		const Color colorAppear = Palette::White.lerp(Theme::Darker, Periodic::Square0_1(0.1s));
 
 		// 無敵時間中の点滅
-		const Color colorInvinclble = (timerDamage_.sF() > TimeDamageInvSec - TimeKnockBackSec) ? ColorF{colorAppear} : AlphaF(0.7 - 0.6 * Periodic::Square0_1(0.12s));
+		const Color colorInvincible = (timerDamage_.sF() > TimeDamageInvSec - TimeKnockBackSec) ? ColorF{colorAppear} : AlphaF(0.7 - 0.6 * Periodic::Square0_1(0.12s));
 
-		const Color color = timeAppear_.isRunning() ? colorAppear : (timerDamage_.isRunning() ? colorInvinclble : Palette::White);
+		// 死にそう
+		const Color colorDanger = Palette::White.lerp(Theme::Darker, Periodic::Square0_1(0.3s));
+
+		const Color color = timeAppear_.isRunning() ? colorAppear :
+			(timerDamage_.isRunning() ? colorInvincible :
+				((karma_ <= KarmaDanger) ? colorDanger : Palette::White));
 
 		// 紙飛行機
 		TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);

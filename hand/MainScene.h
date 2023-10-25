@@ -17,6 +17,9 @@ namespace hand
 		void draw() const override;
 
 	private:
+		void updateScoreRate_();
+		void checkCollision_();
+
 		// 画面を振動させる
 		void shake_();
 

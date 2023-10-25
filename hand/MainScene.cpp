@@ -4,6 +4,14 @@
 
 namespace hand
 {
+	namespace
+	{
+		constexpr double ScoreRateMin = 1.0;
+		constexpr double ScoreRateMax = 8.0;
+		constexpr double ScoreRateDecrOnTimer = 0.1;
+		constexpr auto ScoreRateDecrSpeed = 0.22s;
+	}
+
 	MainScene::MainScene(const InitData& init)
 		:
 		IScene{ init },
@@ -16,9 +24,9 @@ namespace hand
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes },
 		timePlayerDead_{ StartImmediately::No },
 		timerShake_{ 0.4s, StartImmediately::No },
-		scoreRate_{ 1.0 },
+		scoreRate_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No },
-		timerDecrScoreRate_{ 0.1s, StartImmediately::Yes }
+		timerDecrScoreRate_{ ScoreRateDecrSpeed, StartImmediately::Yes }
 	{
 		getData().currentStage += 1;
 	}
@@ -43,91 +51,10 @@ namespace hand
 		}
 
 		// スコアレート
-		if (not hands_.isEmpty())
-		{
-			if (not timeIncrScoreRate_.isRunning()) timeIncrScoreRate_.restart();
+		updateScoreRate_();
 
-			// 加算する倍率
-			const double t = EaseInSine(Clamp(timeIncrScoreRate_.sF(), 0.0, 4.0) / 4.0);
-			scoreRate_ = Clamp(scoreRate_ + 16.0 * t * Scene::DeltaTime(), 1.0, 8.0);
-		}
-		else
-		{
-			timeIncrScoreRate_.reset();
-
-			if (timerDecrScoreRate_.reachedZero())
-			{
-				timerDecrScoreRate_.restart();
-				scoreRate_ = Clamp(scoreRate_ - 0.1, 1.0, 8.0);
-			}
-		}
-
-		// 衝突判定 - Hand vs Enemy
-		for (auto& hand : hands_)
-		{
-			for (auto& enemy : enemies_)
-			{
-				if (enemy->isAlive() && hand->collision().intersects(enemy->collision()))
-				{
-					enemy->damage(100);
-
-					if (not enemy->isAlive())
-					{
-						// 敵を撃破したのでスコアを加算する
-						getData().score += EnemyScore(enemy->type()) * scoreRate_;
-
-						// 敵の撃破後にお金が散らばる
-						if (IsEnemy(enemy->type()))
-						{
-							for (int iMoney : step(4))
-							{
-								items_.emplace_back(MakeItem<ItemMoney, ItemType::Money>(effect_, enemy->pos()));
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// Player の衝突判定は、Player が生きてる時だけ
-		if (player_.isAlive())
-		{
-			// 衝突判定 - Player vs Item
-			for (auto& item : items_)
-			{
-				if (player_.collision().intersects(item->collision()))
-				{
-					switch (item->type())
-					{
-					case ItemType::Money:
-						player_.addKarma(Player::KarmaRecoveryOnGetMoney);
-						break;
-					}
-
-					// アイテムを取得したのでスコアを加算する
-					getData().score += ItemScore(item->type()) * scoreRate_;
-
-					item->kill();
-				}
-			}
-
-			// 衝突判定 - Player vs Enemy
-			for (auto& enemy : enemies_)
-			{
-				if (not player_.isInvincible() && player_.collision().intersects(enemy->collision()))
-				{
-					shake_();
-
-					player_.damage(20.0);
-
-					if (not player_.isAlive())
-					{
-						timePlayerDead_.start();
-						break;
-					}
-				}
-			}
-		}
+		// 衝突判定
+		checkCollision_();
 
 		// 期限切れの Hand を破棄
 		hands_.remove_if([](const auto& hand) { return not hand->isAlive(); });
@@ -240,7 +167,8 @@ namespace hand
 			FontAsset(U"Sub")(U"KARMA").draw(14, 7, karmaLabelColor);
 
 			// カルマゲージ枠
-			const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1);
+			const Color dangerColor = (player_.karma() <= Player::KarmaDanger) ? Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.3s)) : Palette::White;
+			const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1, dangerColor);
 
 			// カルマゲージ
 			int gaugeWidth = 42 * player_.karma() / 100.0;
@@ -254,7 +182,7 @@ namespace hand
 				FontAsset(U"Sub")(U"EMPTY").drawAt(frameRegion.center().movedBy(9, 0), ColorF{Theme::Black, Periodic::Square0_1(0.3s)});
 			}
 
-			TextureAsset(U"KarmaGauge")(0, 0, gaugeWidth, 10).draw(16, 1);
+			TextureAsset(U"KarmaGauge")(0, 0, gaugeWidth, 10).draw(16, 1, dangerColor);
 
 			// スコア
 			const String scoreText = U"{:08d}"_fmt(getData().score);
@@ -271,6 +199,98 @@ namespace hand
 			constexpr double FadeTime = 2.0;
 			const double t = Clamp((timePlayerDead_.sF() - 2.0) / FadeTime, 0.0, 1.0);
 			SceneRect.draw(ColorF{ Theme::Black, t });
+		}
+	}
+
+	void MainScene::updateScoreRate_()
+	{
+		if (not hands_.isEmpty())
+		{
+			if (not timeIncrScoreRate_.isRunning()) timeIncrScoreRate_.restart();
+
+			// 加算する倍率
+			const double rateIncr = 16.0 * EaseInSine(Clamp(timeIncrScoreRate_.sF(), 0.0, 4.0) / 4.0) * Scene::DeltaTime();
+			scoreRate_ = Clamp(scoreRate_ + rateIncr, ScoreRateMin, ScoreRateMax);
+		}
+		else
+		{
+			timeIncrScoreRate_.reset();
+
+			if (timerDecrScoreRate_.reachedZero())
+			{
+				timerDecrScoreRate_.restart();
+				scoreRate_ = Clamp(scoreRate_ - ScoreRateDecrOnTimer, ScoreRateMin, ScoreRateMax);
+			}
+		}
+	}
+
+	void MainScene::checkCollision_()
+	{
+		// 衝突判定 - Hand vs Enemy
+		for (auto& hand : hands_)
+		{
+			for (auto& enemy : enemies_)
+			{
+				if (enemy->isAlive() && hand->collision().intersects(enemy->collision()))
+				{
+					enemy->damage(100);
+
+					if (not enemy->isAlive())
+					{
+						// 敵を撃破したのでスコアを加算する
+						getData().score += EnemyScore(enemy->type()) * scoreRate_;
+
+						// 敵の撃破後にお金が散らばる
+						if (IsEnemy(enemy->type()))
+						{
+							for (int iMoney : step(4))
+							{
+								items_.emplace_back(MakeItem<ItemMoney, ItemType::Money>(effect_, enemy->pos()));
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Player の衝突判定は、Player が生きてる時だけ
+		if (player_.isAlive())
+		{
+			// 衝突判定 - Player vs Item
+			for (auto& item : items_)
+			{
+				if (player_.collision().intersects(item->collision()))
+				{
+					switch (item->type())
+					{
+					case ItemType::Money:
+						player_.addKarma(Player::KarmaRecoveryOnGetMoney);
+						break;
+					}
+
+					// アイテムを取得したのでスコアを加算する
+					getData().score += ItemScore(item->type()) * scoreRate_;
+
+					item->kill();
+				}
+			}
+
+			// 衝突判定 - Player vs Enemy
+			for (auto& enemy : enemies_)
+			{
+				if (not player_.isInvincible() && player_.collision().intersects(enemy->collision()))
+				{
+					shake_();
+
+					player_.damage(20.0);
+
+					if (not player_.isAlive())
+					{
+						timePlayerDead_.start();
+						break;
+					}
+				}
+			}
 		}
 	}
 
