@@ -215,11 +215,15 @@ namespace hand
 
 					player_.damage(20.0);
 
+					// このダメージでプレイヤーがしんでしまった
 					if (not player_.isAlive())
 					{
 						timePlayerDead_.start();
 						break;
 					}
+
+					// ダメージを受けるとスコアレートが半分になる
+					scoreRateRaw_ = Clamp(scoreRateRaw_ / 2, ScoreRateMin, ScoreRateMax);
 				}
 			}
 		}
