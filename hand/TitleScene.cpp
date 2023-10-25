@@ -4,19 +4,42 @@
 
 namespace hand
 {
+	namespace
+	{
+		constexpr int ItemCount = 2;
+	}
+
 	TitleScene::TitleScene(const InitData& init)
-		: IScene{ init }, time_{ StartImmediately::Yes }, timeEnter_{ StartImmediately::No }
+		: IScene{ init }, time_{ StartImmediately::Yes }, timeEnter_{ StartImmediately::No }, cursor_{ 0 }
 	{
 		getData().score = 0;
 	}
 
 	void TitleScene::update()
 	{
-		if (time_ > 1s)
+		if (time_ > 0.5s)
 		{
+			if (KeyLeft.down())
+			{
+				cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
+			}
+
+			if (KeyRight.down())
+			{
+				cursor_ = (cursor_ + 1) % ItemCount;
+			}
+
 			if (KeyEnter.down())
 			{
-				timeEnter_.start();
+				if (cursor_ == 0)
+				{
+					timeEnter_.start();
+				}
+				else if (cursor_ == 1)
+				{
+					changeScene(U"ConfigScene", 0s);
+					return;
+				}
 			}
 		}
 
@@ -41,12 +64,24 @@ namespace hand
 		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(0, 0 + 24 - 16), Theme::Black);
 
 		{
-			const int alpha = timeEnter_.isStarted() ? Periodic::Square0_1(0.2s) * 255 : 255;
-			const int alpha2 = (not timeEnter_.isStarted()) ? Periodic::Square0_1(0.75s) * 255 : alpha;
+			const double alpha = timeEnter_.isStarted() ? Periodic::Square0_1(0.2s) : 1.0;
 
-			const auto text = FontAsset(U"Sub")(U"Press Enter Key");
+			const auto labelFunc = [](int cursor) -> String {
+				switch (cursor)
+				{
+				case 0: return U"Game Start";
+				case 1: return U"Configuration";
+				}
+				return U"";
+				};
+
+			const auto text = FontAsset(U"Sub")(labelFunc(cursor_));
 			const auto region = text.regionAt(SceneCenter.movedBy(0, 32));
-			text.draw(region.pos, Theme::Black.withAlpha(alpha).withAlpha(alpha2));
+			text.draw(region.pos, ColorF{ Theme::Black, alpha });
+
+			const double arrowAlpha = timeEnter_.isStarted() ? 0.0 : Periodic::Square0_1(0.75s);
+			TextureAsset(U"ArrowLeft").drawAt(region.leftCenter().movedBy(-16, 0), ColorF{ Theme::Black, arrowAlpha });
+			TextureAsset(U"ArrowLeft").mirrored().drawAt(region.rightCenter().movedBy(16, 0), ColorF{ Theme::Black, arrowAlpha });
 		}
 		
 	}

@@ -37,6 +37,7 @@ void LoadAssets()
 	TextureAsset::Register(U"Bird", U"texture/bird.png");
 	TextureAsset::Register(U"Money", U"texture/money.png");
 	TextureAsset::Register(U"Bullet", U"texture/bullet.png");
+	TextureAsset::Register(U"ArrowLeft", U"texture/arrow-left.png");
 }
 
 void Main()
@@ -66,8 +67,8 @@ void Main()
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
-	//app.init(U"TitleScene", 0s);
-	app.init(U"ConfigScene", 0s);
+	app.init(U"TitleScene", 0s);
+	//app.init(U"ConfigScene", 0s);
 	//app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 

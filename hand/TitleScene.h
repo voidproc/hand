@@ -14,5 +14,6 @@ namespace hand
 	private:
 		Stopwatch time_;
 		Stopwatch timeEnter_;
+		int cursor_;
 	};
 }
