@@ -115,6 +115,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigScene.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="Hand.cpp" />
@@ -325,6 +326,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="ConfigScene.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameOverScene.h" />

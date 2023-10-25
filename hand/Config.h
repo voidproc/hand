@@ -5,5 +5,7 @@ namespace hand
 	struct Config
 	{
 		int windowScale;
+
+		bool useEffect;
 	};
 }

@@ -1,6 +1,7 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.6.12
 #include "SceneSize.h"
 #include "TitleScene.h"
+#include "ConfigScene.h"
 #include "MainScene.h"
 #include "GameOverScene.h"
 #include "SandboxScene.h"
@@ -23,6 +24,7 @@ void LoadAssets()
 	FontAsset::Register(U"Goh", 12, U"font/JF-Dot-ShinonomeMin12.ttf", FontStyle::Bitmap);
 	FontAsset::Register(U"StageTitle", 12, U"font/JF-Dot-ShinonomeMin12.ttf", FontStyle::BoldBitmap);
 	FontAsset::Register(U"Score", 8, U"font/Score.ttf", FontStyle::Bitmap);
+	FontAsset::Register(U"Config", 10, U"font/JF-Dot-MPlusH10.ttf", FontStyle::Bitmap);
 
 	TextureAsset::Register(U"Girl", U"texture/girl.png");
 	TextureAsset::Register(U"Airplane", U"texture/airplane.png");
@@ -58,18 +60,21 @@ void Main()
 	// アプリケーション
 	App app;
 	app.add<TitleScene>(U"TitleScene");
+	app.add<ConfigScene>(U"ConfigScene");
 	app.add<MainScene>(U"MainScene");
 	app.add<GameOverScene>(U"GameOverScene");
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
 	//app.init(U"TitleScene", 0s);
-	app.init(U"MainScene", 0s);
+	app.init(U"ConfigScene", 0s);
+	//app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config
 	auto data = app.get().get();
 	data->config.windowScale = DefaultWindowScale;
+	data->config.useEffect = true;
 
 	// シェーダ（スキャンラインエフェクト用）
 	const PixelShader ps = HLSL{ U"shader/scanline.hlsl", U"PS_Texture" };
@@ -92,11 +97,13 @@ void Main()
 
 		{
 			const Transformer2D scaler{ Mat3x2::Scale(data->config.windowScale) };
-			const ScopedCustomShader2D shader = ScopedCustomShader2D{ ps };
+
+			const bool useEffect = data->config.useEffect && data->config.windowScale >= 2;
+			const ScopedCustomShader2D shader = useEffect ? ScopedCustomShader2D{ ps } : ScopedCustomShader2D{};
 
 			renderTexture.draw();
 		}
 
-		Circle{ Scene::CenterF(), Scene::Width() * Math::Sqrt2 / 2 * 1.2 }.draw(ColorF{ 0, 0 }, ColorF{ 0, 0.22 });
+		Circle{ Scene::CenterF(), Scene::Width() * Math::Sqrt2 / 2 * 1.2 }.draw(ColorF{ 0, 0 }, ColorF{ 0, 0.20 });
 	}
 }
