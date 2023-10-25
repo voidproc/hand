@@ -64,7 +64,7 @@ namespace hand
 					if (not enemy->isAlive())
 					{
 						// 敵を撃破したのでスコアを加算する
-						getData().score += EnemyScore(enemy->type());
+						getData().score += EnemyScore(enemy->type()) * scoreRate_;
 
 						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
@@ -93,6 +93,9 @@ namespace hand
 						player_.addKarma(Player::KarmaRecoveryOnGetMoney);
 						break;
 					}
+
+					// アイテムを取得したのでスコアを加算する
+					getData().score += ItemScore(item->type()) * scoreRate_;
 
 					item->kill();
 				}

@@ -7,6 +7,8 @@ namespace hand
 		Money,
 	};
 
+	int ItemScore(ItemType type);
+
 	class Item;
 	using ItemPtr = std::unique_ptr<Item>;
 

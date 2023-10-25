@@ -4,6 +4,16 @@
 
 namespace hand
 {
+	int ItemScore(ItemType type)
+	{
+		switch (type)
+		{
+		case ItemType::Money: return 100;
+		}
+
+		return 0;
+	}
+
 	Item::Item(ItemType type, Effect& effect, const Vec2& pos)
 		:
 		type_{ type },

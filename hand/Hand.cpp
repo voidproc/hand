@@ -33,7 +33,6 @@ namespace hand
 
 		if (not KeySpace.pressed()) return false;
 
-		//return time_ < 1.5s;
 		return true;
 	}
 
