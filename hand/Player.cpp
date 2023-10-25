@@ -123,10 +123,9 @@ namespace hand
 			pos_.clamp(SceneRect.stretched(-20, -12, -12, -12));
 
 			// 他の Hand が存在していないとき、カルマを一定量消費して Hand を生成できる
-			// ミリ残しでも OK
 			if (KeySpace.down())
 			{
-				if (hands_.isEmpty() && karma_ >= 1.0)
+				if (hands_.isEmpty() && karma_ >= KarmaEmptyThreshold)
 				{
 					karma_ = Clamp(karma_ - KarmaCostOnAction, 0.1, KarmaMax);
 					hands_.emplace_back(std::make_unique<Hand>(pos_.movedBy(24, 0)));

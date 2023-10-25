@@ -9,10 +9,11 @@ namespace hand
 	public:
 		static inline constexpr double KarmaMax = 100;
 		static inline constexpr double DefaultKarma = 10;
-		static inline constexpr double KarmaRecoveryPerSec = 0.3;
+		static inline constexpr double KarmaRecoveryPerSec = 0.25;
 		static inline constexpr double KarmaRecoveryOnGetMoney = 4;
 
 		static inline constexpr double KarmaCostOnAction = 9.5;
+		static inline constexpr double KarmaEmptyThreshold = 2.0;
 
 		static inline constexpr double TimeDamageInvSec = 2.0;
 		static inline constexpr double TimeKnockBackSec = 0.55;

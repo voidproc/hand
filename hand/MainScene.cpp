@@ -202,14 +202,30 @@ namespace hand
 
 		// ステータス
 		{
+			const bool isKarmaLow = (player_.karma() < Player::KarmaEmptyThreshold);
+			const Color karmaLabelColor = isKarmaLow ? Theme::Darker.lerp(Theme::Black, Periodic::Square0_1(0.3s)) : Theme::Black;
+
 			// カルマ
 			FontAsset(U"Goh")(U"業").draw(2, 0, Theme::Darker);
-			FontAsset(U"Goh")(U"業").draw(1, 0, Theme::Black);
-			FontAsset(U"Sub")(U"KARMA").draw(14, 7, Theme::Black);
+			FontAsset(U"Goh")(U"業").draw(1, 0, karmaLabelColor);
+			FontAsset(U"Sub")(U"KARMA").draw(14, 7, karmaLabelColor);
+
+			// カルマゲージ枠
+			const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1);
 
 			// カルマゲージ
-			TextureAsset(U"KarmaGaugeFrame").draw(15, 1);
-			TextureAsset(U"KarmaGauge")(0, 0, 42 * player_.karma() / 100.0, 10).draw(16, 1);
+			int gaugeWidth = 42 * player_.karma() / 100.0;
+			if (player_.karma() > 1e-3 && gaugeWidth == 0)
+			{
+				gaugeWidth = 1;
+			}
+
+			if (isKarmaLow)
+			{
+				FontAsset(U"Sub")(U"EMPTY").drawAt(frameRegion.center().movedBy(9, 0), ColorF{Theme::Black, Periodic::Square0_1(0.3s)});
+			}
+
+			TextureAsset(U"KarmaGauge")(0, 0, gaugeWidth, 10).draw(16, 1);
 		}
 
 		// ゲームオーバーへ移行直前のフェードアウト
@@ -217,7 +233,7 @@ namespace hand
 		{
 			constexpr double FadeTime = 2.0;
 			const double t = Clamp((timePlayerDead_.sF() - 2.0) / FadeTime, 0.0, 1.0);
-			SceneRect.draw(ColorF{ Theme::Black, t });
+			SceneRect.draw(Theme::Colors[3 - 3 * t]);
 		}
 	}
 
