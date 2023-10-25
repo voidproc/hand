@@ -303,12 +303,25 @@ namespace hand
 	void MainScene::drawScore_() const
 	{
 		// スコア
-		const String scoreText = U"{:08d}"_fmt(getData().score);
-		FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 1, 6 + 1, Theme::Lighter);
-		FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 0, 6 + 0, Theme::Black);
+		{
+			const String scoreText = U"{:08d}"_fmt(getData().score);
+			Vec2 penPos{ 70, 2 };
+			bool grayed = true;
+			for (auto [index, glyph] : Indexed(FontAsset(U"Score").getGlyphs(scoreText)))
+			{
+				if (glyph.codePoint != U'0' || index == scoreText.size() - 1) grayed = false;
+
+				glyph.texture.draw(penPos + glyph.getOffset() + Vec2{ 1, 1 }, ColorF{ Theme::Lighter, grayed ? 0.0 : 1.0 });
+				glyph.texture.draw(penPos + glyph.getOffset(), grayed ? Theme::Darker : Theme::Black);
+
+				penPos.x += glyph.xAdvance;
+			}
+		}
 
 		// 倍率
-		FontAsset(U"Sub")(U"x{:.1f}"_fmt(scoreRateRaw_)).drawAt(SceneWidth - 10, 6 + 0, Theme::Black);
+		{
+			FontAsset(U"Sub")(U"x{:.1f}"_fmt(scoreRateRaw_)).drawAt(SceneWidth - 10, 6 + 0, Theme::Black);
+		}
 	}
 
 	void MainScene::shake_()
