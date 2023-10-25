@@ -102,8 +102,8 @@ namespace hand
 
 		Config& config = getData().config;
 
-		drawItem(0, U"Window Size", Format(U"x", config.windowScale));
+		drawItem(0, U"Window size", Format(U"x", config.windowScale));
 		drawItem(1, U"Use screen effect", config.useEffect ? U"On" : U"Off");
-		drawItem(2, U"Back to Title", U"");
+		drawItem(2, U"Back to title", U"");
 	}
 }
