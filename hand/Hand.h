@@ -17,9 +17,6 @@ namespace hand
 
 		void kill();
 
-		// Hand の生存時間に応じてスコアにかかる倍率が高まっていく
-		double getScoreRate() const;
-
 	private:
 		Vec2 pos_;
 

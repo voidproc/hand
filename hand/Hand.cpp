@@ -45,14 +45,4 @@ namespace hand
 	{
 		killed_ = true;
 	}
-
-	double Hand::getScoreRate() const
-	{
-		const double t = EaseInSine(Clamp(time_.sF(), 0.0, 4.0) / 4.0);
-		double rate = 1.0 + 7.0 * t;
-
-		if (8.0 - rate < 1e-3) return 8.0;
-
-		return static_cast<int>(rate * 10) / 10.0;
-	}
 }

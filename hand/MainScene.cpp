@@ -17,6 +17,7 @@ namespace hand
 		timePlayerDead_{ StartImmediately::No },
 		timerShake_{ 0.4s, StartImmediately::No },
 		scoreRate_{ 1.0 },
+		timeIncrScoreRate_{ StartImmediately::No },
 		timerDecrScoreRate_{ 0.1s, StartImmediately::Yes }
 	{
 		getData().currentStage += 1;
@@ -44,12 +45,21 @@ namespace hand
 		// スコアレート
 		if (not hands_.isEmpty())
 		{
-			scoreRate_ = hands_[0]->getScoreRate();
+			if (not timeIncrScoreRate_.isRunning()) timeIncrScoreRate_.restart();
+
+			// 加算する倍率
+			const double t = EaseInSine(Clamp(timeIncrScoreRate_.sF(), 0.0, 4.0) / 4.0);
+			scoreRate_ = Clamp(scoreRate_ + 16.0 * t * Scene::DeltaTime(), 1.0, 8.0);
 		}
-		else if (timerDecrScoreRate_.reachedZero())
+		else
 		{
-			timerDecrScoreRate_.restart();
-			scoreRate_ = Clamp(scoreRate_ - 0.1, 1.0, 8.0);
+			timeIncrScoreRate_.reset();
+
+			if (timerDecrScoreRate_.reachedZero())
+			{
+				timerDecrScoreRate_.restart();
+				scoreRate_ = Clamp(scoreRate_ - 0.1, 1.0, 8.0);
+			}
 		}
 
 		// 衝突判定 - Hand vs Enemy
