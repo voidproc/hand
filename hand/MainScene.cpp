@@ -83,33 +83,14 @@ namespace hand
 
 	void MainScene::draw() const
 	{
-		// BG
+		// BG Color
 		Scene::Rect().draw(Theme::White);
 
 
 		const Transformer2D shaker{ Mat3x2::Translate(RandomVec2(timerShake_.isRunning() ? 4.0 * EaseInCubic(timerShake_.progress1_0()) : 0.0))};
 
 		// BG Texture
-		{
-			const ScopedRenderStates2D sampler{ SamplerState::RepeatNearest };
-
-			TextureAsset(U"BgMountain2")
-				.mapped(640, 64)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 12.0) % 320), SceneHeight }, AlphaF(0.5));
-
-			TextureAsset(U"BgMountain")
-				.mapped(640, 64)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 20.0) % 320), SceneHeight });
-
-			TextureAsset(U"BgTree")
-				.mapped(400, 32)
-				.mirrored(true)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 110.0) % 200), SceneHeight + 2 }, AlphaF(0.5));
-
-			TextureAsset(U"BgTree")
-				.mapped(400, 32)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
-		}
+		drawBG_();
 
 		// Player
 		player_.draw();
@@ -136,62 +117,11 @@ namespace hand
 		}
 
 		// ステージ表記
-		if (time_ < 3s)
-		{
-			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - time_.sF() / 0.6), 0.0, 1.0);
-			const double xOut = (time_ > 2.4s) ? 200 * EaseInCubic((time_.sF() - 2.4) / 0.6) : 0.0;
-
-			const auto stageText = [](int stage) {
-				switch (stage)
-				{
-				case 1: return std::make_pair<String, String>(U"ＳＴＡＧＥ １", U"- Pleasant Sunny Day -");
-				case 2: return std::make_pair<String, String>(U"ＳＴＡＧＥ ２", U"- Tearful Rain Passage -");
-				case 3: return std::make_pair<String, String>(U"ＳＴＡＧＥ ３", U"- Back to Nostalgic Day -");
-				}
-				return std::make_pair<String, String>(U"", U"");
-				}(getData().currentStage);
-
-			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut + 1, SceneCenter.y + 1 - 8, Theme::Lighter);
-			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut, SceneCenter.y - 8, Theme::Black);
-			FontAsset(U"Sub")(stageText.second).drawAt(x - xOut, SceneCenter.y + 20 - 8, Theme::Black);
-		}
+		drawStageTitle_();
 
 		// ステータス
-		{
-			const bool isKarmaLow = (player_.karma() < Player::KarmaEmptyThreshold);
-			const Color karmaLabelColor = isKarmaLow ? Theme::Darker.lerp(Theme::Black, Periodic::Square0_1(0.3s)) : Theme::Black;
-
-			// カルマ
-			FontAsset(U"Goh")(U"業").draw(2, 0, Theme::Darker);
-			FontAsset(U"Goh")(U"業").draw(1, 0, karmaLabelColor);
-			FontAsset(U"Sub")(U"KARMA").draw(14, 7, karmaLabelColor);
-
-			// カルマゲージ枠
-			const Color dangerColor = (player_.karma() <= Player::KarmaDanger) ? Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.3s)) : Palette::White;
-			const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1, dangerColor);
-
-			// カルマゲージ
-			int gaugeWidth = 42 * player_.karma() / 100.0;
-			if (player_.karma() > 1e-3 && gaugeWidth == 0)
-			{
-				gaugeWidth = 1;
-			}
-
-			if (isKarmaLow)
-			{
-				FontAsset(U"Sub")(U"EMPTY").drawAt(frameRegion.center().movedBy(9, 0), ColorF{Theme::Black, Periodic::Square0_1(0.3s)});
-			}
-
-			TextureAsset(U"KarmaGauge")(0, 0, gaugeWidth, 10).draw(16, 1, dangerColor);
-
-			// スコア
-			const String scoreText = U"{:08d}"_fmt(getData().score);
-			FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 1, 6 + 1, Theme::Lighter);
-			FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 0, 6 + 0, Theme::Black);
-
-			// 倍率
-			FontAsset(U"Sub")(U"x{:.1f}"_fmt(scoreRate_)).drawAt(SceneWidth - 10, 6 + 0, Theme::Black);
-		}
+		drawKarma_();
+		drawScore_();
 
 		// ゲームオーバーへ移行直前のフェードアウト
 		if (timePlayerDead_ > 2.0s)
@@ -292,6 +222,92 @@ namespace hand
 				}
 			}
 		}
+	}
+
+	void MainScene::drawBG_() const
+	{
+		const ScopedRenderStates2D sampler{ SamplerState::RepeatNearest };
+
+		TextureAsset(U"BgMountain2")
+			.mapped(640, 64)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 12.0) % 320), SceneHeight }, AlphaF(0.5));
+
+		TextureAsset(U"BgMountain")
+			.mapped(640, 64)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 20.0) % 320), SceneHeight });
+
+		TextureAsset(U"BgTree")
+			.mapped(400, 32)
+			.mirrored(true)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 110.0) % 200), SceneHeight + 2 }, AlphaF(0.5));
+
+		TextureAsset(U"BgTree")
+			.mapped(400, 32)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(Scene::Time() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
+	}
+
+	void MainScene::drawStageTitle_() const
+	{
+		if (time_ < 3s)
+		{
+			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - time_.sF() / 0.6), 0.0, 1.0);
+			const double xOut = (time_ > 2.4s) ? 200 * EaseInCubic((time_.sF() - 2.4) / 0.6) : 0.0;
+
+			const auto stageTextFunc = [](int stage) {
+				switch (stage)
+				{
+				case 1: return std::make_pair<String, String>(U"ＳＴＡＧＥ １", U"- Pleasant Sunny Day -");
+				case 2: return std::make_pair<String, String>(U"ＳＴＡＧＥ ２", U"- Tearful Rain Passage -");
+				case 3: return std::make_pair<String, String>(U"ＳＴＡＧＥ ３", U"- Back to Nostalgic Day -");
+				}
+				return std::make_pair<String, String>(U"", U"");
+				};
+			const auto stageText = stageTextFunc(getData().currentStage);
+
+			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut + 1, SceneCenter.y + 1 - 8, Theme::Lighter);
+			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut, SceneCenter.y - 8, Theme::Black);
+			FontAsset(U"Sub")(stageText.second).drawAt(x - xOut, SceneCenter.y + 20 - 8, Theme::Black);
+		};
+	}
+
+	void MainScene::drawKarma_() const
+	{
+		const bool isKarmaLow = (player_.karma() < Player::KarmaEmptyThreshold);
+		const Color karmaLabelColor = isKarmaLow ? Theme::Darker.lerp(Theme::Black, Periodic::Square0_1(0.3s)) : Theme::Black;
+
+		// カルマ
+		FontAsset(U"Goh")(U"業").draw(2, 0, Theme::Darker);
+		FontAsset(U"Goh")(U"業").draw(1, 0, karmaLabelColor);
+		FontAsset(U"Sub")(U"KARMA").draw(14, 7, karmaLabelColor);
+
+		// カルマゲージ枠
+		const Color dangerColor = (player_.karma() <= Player::KarmaDanger) ? Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.3s)) : Palette::White;
+		const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1, dangerColor);
+
+		// カルマゲージ
+		int gaugeWidth = 42 * player_.karma() / 100.0;
+		if (player_.karma() > 1e-3 && gaugeWidth == 0)
+		{
+			gaugeWidth = 1;
+		}
+
+		if (isKarmaLow)
+		{
+			FontAsset(U"Sub")(U"EMPTY").drawAt(frameRegion.center().movedBy(9, 0), ColorF{ Theme::Black, Periodic::Square0_1(0.3s) });
+		}
+
+		TextureAsset(U"KarmaGauge")(0, 0, gaugeWidth, 10).draw(16, 1, dangerColor);
+	}
+
+	void MainScene::drawScore_() const
+	{
+		// スコア
+		const String scoreText = U"{:08d}"_fmt(getData().score);
+		FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 1, 6 + 1, Theme::Lighter);
+		FontAsset(U"Score")(scoreText).drawAt(SceneWidth / 2 + 14 + 0, 6 + 0, Theme::Black);
+
+		// 倍率
+		FontAsset(U"Sub")(U"x{:.1f}"_fmt(scoreRate_)).drawAt(SceneWidth - 10, 6 + 0, Theme::Black);
 	}
 
 	void MainScene::shake_()

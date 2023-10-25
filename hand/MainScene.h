@@ -20,6 +20,11 @@ namespace hand
 		void updateScoreRate_();
 		void checkCollision_();
 
+		void drawBG_() const;
+		void drawStageTitle_() const;
+		void drawKarma_() const;
+		void drawScore_() const;
+
 		// 画面を振動させる
 		void shake_();
 
