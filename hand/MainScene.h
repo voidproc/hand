@@ -1,9 +1,10 @@
 ﻿#pragma once
 
-#include "Player.h"
-#include "Hand.h"
-#include "Enemy.h"
-#include "Item.h"
+//#include "Player.h"
+//#include "Hand.h"
+//#include "Enemy.h"
+//#include "Item.h"
+#include "Objects.h"
 #include "EventList.h"
 
 namespace hand
@@ -35,13 +36,13 @@ namespace hand
 		// スコア加算
 		void addScore_(double score);
 
-		Effect effect_;
-
 		// 画面内のオブジェクト
-		Player player_;
-		Array<HandPtr> hands_;
-		Array<EnemyPtr> enemies_;
-		Array<ItemPtr> items_;
+		Objects obj_;
+		//Effect effect_;
+		//Player player_;
+		//Array<HandPtr> hands_;
+		//Array<EnemyPtr> enemies_;
+		//Array<ItemPtr> items_;
 
 		// シーンの経過時間
 		Stopwatch time_;

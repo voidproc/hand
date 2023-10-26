@@ -15,11 +15,12 @@ namespace hand
 	MainScene::MainScene(const InitData& init)
 		:
 		IScene{ init },
-		effect_{},
-		player_{ hands_ },
-		hands_{},
-		enemies_{},
-		items_{},
+		obj_{},
+		//effect_{},
+		//player_{ hands_ },
+		//hands_{},
+		//enemies_{},
+		//items_{},
 		time_{ StartImmediately::Yes },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes },
 		timePlayerDead_{ StartImmediately::No },
@@ -27,7 +28,7 @@ namespace hand
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No },
 		timerDecrScoreRate_{ ScoreRateDecrSpeed, StartImmediately::Yes },
-		eventList_{ effect_, enemies_ }
+		eventList_{ obj_ }
 	{
 		getData().currentStage += 1;
 
@@ -36,19 +37,19 @@ namespace hand
 
 	void MainScene::update()
 	{
-		player_.update();
+		obj_.player.update();
 
-		for (auto& hand : hands_)
+		for (auto& hand : obj_.hands)
 		{
 			hand->update();
 		}
 
-		for (int iEnemy = 0; iEnemy < enemies_.size(); ++iEnemy)
+		for (int iEnemy = 0; iEnemy < obj_.enemies.size(); ++iEnemy)
 		{
-			enemies_[iEnemy]->update();
+			obj_.enemies[iEnemy]->update();
 		}
 
-		for (auto& item : items_)
+		for (auto& item : obj_.items)
 		{
 			item->update();
 		}
@@ -60,13 +61,13 @@ namespace hand
 		checkCollision_();
 
 		// 期限切れの Hand を破棄
-		hands_.remove_if([](const auto& hand) { return not hand->isAlive(); });
+		obj_.hands.remove_if([](const auto& hand) { return not hand->isAlive(); });
 
 		// 期限切れの Enemy を破棄
-		enemies_.remove_if([](const auto& enemy) { return not enemy->isAlive(); });
+		obj_.enemies.remove_if([](const auto& enemy) { return not enemy->isAlive(); });
 
 		// 期限切れの Item を破棄
-		items_.remove_if([](const auto& item) { return not item->isAlive(); });
+		obj_.items.remove_if([](const auto& item) { return not item->isAlive(); });
 
 		// プレイヤーが倒されてから数秒後にシーン移行
 		if (timePlayerDead_ >= 4s)
@@ -99,25 +100,25 @@ namespace hand
 		drawBG_();
 
 		// Player
-		player_.draw();
+		obj_.player.draw();
 
 		// Hands
-		for (const auto& hand : hands_)
+		for (const auto& hand : obj_.hands)
 		{
 			hand->draw();
 		}
 
 		// エフェクト
-		effect_.update();
+		obj_.effect.update();
 
 		// 敵や弾
-		for (const auto& enemy : enemies_)
+		for (const auto& enemy : obj_.enemies)
 		{
 			enemy->draw();
 		}
 
 		// アイテム
-		for (const auto& item : items_)
+		for (const auto& item : obj_.items)
 		{
 			item->draw();
 		}
@@ -140,7 +141,7 @@ namespace hand
 
 	void MainScene::updateScoreRate_()
 	{
-		if (not hands_.isEmpty())
+		if (not obj_.hands.isEmpty())
 		{
 			if (not timeIncrScoreRate_.isRunning()) timeIncrScoreRate_.restart();
 
@@ -163,9 +164,9 @@ namespace hand
 	void MainScene::checkCollision_()
 	{
 		// 衝突判定 - Hand vs Enemy
-		for (auto& hand : hands_)
+		for (auto& hand : obj_.hands)
 		{
-			for (auto& enemy : enemies_)
+			for (auto& enemy : obj_.enemies)
 			{
 				if (enemy->isAlive() && hand->collision().intersects(enemy->collision()))
 				{
@@ -181,7 +182,7 @@ namespace hand
 						{
 							for (int iMoney : step(4))
 							{
-								items_.emplace_back(MakeItem<ItemMoney, ItemType::Money>(effect_, enemy->pos()));
+								obj_.items.emplace_back(MakeItem<ItemMoney, ItemType::Money>(obj_.effect, enemy->pos()));
 							}
 						}
 					}
@@ -190,18 +191,18 @@ namespace hand
 		}
 
 		// Player の衝突判定は、Player が生きてる時だけ
-		if (player_.isAlive())
+		if (obj_.player.isAlive())
 		{
 			// 衝突判定 - Player vs Item
-			for (auto& item : items_)
+			for (auto& item : obj_.items)
 			{
-				if (player_.collision().intersects(item->collision()) ||
-					player_.collisionAirplane().intersects(item->collision()))
+				if (obj_.player.collision().intersects(item->collision()) ||
+					obj_.player.collisionAirplane().intersects(item->collision()))
 				{
 					switch (item->type())
 					{
 					case ItemType::Money:
-						player_.addKarma(Player::KarmaRecoveryOnGetMoney);
+						obj_.player.addKarma(Player::KarmaRecoveryOnGetMoney);
 						break;
 					}
 
@@ -213,16 +214,16 @@ namespace hand
 			}
 
 			// 衝突判定 - Player vs Enemy
-			for (auto& enemy : enemies_)
+			for (auto& enemy : obj_.enemies)
 			{
-				if (not player_.isInvincible() && player_.collision().intersects(enemy->collision()))
+				if (not obj_.player.isInvincible() && obj_.player.collision().intersects(enemy->collision()))
 				{
 					shake_();
 
-					player_.damage(20.0);
+					obj_.player.damage(20.0);
 
 					// このダメージでプレイヤーがしんでしまった
-					if (not player_.isAlive())
+					if (not obj_.player.isAlive())
 					{
 						timePlayerDead_.start();
 						break;
@@ -283,7 +284,9 @@ namespace hand
 
 	void MainScene::drawKarma_() const
 	{
-		const bool isKarmaLow = (player_.karma() < Player::KarmaEmptyThreshold);
+		const auto karma = obj_.player.karma();
+
+		const bool isKarmaLow = (karma < Player::KarmaEmptyThreshold);
 		const Color karmaLabelColor = isKarmaLow ? Theme::Darker.lerp(Theme::Black, Periodic::Square0_1(0.3s)) : Theme::Black;
 
 		// カルマ
@@ -292,12 +295,12 @@ namespace hand
 		FontAsset(U"Sub")(U"KARMA").draw(14, 7, karmaLabelColor);
 
 		// カルマゲージ枠
-		const Color dangerColor = (player_.karma() <= Player::KarmaDanger) ? Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.3s)) : Palette::White;
+		const Color dangerColor = (karma <= Player::KarmaDanger) ? Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.3s)) : Palette::White;
 		const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1, dangerColor);
 
 		// カルマゲージ
-		int gaugeWidth = 42 * player_.karma() / 100.0;
-		if (player_.karma() > 1e-3 && gaugeWidth == 0)
+		int gaugeWidth = 42 * karma / 100.0;
+		if (karma > 1e-3 && gaugeWidth == 0)
 		{
 			gaugeWidth = 1;
 		}

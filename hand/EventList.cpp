@@ -1,4 +1,5 @@
 ﻿#include "EventList.h"
+#include "Objects.h"
 #include "SceneSize.h"
 
 namespace hand
@@ -8,10 +9,11 @@ namespace hand
 		return text.trimmed().isEmpty() || text.starts_with(U'#');
 	}
 
-	EventList::EventList(Effect& effect, Array<EnemyPtr>& enemies)
+	EventList::EventList(Objects& obj)
 		:
-		effect_{ effect },
-		enemies_{ enemies },
+		obj_{ obj },
+		//effect_{ effect },
+		//enemies_{ enemies },
 		eventCsv_{},
 		currentRow_{ 0 },
 		nextTime_{ 0 }
@@ -101,12 +103,11 @@ namespace hand
 
 		if (textType == U"bird1")
 		{
-			enemies_.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(effect_, enemies_, pos));
+			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_.effect, obj_.enemies, pos));
 		}
 		else if (textType == U"bird2")
 		{
-			enemies_.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(effect_, enemies_, pos));
+			obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_.effect, obj_.enemies, pos));
 		}
-
 	}
 }

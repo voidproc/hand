@@ -335,6 +335,7 @@
     <ClInclude Include="Hand.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="MainScene.h" />
+    <ClInclude Include="Objects.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SandboxScene.h" />
     <ClInclude Include="SceneSize.h" />

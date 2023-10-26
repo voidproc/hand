@@ -1,14 +1,14 @@
 ﻿#pragma once
 
-#include "Enemy.h"
-
 namespace hand
 {
+	struct Objects;
+
 	// メインシーンのステージイベントを実行する
 	class EventList
 	{
 	public:
-		EventList(Effect& effect, Array<EnemyPtr>& enemies);
+		EventList(Objects& obj);
 
 		void load(FilePathView eventCsvPath);
 
@@ -17,8 +17,9 @@ namespace hand
 	private:
 		void doEvent_();
 
-		Effect& effect_;
-		Array<EnemyPtr>& enemies_;
+		Objects& obj_;
+		//Effect& effect_;
+		//Array<EnemyPtr>& enemies_;
 		CSV eventCsv_;
 		int currentRow_;
 		double nextTime_;
