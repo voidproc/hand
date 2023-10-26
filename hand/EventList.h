@@ -18,8 +18,6 @@ namespace hand
 		void doEvent_();
 
 		Objects& obj_;
-		//Effect& effect_;
-		//Array<EnemyPtr>& enemies_;
 		CSV eventCsv_;
 		int currentRow_;
 		double nextTime_;

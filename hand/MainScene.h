@@ -38,11 +38,6 @@ namespace hand
 
 		// 画面内のオブジェクト
 		Objects obj_;
-		//Effect effect_;
-		//Player player_;
-		//Array<HandPtr> hands_;
-		//Array<EnemyPtr> enemies_;
-		//Array<ItemPtr> items_;
 
 		// シーンの経過時間
 		Stopwatch time_;

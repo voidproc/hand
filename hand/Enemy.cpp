@@ -1,4 +1,5 @@
 ﻿#include "Enemy.h"
+#include "Objects.h"
 #include "SceneSize.h"
 #include "SpriteSheet.h"
 #include "Theme.h"
@@ -120,11 +121,10 @@ namespace hand
 	}
 
 
-	Enemy::Enemy(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos)
+	Enemy::Enemy(EnemyType type, Objects& obj, const Vec2& pos)
 		:
 		type_{ type },
-		effect_{ effect },
-		enemies_{ enemies },
+		obj_{ obj },
 		pos_{ pos },
 		life_{ 10 },
 		time_{ StartImmediately::Yes }
@@ -153,7 +153,7 @@ namespace hand
 
 	void Enemy::explode()
 	{
-		AddExplodeEffect(effect_, pos_);
+		AddExplodeEffect(obj_.effect, pos_);
 	}
 
 	bool Enemy::isAlive() const
@@ -180,9 +180,9 @@ namespace hand
 		return pos_;
 	}
 
-	Bird1::Bird1(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos)
+	Bird1::Bird1(EnemyType type, Objects& obj, const Vec2& pos)
 		:
-		Enemy{ type, effect, enemies, pos }
+		Enemy{ type, obj, pos }
 	{
 	}
 
@@ -203,9 +203,9 @@ namespace hand
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
 	}
 
-	Bird2::Bird2(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos)
+	Bird2::Bird2(EnemyType type, Objects& obj, const Vec2& pos)
 		:
-		Enemy{ type, effect, enemies, pos },
+		Enemy{ type, obj, pos },
 		timerFire_{ 1.5s, StartImmediately::Yes }
 	{
 	}
@@ -218,7 +218,7 @@ namespace hand
 		if (timerFire_.reachedZero())
 		{
 			timerFire_.reset();
-			enemies_.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(effect_, enemies_, pos_, Circular{ 1.2, 270_deg }));
+			obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(obj_, pos_, Circular{ 1.2, 270_deg }));
 		}
 	}
 
@@ -234,9 +234,9 @@ namespace hand
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
 	}
 
-	Bullet1::Bullet1(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos, const Vec2& vel)
+	Bullet1::Bullet1(EnemyType type, Objects& obj, const Vec2& pos, const Vec2& vel)
 		:
-		Enemy{ type, effect, enemies, pos },
+		Enemy{ type, obj, pos },
 		vel_{ vel }
 	{
 	}
@@ -260,6 +260,6 @@ namespace hand
 
 	void Bullet1::explode()
 	{
-		AddExplodeEffectForBullet(effect_, pos_);
+		AddExplodeEffectForBullet(obj_.effect, pos_);
 	}
 }

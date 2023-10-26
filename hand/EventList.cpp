@@ -12,8 +12,6 @@ namespace hand
 	EventList::EventList(Objects& obj)
 		:
 		obj_{ obj },
-		//effect_{ effect },
-		//enemies_{ enemies },
 		eventCsv_{},
 		currentRow_{ 0 },
 		nextTime_{ 0 }
@@ -103,11 +101,11 @@ namespace hand
 
 		if (textType == U"bird1")
 		{
-			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_.effect, obj_.enemies, pos));
+			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos));
 		}
 		else if (textType == U"bird2")
 		{
-			obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_.effect, obj_.enemies, pos));
+			obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos));
 		}
 	}
 }

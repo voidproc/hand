@@ -23,10 +23,12 @@ namespace hand
 	class Enemy;
 	using EnemyPtr = std::unique_ptr<Enemy>;
 
+	struct Objects;
+
 	class Enemy
 	{
 	public:
-		Enemy(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos);
+		Enemy(EnemyType type, Objects& obj, const Vec2& pos);
 
 		EnemyType type() const;
 
@@ -48,8 +50,7 @@ namespace hand
 		EnemyType type_;
 
 	protected:
-		Effect& effect_;
-		Array<EnemyPtr>& enemies_;
+		Objects& obj_;
 
 		Vec2 pos_;
 
@@ -63,7 +64,7 @@ namespace hand
 	class Bird1 : public Enemy
 	{
 	public:
-		Bird1(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos);
+		Bird1(EnemyType type, Objects& obj, const Vec2& pos);
 
 		void update() override;
 
@@ -77,7 +78,7 @@ namespace hand
 	class Bird2 : public Enemy
 	{
 	public:
-		Bird2(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos);
+		Bird2(EnemyType type, Objects& obj, const Vec2& pos);
 
 		void update() override;
 
@@ -94,7 +95,7 @@ namespace hand
 	class Bullet1 : public Enemy
 	{
 	public:
-		Bullet1(EnemyType type, Effect& effect, Array<EnemyPtr>& enemies, const Vec2& pos, const Vec2& vel);
+		Bullet1(EnemyType type, Objects& obj, const Vec2& pos, const Vec2& vel);
 
 		void update() override;
 

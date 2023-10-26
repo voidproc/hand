@@ -16,11 +16,6 @@ namespace hand
 		:
 		IScene{ init },
 		obj_{},
-		//effect_{},
-		//player_{ hands_ },
-		//hands_{},
-		//enemies_{},
-		//items_{},
 		time_{ StartImmediately::Yes },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes },
 		timePlayerDead_{ StartImmediately::No },
@@ -78,14 +73,6 @@ namespace hand
 
 		// ステージイベント
 		while (eventList_.update(time_.sF())) {}
-
-		// [DEBUG] 敵をランダムに生成
-		//if (timerSpawnEnemy_.reachedZero())
-		//{
-		//	timerSpawnEnemy_.restart(SecondsF{ Random(0.5, 2.0) });
-		//
-		//	enemies_.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(effect_, enemies_, Vec2{SceneWidth + 16, Random(32.0, SceneHeight - 32.0)}));
-		//}
 	}
 
 	void MainScene::draw() const
