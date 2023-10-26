@@ -4,9 +4,98 @@
 
 namespace hand
 {
+	struct GenerateEnemies : IEffect
+	{
+		GenerateEnemies(std::function<void()> f, double lifetime, double interval)
+			: f_{ f }, lifetime_{ lifetime }, interval_{ SecondsF{ interval }, StartImmediately::Yes }
+		{
+		}
+
+		bool update(double t) override
+		{
+			if (interval_.reachedZero())
+			{
+				interval_.restart();
+				f_();
+			}
+
+			return t < lifetime_;
+		}
+
+		std::function<void()> f_;
+		double lifetime_;
+		Timer interval_;
+	};
+
 	bool IsComment(const String& text)
 	{
 		return text.trimmed().isEmpty() || text.starts_with(U'#');
+	}
+
+	double RandomX()
+	{
+		return Random(16.0, SceneWidth - 16.0);
+	}
+
+	double PosRight()
+	{
+		return SceneWidth + 16;
+	}
+
+	double PosLeft()
+	{
+		return -16;
+	}
+
+	double ParseX(const String& text)
+	{
+		if (text == U"random")
+		{
+			return RandomX();
+		}
+		else if (text == U"right")
+		{
+			return PosRight();
+		}
+		else if (text == U"left")
+		{
+			return PosLeft();
+		}
+
+		return ParseFloat<double>(text);
+	}
+
+	double RandomY()
+	{
+		return Random(16.0, SceneHeight - 16.0);
+	}
+
+	double PosBottom()
+	{
+		return SceneHeight + 16;
+	}
+
+	double PosTop()
+	{
+		return -16;
+	}
+
+	double ParseY(const String& text)
+	{
+		if (text == U"random")
+		{
+			return RandomY();
+		}
+		else if (text == U"bottom")
+		{
+			return PosBottom();
+		}
+		else if (text == U"top")
+		{
+			return PosTop();
+		}
+
+		return ParseFloat<double>(text);
 	}
 
 	EventList::EventList(Objects& obj)
@@ -59,53 +148,39 @@ namespace hand
 
 	void EventList::doEvent_()
 	{
-		const String textType = eventCsv_.get(currentRow_, 1).lowercased();
-		const String textX = eventCsv_.get(currentRow_, 2).lowercased();
-		const String textY = eventCsv_.get(currentRow_, 3).lowercased();
+		const String textType = eventCsv_.get(currentRow_, 1).trimmed().lowercased();
+		const String textX = eventCsv_.get(currentRow_, 2).trimmed().lowercased();
+		const String textY = eventCsv_.get(currentRow_, 3).trimmed().lowercased();
 
-		Vec2 pos{};
-
-		if (textX == U"random")
-		{
-			pos.x = Random(16.0, SceneWidth - 16.0);
-		}
-		else if (textX == U"right")
-		{
-			pos.x = SceneWidth + 16;
-		}
-		else if (textX == U"left")
-		{
-			pos.x = -16;
-		}
-		else
-		{
-			pos.x = eventCsv_.get<double>(currentRow_, 2);
-		}
-
-		if (textY == U"random")
-		{
-			pos.y = Random(32.0, SceneHeight - 16.0);
-		}
-		else if (textY == U"bottom")
-		{
-			pos.y = SceneHeight + 16;
-		}
-		else if (textY == U"top")
-		{
-			pos.y = -16;
-		}
-		else
-		{
-			pos.y = eventCsv_.get<double>(currentRow_, 3);
-		}
+		Vec2 pos{ ParseX(textX), ParseY(textY) };
 
 		if (textType == U"bird1")
 		{
-			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos));
+			const double speedScale = eventCsv_.getOr<double>(currentRow_, 4, 1.0);
+			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale));
 		}
 		else if (textType == U"bird2")
 		{
-			obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos));
+			const double speedScale = eventCsv_.getOr<double>(currentRow_, 4, 1.0);
+			obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos, speedScale));
+		}
+		else if (textType == U"genbird1")
+		{
+			const double lifetime = eventCsv_.get<double>(currentRow_, 4);
+			const double interval = eventCsv_.get<double>(currentRow_, 5);
+			const double speedScale = eventCsv_.get<double>(currentRow_, 6);
+			obj_.effect.add<GenerateEnemies>([&, speedScale]() {
+				obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, Vec2{ PosRight(), RandomY() }, speedScale));
+				}, lifetime, interval);
+		}
+		else if (textType == U"genbird2")
+		{
+			const double lifetime = eventCsv_.get<double>(currentRow_, 4);
+			const double interval = eventCsv_.get<double>(currentRow_, 5);
+			const double speedScale = eventCsv_.get<double>(currentRow_, 6);
+			obj_.effect.add<GenerateEnemies>([&, speedScale]() {
+				obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, Vec2{ PosRight(), RandomY() }, speedScale));
+				}, lifetime, interval);
 		}
 	}
 }

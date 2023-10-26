@@ -64,21 +64,7 @@ namespace hand
 	class Bird1 : public Enemy
 	{
 	public:
-		Bird1(EnemyType type, Objects& obj, const Vec2& pos);
-
-		void update() override;
-
-		void draw() const override;
-
-		RectF collision() const override;
-	};
-
-	// 敵（鳥）
-	// ゆらゆら
-	class Bird2 : public Enemy
-	{
-	public:
-		Bird2(EnemyType type, Objects& obj, const Vec2& pos);
+		Bird1(EnemyType type, Objects& obj, const Vec2& pos, double speedScale = 1.0);
 
 		void update() override;
 
@@ -87,7 +73,25 @@ namespace hand
 		RectF collision() const override;
 
 	private:
-		Timer timerFire_;
+		double speedScale_;
+	};
+
+	// 敵（鳥）
+	// ゆらゆら
+	class Bird2 : public Enemy
+	{
+	public:
+		Bird2(EnemyType type, Objects& obj, const Vec2& pos, double speedScale = 1.0);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+	private:
+		double speedScale_;
+		//	Timer timerFire_;
 	};
 
 	// 敵弾（小）

@@ -180,15 +180,15 @@ namespace hand
 		return pos_;
 	}
 
-	Bird1::Bird1(EnemyType type, Objects& obj, const Vec2& pos)
+	Bird1::Bird1(EnemyType type, Objects& obj, const Vec2& pos, double speedScale)
 		:
-		Enemy{ type, obj, pos }
+		Enemy{ type, obj, pos }, speedScale_{ speedScale }
 	{
 	}
 
 	void Bird1::update()
 	{
-		pos_.x -= 0.5 * 60 * Scene::DeltaTime();
+		pos_.x -= 0.5 * 60 * Scene::DeltaTime() * speedScale_;
 	}
 
 	void Bird1::draw() const
@@ -203,23 +203,22 @@ namespace hand
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
 	}
 
-	Bird2::Bird2(EnemyType type, Objects& obj, const Vec2& pos)
+	Bird2::Bird2(EnemyType type, Objects& obj, const Vec2& pos, double speedScale)
 		:
-		Enemy{ type, obj, pos },
-		timerFire_{ 1.5s, StartImmediately::Yes }
+		Enemy{ type, obj, pos }, speedScale_{ speedScale } //, timerFire_{ 1.5s, StartImmediately::Yes }
 	{
 	}
 
 	void Bird2::update()
 	{
-		pos_.x -= 0.8 * 60 * Scene::DeltaTime();
+		pos_.x -= 0.8 * 60 * Scene::DeltaTime() * speedScale_;
 		pos_.y += 16.0 * Periodic::Sine1_1(1.8s, time_.sF()) * Scene::DeltaTime();
 
-		if (timerFire_.reachedZero())
-		{
-			timerFire_.reset();
-			obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(obj_, pos_, Circular{ 1.2, 270_deg }));
-		}
+		//if (timerFire_.reachedZero())
+		//{
+		//	timerFire_.reset();
+		//	obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(obj_, pos_, Circular{ 1.2, 270_deg }));
+		//}
 	}
 
 	void Bird2::draw() const
