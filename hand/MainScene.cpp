@@ -26,9 +26,12 @@ namespace hand
 		timerShake_{ 0.4s, StartImmediately::No },
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No },
-		timerDecrScoreRate_{ ScoreRateDecrSpeed, StartImmediately::Yes }
+		timerDecrScoreRate_{ ScoreRateDecrSpeed, StartImmediately::Yes },
+		eventList_{ effect_, enemies_ }
 	{
 		getData().currentStage += 1;
+
+		eventList_.load(U"event/stage1.csv");
 	}
 
 	void MainScene::update()
@@ -72,13 +75,16 @@ namespace hand
 			return;
 		}
 
-		// [DEBUG] 敵をランダムに生成
-		if (timerSpawnEnemy_.reachedZero())
-		{
-			timerSpawnEnemy_.restart(SecondsF{ Random(0.5, 2.0) });
+		// ステージイベント
+		while (eventList_.update(time_.sF())) {}
 
-			enemies_.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(effect_, enemies_, Vec2{SceneWidth + 16, Random(32.0, SceneHeight - 32.0)}));
-		}
+		// [DEBUG] 敵をランダムに生成
+		//if (timerSpawnEnemy_.reachedZero())
+		//{
+		//	timerSpawnEnemy_.restart(SecondsF{ Random(0.5, 2.0) });
+		//
+		//	enemies_.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(effect_, enemies_, Vec2{SceneWidth + 16, Random(32.0, SceneHeight - 32.0)}));
+		//}
 	}
 
 	void MainScene::draw() const

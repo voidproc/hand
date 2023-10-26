@@ -4,6 +4,7 @@
 #include "Hand.h"
 #include "Enemy.h"
 #include "Item.h"
+#include "EventList.h"
 
 namespace hand
 {
@@ -61,5 +62,7 @@ namespace hand
 		double scoreRateRaw_;
 		Stopwatch timeIncrScoreRate_;
 		Timer timerDecrScoreRate_;
+
+		EventList eventList_;
 	};
 }
