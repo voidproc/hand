@@ -57,11 +57,11 @@ namespace hand
 		Rect{ 0, 0, SceneWidth, 24 }.draw(Theme::Darker);
 		Rect{ Arg::bottomLeft = Point{ 0, SceneHeight }, Size{ SceneWidth, 24 } }.draw(Theme::Darker);
 
-		FontAsset(U"Title")(U"救いの手").drawAt(SceneCenter.movedBy(2, 2 - 16), Theme::Lighter);
-		FontAsset(U"Title")(U"救いの手").drawAt(SceneCenter.movedBy(0, 0 - 16), Theme::Black);
+		FontAsset(U"Title")(U"救いの手").drawAt(SceneCenter.movedBy(2, 2 - 20), Theme::Lighter);
+		FontAsset(U"Title")(U"救いの手").drawAt(SceneCenter.movedBy(0, 0 - 20), Theme::Black);
 
-		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(1, 1 + 24 - 16), Theme::Lighter);
-		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(0, 0 + 24 - 16), Theme::Black);
+		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(1, 1 + 24 - 20), Theme::Lighter);
+		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(0, 0 + 24 - 20), Theme::Black);
 
 		{
 			const double alpha = timeEnter_.isStarted() ? Periodic::Square0_1(0.2s) : 1.0;
@@ -76,7 +76,7 @@ namespace hand
 				};
 
 			const auto text = FontAsset(U"H88")(labelFunc(cursor_));
-			const auto region = text.regionAt(SceneCenter.movedBy(0, 32));
+			const auto region = text.regionAt(SceneCenter.movedBy(0, 28));
 			text.draw(region.pos, ColorF{ Theme::Black, alpha });
 
 			const double arrowAlpha = timeEnter_.isStarted() ? 0.0 : Periodic::Square0_1(0.75s);
