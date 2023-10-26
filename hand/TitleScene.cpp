@@ -69,13 +69,13 @@ namespace hand
 			const auto labelFunc = [](int cursor) -> String {
 				switch (cursor)
 				{
-				case 0: return U"Game Start";
-				case 1: return U"Configuration";
+				case 0: return U"GAME START";
+				case 1: return U"CONFIGURATION";
 				}
 				return U"";
 				};
 
-			const auto text = FontAsset(U"Sub")(labelFunc(cursor_));
+			const auto text = FontAsset(U"H88")(labelFunc(cursor_));
 			const auto region = text.regionAt(SceneCenter.movedBy(0, 32));
 			text.draw(region.pos, ColorF{ Theme::Black, alpha });
 

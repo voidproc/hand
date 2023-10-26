@@ -80,9 +80,9 @@ namespace hand
 
 		// 設定項目...
 
-		constexpr int PaddingL = 16;
-		constexpr int PaddingR = 16;
-		constexpr int LineHeight = 14;
+		constexpr int PaddingL = 8;
+		constexpr int PaddingR = 8;
+		constexpr int LineHeight = 12;
 
 		Vec2 itemPos{ PaddingL, 24 };
 
@@ -92,8 +92,8 @@ namespace hand
 				RectF{ 0, itemPos.y - 2, SizeF{ SceneWidth, LineHeight } }.draw(ColorF{ Theme::Lighter, 0.5 + 0.5 * Periodic::Jump0_1(0.5s) });
 			}
 
-			FontAsset(U"Config")(label).draw(itemPos, Theme::Black);
-			FontAsset(U"Config")(value)
+			FontAsset(U"H88")(label).draw(itemPos, Theme::Black);
+			FontAsset(U"H88")(value)
 				.draw(Arg::topRight = Vec2{ SceneWidth - PaddingR, itemPos.y }, Theme::Black);
 
 			itemPos.y += LineHeight;
@@ -102,8 +102,8 @@ namespace hand
 
 		Config& config = getData().config;
 
-		drawItem(0, U"Window size", Format(U"x", config.windowScale));
-		drawItem(1, U"Use screen effect", config.useEffect ? U"On" : U"Off");
-		drawItem(2, U"Back to title", U"");
+		drawItem(0, U"WINDOW SIZE", Format(U"x", config.windowScale));
+		drawItem(1, U"USE SCREEN FX", config.useEffect ? U"ON" : U"OFF");
+		drawItem(2, U"BACK TO TITLE", U"");
 	}
 }

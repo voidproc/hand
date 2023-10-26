@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-//#include "Player.h"
-//#include "Hand.h"
-//#include "Enemy.h"
-//#include "Item.h"
 #include "Objects.h"
 #include "EventList.h"
 

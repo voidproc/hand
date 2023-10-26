@@ -52,6 +52,8 @@ namespace hand
 
 		double karma_;
 
+		Stopwatch time_;
+
 		// シーン開始時に画面外から登場する用
 		Stopwatch timeAppear_;
 

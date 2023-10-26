@@ -65,7 +65,7 @@ namespace hand
 
 			pos_ += vel_ * 60.0 * Scene::DeltaTime();
 
-			const double alpha = Periodic::Square0_1(0.07s);
+			const double alpha = Periodic::Square0_1(0.07s, t);
 			const double size = EaseOutCubic(1.0 - t / lifetime_) * 4.0;
 
 			RectF{ Arg::center = pos_, size }
@@ -92,7 +92,7 @@ namespace hand
 		bool update(double t) override
 		{
 			constexpr double Lifetime = 0.24;
-			const double alpha = Periodic::Pulse0_1(0.08s, 0.75 - 0.50 * t / Lifetime);
+			const double alpha = Periodic::Pulse0_1(0.08s, 0.75 - 0.50 * t / Lifetime, t);
 			const double size = EaseOutCubic(t / Lifetime) * 14.0 * scale_;
 
 			Circle{ pos_, size }
@@ -127,7 +127,7 @@ namespace hand
 		obj_{ obj },
 		pos_{ pos },
 		life_{ 10 },
-		time_{ StartImmediately::Yes }
+		time_{ StartImmediately::Yes, GlobalClock::Get() }
 	{
 	}
 

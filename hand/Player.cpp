@@ -18,7 +18,7 @@ namespace hand
 		bool update(double t) override
 		{
 			const double t0_1 = t / lifetime_;
-			const double alpha = Periodic::Square0_1(0.08s);
+			const double alpha = Periodic::Square0_1(0.08s, t);
 
 			Circle{ pos_.movedBy((-12 + playerVel_.x * 2.0) * EaseOutCubic(t0_1), 0), 2 + 3 * t0_1 }
 				.draw(ColorF{ Theme::Lighter, alpha })
@@ -60,11 +60,12 @@ namespace hand
 		pos_{},
 		vel_{},
 		karma_{ DefaultKarma },
-		timeAppear_{ StartImmediately::No },
-		timerSmoke_{ 1s, StartImmediately::Yes },
-		timerRecoverKarma_{ 1s, StartImmediately::No },
-		timerDamage_{ SecondsF{ TimeDamageInvSec }, StartImmediately::No },
-		timeDead_{ StartImmediately::No },
+		time_{ StartImmediately::Yes, GlobalClock::Get() },
+		timeAppear_{ StartImmediately::No, GlobalClock::Get() },
+		timerSmoke_{ 1s, StartImmediately::Yes, GlobalClock::Get() },
+		timerRecoverKarma_{ 1s, StartImmediately::No, GlobalClock::Get() },
+		timerDamage_{ SecondsF{ TimeDamageInvSec }, StartImmediately::No, GlobalClock::Get() },
+		timeDead_{ StartImmediately::No, GlobalClock::Get() },
 		effect_{}
 	{
 		appear_();
@@ -105,7 +106,7 @@ namespace hand
 		}
 
 		// ふわふわ
-		pos_.y += 8.0 * Periodic::Sine1_1(2.5s) * Scene::DeltaTime();
+		pos_.y += 8.0 * Periodic::Sine1_1(2.5s, time_.sF()) * Scene::DeltaTime();
 
 		// 入力に反応
 		if (not timeAppear_.isRunning())
@@ -197,7 +198,7 @@ namespace hand
 		{
 			const Color color = Palette::White.lerp(Theme::Black, EaseInQuad(Clamp(timeDead_.sF() / 1.0, 0.0, 1.0)));
 			TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
-			SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.5s);
+			SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.5s, time_.sF());
 			return;
 		}
 
@@ -205,13 +206,13 @@ namespace hand
 		effect_.update();
 
 		// ステージ開始時の点滅
-		const Color colorAppear = Palette::White.lerp(Theme::Darker, Periodic::Square0_1(0.1s));
+		const Color colorAppear = Palette::White.lerp(Theme::Darker, Periodic::Square0_1(0.1s, time_.sF()));
 
 		// 無敵時間中の点滅
-		const Color colorInvincible = (timerDamage_.sF() > TimeDamageInvSec - TimeKnockBackSec) ? ColorF{colorAppear} : AlphaF(0.7 - 0.6 * Periodic::Square0_1(0.12s));
+		const Color colorInvincible = (timerDamage_.sF() > TimeDamageInvSec - TimeKnockBackSec) ? ColorF{colorAppear} : AlphaF(0.7 - 0.6 * Periodic::Square0_1(0.12s, time_.sF()));
 
 		// 死にそう
-		const Color colorDanger = Palette::White.lerp(Theme::Darker, Periodic::Square0_1(0.3s));
+		const Color colorDanger = Palette::White.lerp(Theme::Darker, Periodic::Square0_1(0.3s, time_.sF()));
 
 		const Color color = timeAppear_.isRunning() ? colorAppear :
 			(timerDamage_.isRunning() ? colorInvincible :
@@ -221,7 +222,7 @@ namespace hand
 		TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
 
 		// Girl
-		SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.2s);
+		SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.2s, time_.sF());
 
 		// [DEBUG] 当たり判定
 		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));

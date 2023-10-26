@@ -20,7 +20,7 @@ namespace hand
 		effect_{ effect },
 		pos_{ pos },
 		life_{ 1 },
-		time_{ StartImmediately::Yes }
+		time_{ StartImmediately::Yes, GlobalClock::Get() }
 	{
 	}
 

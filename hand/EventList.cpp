@@ -7,15 +7,18 @@ namespace hand
 	struct GenerateEnemies : IEffect
 	{
 		GenerateEnemies(std::function<void()> f, double lifetime, double interval)
-			: f_{ f }, lifetime_{ lifetime }, interval_{ SecondsF{ interval }, StartImmediately::Yes }
+			:
+			f_{ f },
+			lifetime_{ lifetime },
+			timerInterval_{ SecondsF{ interval }, StartImmediately::Yes, GlobalClock::Get() }
 		{
 		}
 
 		bool update(double t) override
 		{
-			if (interval_.reachedZero())
+			if (timerInterval_.reachedZero())
 			{
-				interval_.restart();
+				timerInterval_.restart();
 				f_();
 			}
 
@@ -24,7 +27,7 @@ namespace hand
 
 		std::function<void()> f_;
 		double lifetime_;
-		Timer interval_;
+		Timer timerInterval_;
 	};
 
 	bool IsComment(const String& text)
