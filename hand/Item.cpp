@@ -1,9 +1,33 @@
 ﻿#include "Item.h"
 #include "SceneSize.h"
 #include "SpriteSheet.h"
+#include "Theme.h"
 
 namespace hand
 {
+	// コイン取得エフェクト
+	struct GetMoneyEffect : IEffect
+	{
+		GetMoneyEffect(const Vec2& pos)
+			: pos_{ pos }
+		{
+		}
+
+		bool update(double t) override
+		{
+			constexpr double Lifetime = 0.15;
+			const double alpha = 0.9 - 0.5 * t / 0.15;
+			const double size = 2.0 + EaseOutCubic(t / Lifetime) * 6.0;
+
+			Circle{ pos_, size }
+				.drawFrame(8.0 - 8.0 * t / Lifetime, Theme::Lighter.lerp(Theme::Darker, Periodic::Square0_1(0.01s, t)));
+
+			return t < Lifetime;
+		}
+
+		Vec2 pos_;
+	};
+
 	int ItemScore(ItemType type)
 	{
 		switch (type)
@@ -52,6 +76,13 @@ namespace hand
 	void Item::kill()
 	{
 		life_ = 0;
+
+		effect_.add<GetMoneyEffect>(pos_);
+	}
+
+	bool Item::enableCollision() const
+	{
+		return true;
 	}
 
 	ItemMoney::ItemMoney(ItemType type, Effect& effect, const Vec2& pos)
@@ -76,5 +107,11 @@ namespace hand
 	RectF ItemMoney::collision() const
 	{
 		return RectF{ Arg::center = pos_, SizeF{ 8, 12 } };
+	}
+
+	bool ItemMoney::enableCollision() const
+	{
+		// コインが飛び出すところを見せるために最初は衝突判定しない
+		return time_ > 0.2s;
 	}
 }

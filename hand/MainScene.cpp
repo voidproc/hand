@@ -214,8 +214,11 @@ namespace hand
 			// 衝突判定 - Player vs Item
 			for (auto& item : obj_.items)
 			{
+				if (not item->enableCollision()) continue;
+
 				if (obj_.player.collision().intersects(item->collision()) ||
-					obj_.player.collisionAirplane().intersects(item->collision()))
+					obj_.player.collisionAirplane().intersects(item->collision()) ||
+					(not obj_.hands.isEmpty() && obj_.hands[0]->collision().intersects(item->collision())))
 				{
 					switch (item->type())
 					{
@@ -286,7 +289,7 @@ namespace hand
 			const auto stageTextFunc = [](int stage) {
 				switch (stage)
 				{
-				case 1: return std::make_pair<String, String>(U"ＳＴＡＧＥ １", U"- SUNNY DAY -");
+				case 1: return std::make_pair<String, String>(U"STAGE 1", U"- SUNNY DAY -");
 				case 2: return std::make_pair<String, String>(U"ＳＴＡＧＥ ２", U"- Tearful Rain Passage -");
 				case 3: return std::make_pair<String, String>(U"ＳＴＡＧＥ ３", U"- Back to Nostalgic Day -");
 				}
@@ -294,9 +297,9 @@ namespace hand
 				};
 			const auto stageText = stageTextFunc(getData().currentStage);
 
-			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut + 1, SceneCenter.y + 1 - 8, Theme::Lighter);
-			FontAsset(U"StageTitle")(stageText.first).drawAt(x - xOut, SceneCenter.y - 8, Theme::Black);
-			FontAsset(U"H68Thin")(stageText.second).drawAt(x - xOut, SceneCenter.y + 20 - 8, Theme::Black);
+			FontAsset(U"H68Thin")(stageText.first).drawAt(16, x - xOut + 1, SceneCenter.y - 4 + 1, Theme::Lighter);
+			FontAsset(U"H68Thin")(stageText.first).drawAt(16, x - xOut + 0, SceneCenter.y - 4 + 0, Theme::Black);
+			FontAsset(U"H68Thin")(stageText.second).drawAt(x - xOut, SceneCenter.y + 12, Theme::Black);
 		};
 	}
 
@@ -336,7 +339,7 @@ namespace hand
 		// スコア
 		{
 			const String scoreText = U"{:08d}"_fmt(getData().score);
-			Vec2 penPos{ 70, 2 };
+			Vec2 penPos{ 74, 2 };
 			bool grayed = true;
 			for (auto [index, glyph] : Indexed(FontAsset(U"H68").getGlyphs(scoreText)))
 			{

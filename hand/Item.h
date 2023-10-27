@@ -29,6 +29,9 @@ namespace hand
 
 		void kill();
 
+		// falseの場合衝突判定をしないでください
+		virtual bool enableCollision() const;
+
 	private:
 		ItemType type_;
 
@@ -52,6 +55,8 @@ namespace hand
 		void draw() const override;
 
 		RectF collision() const override;
+
+		bool enableCollision() const override;
 
 	private:
 		Vec2 vel_;
