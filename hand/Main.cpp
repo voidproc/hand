@@ -17,28 +17,35 @@ void InitSivSystem()
 	System::SetTerminationTriggers(UserAction::CloseButtonClicked);
 }
 
+//#define USE_RESOURCE
+#ifdef USE_RESOURCE
+#define RES(path) (Resource(path))
+#else
+#define RES(path) (path)
+#endif
+
 void LoadAssets()
 {
-	FontAsset::Register(U"Title", 20, U"font/JF-Dot-Kappa20.ttf", FontStyle::BoldBitmap);
-	FontAsset::Register(U"Sub", 8, U"font/misaki_mincho.ttf", FontStyle::Bitmap);
-	FontAsset::Register(U"Goh", 12, U"font/JF-Dot-ShinonomeMin12.ttf", FontStyle::Bitmap);
-	FontAsset::Register(U"StageTitle", 12, U"font/JF-Dot-ShinonomeMin12.ttf", FontStyle::BoldBitmap);
-	FontAsset::Register(U"H68", 8, U"font/hand6x8_2.ttf", FontStyle::Bitmap);
-	FontAsset::Register(U"H68Thin", 8, U"font/hand6x8.ttf", FontStyle::Bitmap);
-	FontAsset::Register(U"H88", 8, U"font/hand8x8.ttf", FontStyle::Bitmap);
+	FontAsset::Register(U"Title", 20, RES(U"font/JF-Dot-Kappa20.ttf"), FontStyle::BoldBitmap);
+	FontAsset::Register(U"Sub", 8, RES(U"font/misaki_mincho.ttf"), FontStyle::Bitmap);
+	FontAsset::Register(U"Goh", 12, RES(U"font/JF-Dot-ShinonomeMin12.ttf"), FontStyle::Bitmap);
+	FontAsset::Register(U"StageTitle", 12, RES(U"font/JF-Dot-ShinonomeMin12.ttf"), FontStyle::BoldBitmap);
+	FontAsset::Register(U"H68", 8, RES(U"font/hand6x8_2.ttf"), FontStyle::Bitmap);
+	FontAsset::Register(U"H68Thin", 8, RES(U"font/hand6x8.ttf"), FontStyle::Bitmap);
+	FontAsset::Register(U"H88", 8, RES(U"font/hand8x8.ttf"), FontStyle::Bitmap);
 
-	TextureAsset::Register(U"Girl", U"texture/girl.png");
-	TextureAsset::Register(U"Airplane", U"texture/airplane.png");
-	TextureAsset::Register(U"Hand", U"texture/hand.png");
-	TextureAsset::Register(U"BgMountain", U"texture/bg_mountain.png");
-	TextureAsset::Register(U"BgMountain2", U"texture/bg_mountain2.png");
-	TextureAsset::Register(U"BgTree", U"texture/bg_tree.png");
-	TextureAsset::Register(U"KarmaGaugeFrame", U"texture/karma_gauge_frame.png");
-	TextureAsset::Register(U"KarmaGauge", U"texture/karma_gauge.png");
-	TextureAsset::Register(U"Bird", U"texture/bird.png");
-	TextureAsset::Register(U"Money", U"texture/money.png");
-	TextureAsset::Register(U"Bullet", U"texture/bullet.png");
-	TextureAsset::Register(U"ArrowLeft", U"texture/arrow-left.png");
+	TextureAsset::Register(U"Girl", RES(U"texture/girl.png"));
+	TextureAsset::Register(U"Airplane", RES(U"texture/airplane.png"));
+	TextureAsset::Register(U"Hand", RES(U"texture/hand.png"));
+	TextureAsset::Register(U"BgMountain", RES(U"texture/bg_mountain.png"));
+	TextureAsset::Register(U"BgMountain2", RES(U"texture/bg_mountain2.png"));
+	TextureAsset::Register(U"BgTree", RES(U"texture/bg_tree.png"));
+	TextureAsset::Register(U"KarmaGaugeFrame", RES(U"texture/karma_gauge_frame.png"));
+	TextureAsset::Register(U"KarmaGauge", RES(U"texture/karma_gauge.png"));
+	TextureAsset::Register(U"Bird", RES(U"texture/bird.png"));
+	TextureAsset::Register(U"Money", RES(U"texture/money.png"));
+	TextureAsset::Register(U"Bullet", RES(U"texture/bullet.png"));
+	TextureAsset::Register(U"ArrowLeft", RES(U"texture/arrow-left.png"));
 }
 
 void Main()
