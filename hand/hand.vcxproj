@@ -120,6 +120,7 @@
     <ClCompile Include="EventList.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="Hand.cpp" />
+    <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainScene.cpp" />
@@ -334,6 +335,7 @@
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="Hand.h" />
+    <ClInclude Include="InputDevice.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Objects.h" />

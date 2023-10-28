@@ -7,6 +7,8 @@
 
 namespace hand
 {
+	class InputDevice;
+
 	// メインシーン画面内のオブジェクト
 	struct Objects
 	{
@@ -14,6 +16,17 @@ namespace hand
 		Array<HandPtr> hands;
 		Array<EnemyPtr> enemies;
 		Array<ItemPtr> items;
-		Player player{ hands };
+		Player player;
+
+		Objects(InputDevice& input)
+			:
+			effect{},
+			hands{},
+			enemies{},
+			items{},
+			player{ input, hands }
+		{
+
+		}
 	};
 }

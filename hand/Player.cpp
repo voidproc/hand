@@ -1,4 +1,5 @@
 ﻿#include "Player.h"
+#include "InputDevice.h"
 #include "SceneSize.h"
 #include "Theme.h"
 #include "SpriteSheet.h"
@@ -54,8 +55,9 @@ namespace hand
 	};
 
 
-	Player::Player(Array<HandPtr>& hands)
+	Player::Player(InputDevice& input, Array<HandPtr>& hands)
 		:
+		input_{ input },
 		hands_{ hands },
 		pos_{},
 		vel_{},
@@ -114,10 +116,10 @@ namespace hand
 			// 移動のためのキー入力
 
 			Vec2 vel{};
-			if (KeyLeft.pressed()) vel.x = -1;
-			if (KeyRight.pressed()) vel.x = 1;
-			if (KeyUp.pressed()) vel.y = -1;
-			if (KeyDown.pressed()) vel.y = 1;
+			if (input_.left().pressed()) vel.x = -1;
+			if (input_.right().pressed()) vel.x = 1;
+			if (input_.up().pressed()) vel.y = -1;
+			if (input_.down().pressed()) vel.y = 1;
 			vel.limitLengthSelf(1.0);
 
 			// ダメージ中は入力無効
@@ -145,7 +147,7 @@ namespace hand
 			pos_.clamp(SceneRect.stretched(-20, -12, -12, -12));
 
 			// 他の Hand が存在していないとき、Hand を生成できる
-			if (KeySpace.down())
+			if (input_.action().down())
 			{
 				if (hands_.isEmpty() && karma_ >= KarmaEmptyThreshold)
 				{
@@ -160,7 +162,7 @@ namespace hand
 			}
 
 			// カルマが切れるかボタンが離されたらすべての Hand を破棄
-			if (not KeySpace.pressed() || karma_ < KarmaEmptyThreshold)
+			if (not input_.action().pressed() || karma_ < KarmaEmptyThreshold)
 			{
 				for (auto& hand : hands_)
 				{

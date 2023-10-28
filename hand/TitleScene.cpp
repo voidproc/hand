@@ -19,17 +19,17 @@ namespace hand
 	{
 		if (time_ > 0.5s)
 		{
-			if (KeyLeft.down())
+			if (getData().input.left().down())
 			{
 				cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
 			}
 
-			if (KeyRight.down())
+			if (getData().input.right().down())
 			{
 				cursor_ = (cursor_ + 1) % ItemCount;
 			}
 
-			if (KeyEnter.down())
+			if (getData().input.decide().down())
 			{
 				if (cursor_ == 0)
 				{

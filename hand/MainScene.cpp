@@ -15,7 +15,7 @@ namespace hand
 	MainScene::MainScene(const InitData& init)
 		:
 		IScene{ init },
-		obj_{},
+		obj_{ getData().input },
 		time_{ StartImmediately::Yes, GlobalClock::Get() },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes, GlobalClock::Get() },
 		timePlayerDead_{ StartImmediately::No, GlobalClock::Get() },
@@ -36,15 +36,17 @@ namespace hand
 		auto clock = GlobalClock::Get();
 
 		// ポーズ切替
-		if (KeyEnter.down())
+		if (getData().input.pause().down())
 		{
 			if (clock->isPaused())
 			{
 				clock->start();
+				obj_.effect.resume();
 			}
 			else
 			{
 				clock->pause();
+				obj_.effect.pause();
 			}
 		}
 

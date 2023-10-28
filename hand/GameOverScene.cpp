@@ -17,7 +17,7 @@ namespace hand
 	{
 		if (time_ > 1s)
 		{
-			if ((KeyEnter | KeySpace).down())
+			if (getData().input.decide().down())
 			{
 				changeScene(U"TitleScene", 0s);
 			}

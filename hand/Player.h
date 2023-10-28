@@ -4,6 +4,8 @@
 
 namespace hand
 {
+	class InputDevice;
+
 	class Player
 	{
 	public:
@@ -21,7 +23,7 @@ namespace hand
 		static inline constexpr double TimeKnockBackSec = 0.55;
 
 	public:
-		Player(Array<HandPtr>& hands);
+		Player(InputDevice& input, Array<HandPtr>& hands);
 
 		void update();
 
@@ -43,6 +45,8 @@ namespace hand
 
 	private:
 		void appear_();
+
+		InputDevice& input_;
 
 		Array<HandPtr>& hands_;
 
