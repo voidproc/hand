@@ -1,5 +1,6 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.6.12
 #include "SceneSize.h"
+#include "SplashScene.h"
 #include "TitleScene.h"
 #include "ConfigScene.h"
 #include "MainScene.h"
@@ -20,6 +21,9 @@ void InitSivSystem()
 
 void LoadAssets()
 {
+	TextureAsset::Register(U"Powered", RES(U"texture/powered.png"));
+	TextureAsset::Load(U"PlayerIndicator");
+
 	FontAsset::Register(U"Title", 20, RES(U"font/JF-Dot-Kappa20.ttf"), FontStyle::BoldBitmap);
 	FontAsset::Register(U"Sub", 8, RES(U"font/misaki_mincho.ttf"), FontStyle::Bitmap);
 	FontAsset::Register(U"Goh", 12, RES(U"font/JF-Dot-ShinonomeMin12.ttf"), FontStyle::Bitmap);
@@ -64,6 +68,7 @@ void Main()
 
 	// アプリケーション
 	App app;
+	app.add<SplashScene>(U"SplashScene");
 	app.add<TitleScene>(U"TitleScene");
 	app.add<ConfigScene>(U"ConfigScene");
 	app.add<MainScene>(U"MainScene");
@@ -71,9 +76,10 @@ void Main()
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
+	app.init(U"SplashScene", 0s);
 	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
-	app.init(U"MainScene", 0s);
+	//app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config
