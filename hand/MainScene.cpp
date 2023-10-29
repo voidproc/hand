@@ -10,7 +10,10 @@ namespace hand
 		constexpr double ScoreRateMin = 1.0;
 		constexpr double ScoreRateMax = 8.0;
 		constexpr double ScoreRateDecrOnTimer = 0.1;
-		constexpr auto ScoreRateDecrSpeed = 0.22s;
+		constexpr auto ScoreRateDecrTime = 0.22s;
+		constexpr auto ScoreRateDecrTimeOnDestroyEnemy = 0.8s;
+		constexpr auto ScoreRateDecrTimeOnGetMoney = 0.4s;
+		constexpr auto ScoreRateDecrTimeMax = 2.0s;
 
 		constexpr std::array<StringView, 4> StageEventFilePath = {
 			U""_sv,
@@ -30,7 +33,7 @@ namespace hand
 		timerShake_{ 0.4s, StartImmediately::No, GlobalClock::Get() },
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No, GlobalClock::Get() },
-		timerDecrScoreRate_{ ScoreRateDecrSpeed, StartImmediately::Yes, GlobalClock::Get() },
+		timerDecrScoreRate_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
 		eventList_{ obj_ }
 	{
 		getData().currentStage += 1;
@@ -171,6 +174,8 @@ namespace hand
 	{
 		if (not obj_.hands.isEmpty())
 		{
+			// Hand が存在するのでスコアレートを加算する...
+
 			if (not timeIncrScoreRate_.isRunning()) timeIncrScoreRate_.restart();
 
 			// 加算する倍率
@@ -179,11 +184,13 @@ namespace hand
 		}
 		else
 		{
+			// Hand が存在しないのでスコアレートを減らす...
+
 			timeIncrScoreRate_.reset();
 
 			if (timerDecrScoreRate_.reachedZero())
 			{
-				timerDecrScoreRate_.restart();
+				timerDecrScoreRate_.restart(ScoreRateDecrTime);
 				scoreRateRaw_ = Clamp(scoreRateRaw_ - ScoreRateDecrOnTimer, ScoreRateMin, ScoreRateMax);
 			}
 		}
@@ -204,6 +211,13 @@ namespace hand
 					{
 						// 敵を撃破したのでスコアを加算する
 						addScore_(EnemyScore(enemy->type()) * scoreRate_());
+
+						// 敵を撃破したのでスコアレートが少し増える
+						scoreRateRaw_ = Clamp(scoreRateRaw_ + 0.1, ScoreRateMin, ScoreRateMax);
+
+						// スコアレート減少タイマーの残り時間を加算
+						const auto timerDecrScoreRateRemain = Clamp(timerDecrScoreRate_.remaining() + ScoreRateDecrTimeOnDestroyEnemy, ScoreRateDecrTime, ScoreRateDecrTimeMax);
+						timerDecrScoreRate_.restart(timerDecrScoreRateRemain);
 
 						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
@@ -239,6 +253,10 @@ namespace hand
 
 					// アイテムを取得したのでスコアを加算する
 					addScore_(ItemScore(item->type()) * scoreRate_());
+
+					// スコアレート減少タイマーの残り時間を加算
+					const auto timerDecrScoreRateRemain = Clamp(timerDecrScoreRate_.remaining() + ScoreRateDecrTimeOnGetMoney, ScoreRateDecrTime, ScoreRateDecrTimeMax);
+					timerDecrScoreRate_.restart(timerDecrScoreRateRemain);
 
 					item->kill();
 				}
@@ -377,7 +395,12 @@ namespace hand
 
 		// 倍率
 		{
-			FontAsset(U"H68Thin")(U"x{:.1f}"_fmt(scoreRateRaw_)).drawAt(SceneWidth - 12, 6 + 0, Theme::Black);
+			const auto rateRect = FontAsset(U"H68Thin")(U"x{:.1f}"_fmt(scoreRateRaw_)).drawAt(SceneWidth - 12, 6 + 0, Theme::Black);
+
+			const double scoreRateGauge0_1 = Clamp((timerDecrScoreRate_.sF() - ScoreRateDecrTime.count()) / (ScoreRateDecrTimeMax.count() - ScoreRateDecrTime.count()), 0.0, 1.0);
+			Line{ rateRect.bottomCenter().movedBy(-8, 4), rateRect.bottomCenter().movedBy(8, 4) }.draw(Theme::Lighter);
+			Line{ rateRect.bottomCenter().movedBy(-8, 4), rateRect.bottomCenter().movedBy(-8 + 16 * scoreRateGauge0_1, 4) }.draw(Theme::Black);
+
 		}
 	}
 
