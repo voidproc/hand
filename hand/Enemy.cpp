@@ -13,6 +13,7 @@ namespace hand
 		case EnemyType::Bird1:
 		case EnemyType::Bird2:
 		case EnemyType::Bird3:
+		case EnemyType::BirdB1:
 			return true;
 		}
 
@@ -39,6 +40,7 @@ namespace hand
 		case EnemyType::Bird1:return 200;
 		case EnemyType::Bird2:return 200;
 		case EnemyType::Bird3:return 200;
+		case EnemyType::BirdB1:return 300;
 		case EnemyType::Bullet1: return 50;
 		case EnemyType::Bullet2: return 50;
 		case EnemyType::Bullet3: return 50;
@@ -264,7 +266,10 @@ namespace hand
 	}
 
 	Bird3::Bird3(EnemyType type, Objects& obj, const Vec2& pos)
-		: Enemy{ type, obj, pos }, anim_{ GlobalClock::Get() }, timerFire_{ 0.5s, StartImmediately::Yes }
+		:
+		Enemy{ type, obj, pos },
+		anim_{ GlobalClock::Get() },
+		timerFire_{ 0.5s, StartImmediately::Yes }
 	{
 		anim_
 			.set(U"SpeedX", { 0s, -60 }, { 2.2s, 0 }, EaseOutSine)
@@ -304,6 +309,51 @@ namespace hand
 	RectF Bird3::collision() const
 	{
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
+	}
+
+	BirdB1::BirdB1(EnemyType type, Objects& obj, const Vec2& pos, double speedY0)
+		:
+		Enemy{ type, obj, pos },
+		anim1_{ GlobalClock::Get() },
+		anim2_{ GlobalClock::Get() }
+	{
+		anim1_
+			.set(U"SpeedY", { 0s, speedY0 }, { 1.3s, 0 }, EaseOutSine)
+			.start();
+
+		anim2_
+			.set(U"SpeedX", { 0s, 0 }, { 1.2s, -180 }, EaseInCubic)
+			.set(U"Texture", { 0s, 0 }, { 0.01s, 0 })
+			.set(U"Texture", { 0.01s, 1 }, { 999s, 1 });
+	}
+
+	void BirdB1::update()
+	{
+		if (obj_.player.pos().y <= pos_.y || anim1_.posSec() > 1.2)
+		{
+			if (Abs(anim2_[U"SpeedX"]) < 1e-3) //まだanim2がスタートしてない
+			{
+				anim2_.start();
+			}
+		}
+
+		pos_.x += anim2_[U"SpeedX"] * Scene::DeltaTime();
+		pos_.y += anim1_[U"SpeedY"] * Scene::DeltaTime();
+	}
+
+	void BirdB1::draw() const
+	{
+		std::pair<int, int> frame = (anim2_[U"Texture"] < 1) ? std::make_pair(0, 1) : std::make_pair(2, 3);
+
+		auto tex = SpriteSheet::GetFrame(TextureAsset(U"BirdB"), 4, frame.first, frame.second, 0.10s, time_.sF());
+		tex.drawAt(pos_, Palette::White);
+
+		Enemy::draw();
+	}
+
+	RectF BirdB1::collision() const
+	{
+		return RectF{ Arg::center = pos_, 14, 8 };
 	}
 
 }

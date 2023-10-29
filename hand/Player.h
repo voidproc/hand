@@ -45,6 +45,8 @@ namespace hand
 
 		double angleFrom(const Vec2 p) const;
 
+		const Vec2& pos() const;
+
 	private:
 		void appear_();
 

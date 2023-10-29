@@ -7,6 +7,7 @@ namespace hand
 		Bird1,
 		Bird2,
 		Bird3,
+		BirdB1,
 
 		Bullet1,
 		Bullet2,
@@ -108,6 +109,24 @@ namespace hand
 	private:
 		SimpleAnimation anim_;
 		Timer timerFire_;
+	};
+
+	// 敵（鳥B）
+	// 急降下し、プレイヤーと Y 座標が合うか指定の Y 座標に達したら直進する
+	class BirdB1 : public Enemy
+	{
+	public:
+		BirdB1(EnemyType type, Objects& obj, const Vec2& pos, double speedY0);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+	private:
+		SimpleAnimation anim1_;
+		SimpleAnimation anim2_;
 	};
 
 	// 敵弾（小）

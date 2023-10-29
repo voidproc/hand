@@ -174,6 +174,11 @@ namespace hand
 		{
 			obj_.enemies.emplace_back(MakeEnemy<Bird3, EnemyType::Bird3>(obj_, pos));
 		}
+		else if (textType == U"birdb1")
+		{
+			const double speedY0 = eventCsv_.getOr<double>(currentRow_, 4, 200);
+			obj_.enemies.emplace_back(MakeEnemy<BirdB1, EnemyType::BirdB1>(obj_, pos, speedY0));
+		}
 		else if (textType == U"genbird1")
 		{
 			const double lifetime = eventCsv_.get<double>(currentRow_, 4);

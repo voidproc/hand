@@ -38,7 +38,7 @@ namespace hand
 		struct HandEffect : IEffect
 		{
 			HandEffect(const Vec2& pos, HandDirection dir)
-				: pos_{ pos }, dir_{ dir }
+				: pos_{ pos }, dir_{ dir }, ySpeed_{ 0 }
 			{
 				if (dir == HandDirection::Up)
 				{
@@ -325,6 +325,11 @@ namespace hand
 	double Player::angleFrom(const Vec2 p) const
 	{
 		return Atan2(pos_.x - p.x, p.y - pos_.y);
+	}
+
+	const Vec2& Player::pos() const
+	{
+		return pos_;
 	}
 
 	void Player::appear_()
