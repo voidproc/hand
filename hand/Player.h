@@ -43,6 +43,8 @@ namespace hand
 
 		bool isInvincible() const;
 
+		double angleFrom(const Vec2 p) const;
+
 	private:
 		void appear_();
 

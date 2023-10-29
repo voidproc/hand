@@ -316,6 +316,11 @@ namespace hand
 		return timerDamage_.isRunning();
 	}
 
+	double Player::angleFrom(const Vec2 p) const
+	{
+		return Atan2(pos_.x - p.x, p.y - pos_.y);
+	}
+
 	void Player::appear_()
 	{
 		pos_ = SceneRect.leftCenter().movedBy(-24, 0);

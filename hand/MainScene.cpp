@@ -1,6 +1,7 @@
 ﻿#include "MainScene.h"
 #include "SceneSize.h"
 #include "Theme.h"
+#include "Res.h"
 
 namespace hand
 {
@@ -27,7 +28,7 @@ namespace hand
 	{
 		getData().currentStage += 1;
 
-		eventList_.load(U"event/stage1.csv");
+		eventList_.load(RES(U"event/stage1.csv"));
 	}
 
 	void MainScene::update()

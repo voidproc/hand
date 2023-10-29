@@ -340,6 +340,7 @@
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Objects.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Res.h" />
     <ClInclude Include="SandboxScene.h" />
     <ClInclude Include="SceneSize.h" />
     <ClInclude Include="SpriteSheet.h" />

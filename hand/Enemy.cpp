@@ -211,7 +211,7 @@ namespace hand
 
 	Bird2::Bird2(EnemyType type, Objects& obj, const Vec2& pos, double speedScale)
 		:
-		Enemy{ type, obj, pos }, speedScale_{ speedScale } //, timerFire_{ 1.5s, StartImmediately::Yes }
+		Enemy{ type, obj, pos }, speedScale_{ speedScale }
 	{
 	}
 
@@ -219,12 +219,6 @@ namespace hand
 	{
 		pos_.x -= 0.8 * 60 * Scene::DeltaTime() * speedScale_;
 		pos_.y += 16.0 * Periodic::Sine1_1(1.8s, time_.sF()) * Scene::DeltaTime();
-
-		//if (timerFire_.reachedZero())
-		//{
-		//	timerFire_.reset();
-		//	obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(obj_, pos_, Circular{ 1.2, 270_deg }));
-		//}
 	}
 
 	void Bird2::draw() const
@@ -267,4 +261,48 @@ namespace hand
 	{
 		AddExplodeEffectForBullet(obj_.effect, pos_);
 	}
+
+	Bird3::Bird3(EnemyType type, Objects& obj, const Vec2& pos)
+		: Enemy{ type, obj, pos }, anim_{ GlobalClock::Get() }, timerFire_{ 0.5s, StartImmediately::Yes }
+	{
+		anim_
+			.set(U"SpeedX", { 0s, -60 }, { 2.2s, 0 }, EaseOutSine)
+			.set(U"SpeedX", { 2.8s, 0 }, { 5.0s, 60 }, EaseInSine)
+			.set(U"Fire", { 0s, 0 }, { 1.9s, 0 })
+			.set(U"Fire", { 1.9s, 1 }, { 2.3s, 1 })
+			.set(U"Fire", { 2.3s, 0 }, { 999s, 0 })
+			.set(U"Mirrored", { 0s, 0 }, { 2.9s, 0 })
+			.set(U"Mirrored", { 2.9s, 1 }, { 999s, 1 })
+			.start();
+	}
+
+	void Bird3::update()
+	{
+		pos_.x += anim_[U"SpeedX"] * Scene::DeltaTime();
+		pos_.y += 4.0 * Periodic::Sine1_1(1.8s, time_.sF()) * Scene::DeltaTime();
+
+		if (timerFire_.reachedZero())
+		{
+			timerFire_.restart();
+
+			if (anim_[U"Fire"] > 0)
+			{
+				obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(obj_, pos_, Circular{ 1.2, obj_.player.angleFrom(pos_) }));
+			}
+		}
+	}
+
+	void Bird3::draw() const
+	{
+		auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bird"), 3, 0.4s, time_.sF());
+		tex.mirrored(anim_[U"Mirrored"]).drawAt(pos_, Palette::White);
+
+		Enemy::draw();
+	}
+
+	RectF Bird3::collision() const
+	{
+		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
+	}
+
 }

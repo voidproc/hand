@@ -91,7 +91,23 @@ namespace hand
 
 	private:
 		double speedScale_;
-		//	Timer timerFire_;
+	};
+
+	// 画面右側で止まって弾を撃ち、Uターンする
+	class Bird3 : public Enemy
+	{
+	public:
+		Bird3(EnemyType type, Objects& obj, const Vec2& pos);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+	private:
+		SimpleAnimation anim_;
+		Timer timerFire_;
 	};
 
 	// 敵弾（小）

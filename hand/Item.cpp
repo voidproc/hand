@@ -115,6 +115,6 @@ namespace hand
 	bool ItemMoney::enableCollision() const
 	{
 		// コインが飛び出すところを見せるために最初は衝突判定しない
-		return time_ > 0.2s;
+		return time_ > 0.5s;
 	}
 }

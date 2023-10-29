@@ -6,6 +6,7 @@
 #include "GameOverScene.h"
 #include "SandboxScene.h"
 #include "Theme.h"
+#include "Res.h"
 
 void InitSivSystem()
 {
@@ -16,13 +17,6 @@ void InitSivSystem()
 	// ESCキーで終了しない
 	System::SetTerminationTriggers(UserAction::CloseButtonClicked);
 }
-
-//#define USE_RESOURCE
-#ifdef USE_RESOURCE
-#define RES(path) (Resource(path))
-#else
-#define RES(path) (path)
-#endif
 
 void LoadAssets()
 {
@@ -75,9 +69,9 @@ void Main()
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
-	app.init(U"TitleScene", 0s);
+	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
-	//app.init(U"MainScene", 0s);
+	app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config
@@ -86,7 +80,7 @@ void Main()
 	data->config.useEffect = true;
 
 	// シェーダ（スキャンラインエフェクト用）
-	const PixelShader ps = HLSL{ U"shader/scanline.hlsl", U"PS_Texture" };
+	const PixelShader ps = HLSL{ RES(U"shader/scanline.hlsl"), U"PS_Texture" };
 	if (not ps)
 	{
 		Logger << U"PixelShaderの作成に失敗";
