@@ -10,9 +10,14 @@ namespace hand
 	}
 
 	TitleScene::TitleScene(const InitData& init)
-		: IScene{ init }, time_{ StartImmediately::Yes }, timeEnter_{ StartImmediately::No }, cursor_{ 0 }
+		:
+		IScene{ init },
+		time_{ StartImmediately::Yes },
+		timeEnter_{ StartImmediately::No },
+		cursor_{ 0 }
 	{
 		getData().score = 0;
+		getData().currentStage = 0;
 	}
 
 	void TitleScene::update()

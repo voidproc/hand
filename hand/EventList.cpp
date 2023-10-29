@@ -158,7 +158,7 @@ namespace hand
 		const String textX = eventCsv_.get(currentRow_, 2).trimmed().lowercased();
 		const String textY = eventCsv_.get(currentRow_, 3).trimmed().lowercased();
 
-		Vec2 pos{ ParseX(textX), ParseY(textY) };
+		const Vec2 pos{ ParseX(textX), ParseY(textY) };
 
 		if (textType == U"bird1")
 		{

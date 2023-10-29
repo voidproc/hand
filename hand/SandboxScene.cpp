@@ -7,7 +7,7 @@ namespace hand
 	SandboxScene::SandboxScene(const InitData& init)
 		:
 		IScene{ init },
-		time_{ StartImmediately::Yes }
+		time_{ StartImmediately::Yes, GlobalClock::Get() }
 	{
 	}
 

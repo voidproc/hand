@@ -56,7 +56,7 @@ namespace hand
 
 	RectF Hand::collision() const
 	{
-		return RectF{ Arg::center = pos_.movedBy(0, -2), SizeF{16, 40}};
+		return RectF{ Arg::center = pos_.movedBy(0, -2), SizeF{ 16, 40 } };
 	}
 
 	void Hand::kill()

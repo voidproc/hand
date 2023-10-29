@@ -28,11 +28,10 @@ namespace hand
 			bool update(double t) override
 			{
 				constexpr double Lifetime = 0.15;
-				const double alpha = 0.9 - 0.5 * t / 0.15;
 				const double size = 2.0 + EaseOutCubic(t / Lifetime) * 6.0;
 
 				Circle{ pos_, size }
-				.drawFrame(8.0 - 8.0 * t / Lifetime, Theme::Lighter.lerp(Theme::Darker, Periodic::Square0_1(0.01s, t)));
+					.drawFrame(8.0 - 8.0 * t / Lifetime, Theme::Lighter.lerp(Theme::Darker, Periodic::Square0_1(0.01s, t)));
 
 				return t < Lifetime;
 			}
@@ -94,7 +93,10 @@ namespace hand
 	}
 
 	ItemMoney::ItemMoney(ItemType type, Effect& effect, const Vec2& pos)
-		: Item{ type, effect, pos }, vel_{ Circular{ Random(1.0, 2.4), Random(-20_deg, 20_deg) } }, animSpeed_{ Random(0.2, 0.8) }
+		:
+		Item{ type, effect, pos },
+		vel_{ Circular{ Random(1.0, 2.4), Random(-20_deg, 20_deg) } },
+		animSpeed_{ Random(0.2, 0.8) }
 	{
 	}
 
