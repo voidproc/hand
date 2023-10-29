@@ -247,7 +247,8 @@ namespace hand
 
 	void Bullet1::draw() const
 	{
-		SpriteSheet::DrawAt(TextureAsset(U"Bullet"), 4, pos_, Palette::White, 0.4s, time_.sF());
+		const auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bullet"), 4, 0.4s, time_.sF());
+		tex.scaled(Clamp(2.0 - 1.0 * time_.sF() / 0.15, 1.0, 2.0)).drawAt(pos_, Palette::White);
 
 		Enemy::draw();
 	}

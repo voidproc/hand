@@ -179,8 +179,9 @@ namespace hand
 			const double lifetime = eventCsv_.get<double>(currentRow_, 4);
 			const double interval = eventCsv_.get<double>(currentRow_, 5);
 			const double speedScale = eventCsv_.get<double>(currentRow_, 6);
-			obj_.effect.add<GenerateEnemies>([&, speedScale]() {
-				obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, Vec2{ PosRight(), RandomY() }, speedScale));
+			obj_.effect.add<GenerateEnemies>([&, speedScale, textX, textY]() {
+				const Vec2 pos{ ParseX(textX), ParseY(textY) };
+				obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale));
 				}, lifetime, interval);
 		}
 		else if (textType == U"genbird2")
@@ -188,8 +189,9 @@ namespace hand
 			const double lifetime = eventCsv_.get<double>(currentRow_, 4);
 			const double interval = eventCsv_.get<double>(currentRow_, 5);
 			const double speedScale = eventCsv_.get<double>(currentRow_, 6);
-			obj_.effect.add<GenerateEnemies>([&, speedScale]() {
-				obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, Vec2{ PosRight(), RandomY() }, speedScale));
+			obj_.effect.add<GenerateEnemies>([&, speedScale, textX, textY]() {
+				const Vec2 pos{ ParseX(textX), ParseY(textY) };
+				obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos, speedScale));
 				}, lifetime, interval);
 		}
 	}
