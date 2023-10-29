@@ -39,7 +39,8 @@ void LoadAssets()
 	TextureAsset::Register(U"Bird", RES(U"texture/bird.png"));
 	TextureAsset::Register(U"Money", RES(U"texture/money.png"));
 	TextureAsset::Register(U"Bullet", RES(U"texture/bullet.png"));
-	TextureAsset::Register(U"ArrowLeft", RES(U"texture/arrow-left.png"));
+	TextureAsset::Register(U"ArrowLeft", RES(U"texture/arrow_left.png"));
+	TextureAsset::Register(U"PlayerIndicator", RES(U"texture/player_indicator.png"));
 }
 
 void Main()

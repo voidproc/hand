@@ -260,6 +260,12 @@ namespace hand
 		// Girl
 		SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.2s, time_.sF());
 
+		// "Player(矢印)"
+		if (time_ < 3.5s)
+		{
+			TextureAsset(U"PlayerIndicator").drawAt(pos_.movedBy(0, -16), AlphaF(Periodic::Square0_1(0.6s, time_.sF())));
+		}
+
 		// [DEBUG] 当たり判定
 		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
 		//collisionAirplane().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
