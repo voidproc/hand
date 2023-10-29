@@ -4,101 +4,104 @@
 
 namespace hand
 {
-	struct GenerateEnemies : IEffect
+	namespace
 	{
-		GenerateEnemies(std::function<void()> f, double lifetime, double interval)
-			:
-			f_{ f },
-			lifetime_{ lifetime },
-			timerInterval_{ SecondsF{ interval }, StartImmediately::Yes, GlobalClock::Get() }
+		struct GenerateEnemies : IEffect
 		{
-		}
-
-		bool update(double t) override
-		{
-			if (timerInterval_.reachedZero())
+			GenerateEnemies(std::function<void()> f, double lifetime, double interval)
+				:
+				f_{ f },
+				lifetime_{ lifetime },
+				timerInterval_{ SecondsF{ interval }, StartImmediately::Yes, GlobalClock::Get() }
 			{
-				timerInterval_.restart();
-				f_();
 			}
 
-			return t < lifetime_;
-		}
+			bool update(double t) override
+			{
+				if (timerInterval_.reachedZero())
+				{
+					timerInterval_.restart();
+					f_();
+				}
 
-		std::function<void()> f_;
-		double lifetime_;
-		Timer timerInterval_;
-	};
+				return t < lifetime_;
+			}
 
-	bool IsComment(const String& text)
-	{
-		return text.trimmed().isEmpty() || text.starts_with(U'#');
-	}
+			std::function<void()> f_;
+			double lifetime_;
+			Timer timerInterval_;
+		};
 
-	double RandomX()
-	{
-		return Random(16.0, SceneWidth - 16.0);
-	}
-
-	double PosRight()
-	{
-		return SceneWidth + 16;
-	}
-
-	double PosLeft()
-	{
-		return -16;
-	}
-
-	double ParseX(const String& text)
-	{
-		if (text == U"random")
+		bool IsComment(const String& text)
 		{
-			return RandomX();
+			return text.trimmed().isEmpty() || text.starts_with(U'#');
 		}
-		else if (text == U"right")
+
+		double RandomX()
 		{
-			return PosRight();
+			return Random(16.0, SceneWidth - 16.0);
 		}
-		else if (text == U"left")
+
+		double PosRight()
 		{
-			return PosLeft();
+			return SceneWidth + 16;
 		}
 
-		return ParseFloat<double>(text);
-	}
-
-	double RandomY()
-	{
-		return Random(16.0, SceneHeight - 16.0);
-	}
-
-	double PosBottom()
-	{
-		return SceneHeight + 16;
-	}
-
-	double PosTop()
-	{
-		return -16;
-	}
-
-	double ParseY(const String& text)
-	{
-		if (text == U"random")
+		double PosLeft()
 		{
-			return RandomY();
-		}
-		else if (text == U"bottom")
-		{
-			return PosBottom();
-		}
-		else if (text == U"top")
-		{
-			return PosTop();
+			return -16;
 		}
 
-		return ParseFloat<double>(text);
+		double ParseX(const String& text)
+		{
+			if (text == U"random")
+			{
+				return RandomX();
+			}
+			else if (text == U"right")
+			{
+				return PosRight();
+			}
+			else if (text == U"left")
+			{
+				return PosLeft();
+			}
+
+			return ParseFloat<double>(text);
+		}
+
+		double RandomY()
+		{
+			return Random(16.0, SceneHeight - 16.0);
+		}
+
+		double PosBottom()
+		{
+			return SceneHeight + 16;
+		}
+
+		double PosTop()
+		{
+			return -16;
+		}
+
+		double ParseY(const String& text)
+		{
+			if (text == U"random")
+			{
+				return RandomY();
+			}
+			else if (text == U"bottom")
+			{
+				return PosBottom();
+			}
+			else if (text == U"top")
+			{
+				return PosTop();
+			}
+
+			return ParseFloat<double>(text);
+		}
 	}
 
 	EventList::EventList(Objects& obj)

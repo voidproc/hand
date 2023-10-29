@@ -11,6 +11,13 @@ namespace hand
 		constexpr double ScoreRateMax = 8.0;
 		constexpr double ScoreRateDecrOnTimer = 0.1;
 		constexpr auto ScoreRateDecrSpeed = 0.22s;
+
+		constexpr std::array<StringView, 4> StageEventFilePath = {
+			U""_sv,
+			U"event/stage1.csv"_sv,
+			U"event/stage2.csv"_sv,
+			U"event/stage3.csv"_sv,
+		};
 	}
 
 	MainScene::MainScene(const InitData& init)
@@ -28,7 +35,7 @@ namespace hand
 	{
 		getData().currentStage += 1;
 
-		eventList_.load(RES(U"event/stage1.csv"));
+		eventList_.load(RES(StageEventFilePath[getData().currentStage]));
 	}
 
 	void MainScene::update()
@@ -201,7 +208,7 @@ namespace hand
 						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
 						{
-							for (int iMoney : step(4))
+							for ([[maybe_unused]] int iMoney : step(4))
 							{
 								obj_.items.emplace_back(MakeItem<ItemMoney, ItemType::Money>(obj_.effect, enemy->pos()));
 							}
@@ -262,24 +269,37 @@ namespace hand
 
 	void MainScene::drawBG_() const
 	{
-		const ScopedRenderStates2D sampler{ SamplerState::RepeatNearest };
+		const int stage = getData().currentStage;
 
-		TextureAsset(U"BgMountain2")
-			.mapped(640, 64)
-			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, AlphaF(0.5));
+		if (stage == 1)
+		{
+			const ScopedRenderStates2D sampler{ SamplerState::RepeatNearest };
 
-		TextureAsset(U"BgMountain")
-			.mapped(640, 64)
-			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight });
+			TextureAsset(U"BgMountain2")
+				.mapped(640, 64)
+				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, AlphaF(0.5));
 
-		TextureAsset(U"BgTree")
-			.mapped(400, 32)
-			.mirrored(true)
-			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 110.0) % 200), SceneHeight + 2 }, AlphaF(0.5));
+			TextureAsset(U"BgMountain")
+				.mapped(640, 64)
+				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight });
 
-		TextureAsset(U"BgTree")
-			.mapped(400, 32)
-			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
+			TextureAsset(U"BgTree")
+				.mapped(400, 32)
+				.mirrored(true)
+				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 110.0) % 200), SceneHeight + 2 }, AlphaF(0.5));
+
+			TextureAsset(U"BgTree")
+				.mapped(400, 32)
+				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
+		}
+		else if (stage == 2)
+		{
+			//...
+		}
+		else if (stage == 3)
+		{
+			//...
+		}
 	}
 
 	void MainScene::drawStageTitle_() const
@@ -292,9 +312,9 @@ namespace hand
 			const auto stageTextFunc = [](int stage) {
 				switch (stage)
 				{
-				case 1: return std::make_pair<String, String>(U"STAGE 1", U"- SUNNY DAY -");
-				case 2: return std::make_pair<String, String>(U"ＳＴＡＧＥ ２", U"- Tearful Rain Passage -");
-				case 3: return std::make_pair<String, String>(U"ＳＴＡＧＥ ３", U"- Back to Nostalgic Day -");
+				case 1: return std::make_pair<String, String>(U"STAGE 1", U"- CLEAR SKY PASSAGE -");
+				case 2: return std::make_pair<String, String>(U"STAGE 2", U"- DUSK AND TEARFUL RAIN -");
+				case 3: return std::make_pair<String, String>(U"STAGE 3", U"- BACK TO NOSTALGIC DAY -");
 				}
 				return std::make_pair<String, String>(U"", U"");
 				};
@@ -323,7 +343,7 @@ namespace hand
 		const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1, dangerColor);
 
 		// カルマゲージ
-		int gaugeWidth = 42 * karma / 100.0;
+		int gaugeWidth = static_cast<int>(42 * karma / 100.0);
 		if (karma > 1e-3 && gaugeWidth == 0)
 		{
 			gaugeWidth = 1;
