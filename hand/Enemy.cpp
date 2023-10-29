@@ -53,7 +53,7 @@ namespace hand
 	struct ExplodeFragmentEffect : IEffect
 	{
 		ExplodeFragmentEffect(const Vec2& pos)
-			: pos_{ pos }, vel_{ Circular{ Random(0.2, 3.0), Random(Math::TwoPi) } }, lifetime_{ Random(0.2, 0.45) }
+			: pos_{ pos }, vel_{ Circular{ Random(0.2, 3.0), Random(Math::TwoPi) } }, lifetime_{ Random(0.2, 0.45) }, prevT_{ 0 }
 		{
 			// 中心からちょっと進んだ位置からスタート
 			pos_ += vel_ * 60.0 * Scene::DeltaTime() * 4;
@@ -61,9 +61,12 @@ namespace hand
 
 		bool update(double t) override
 		{
-			vel_.y += 4.0 * Scene::DeltaTime();
+			const double deltaTime = t - prevT_;
+			prevT_ = t;
 
-			pos_ += vel_ * 60.0 * Scene::DeltaTime();
+			vel_.y += 4.0 * deltaTime;
+
+			pos_ += vel_ * 60.0 * deltaTime;
 
 			const double alpha = Periodic::Square0_1(0.07s, t);
 			const double size = EaseOutCubic(1.0 - t / lifetime_) * 4.0;
@@ -78,6 +81,7 @@ namespace hand
 		Vec2 pos_;
 		Vec2 vel_;
 		double lifetime_;
+		double prevT_;
 	};
 
 	// 爆発エフェクト
