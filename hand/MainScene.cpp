@@ -21,6 +21,32 @@ namespace hand
 			U"event/stage2.csv"_sv,
 			U"event/stage3.csv"_sv,
 		};
+
+		RectF DrawScoreRate(const Vec2& pos, double rate, const Color& color)
+		{
+			return FontAsset(U"H68Thin")(U"x{:.1f}"_fmt(rate)).drawAt(pos, color);
+		}
+
+		struct ScoreRateEffect : IEffect
+		{
+			ScoreRateEffect(const Vec2& pos, double rate)
+				: pos_{ pos }, rate_{ rate }
+			{
+			}
+
+			bool update(double t) override
+			{
+				constexpr double Lifetime = 0.65;
+
+				DrawScoreRate(pos_.movedBy(EaseOutCubic(t / Lifetime) * 12.0, 4 + 1), rate_, ColorF{ Theme::White, 0.5 });
+				DrawScoreRate(pos_.movedBy(EaseOutCubic(t / Lifetime) * 12.0, 4), rate_, Theme::Black.lerp(Theme::Lighter, Periodic::Jump0_1(0.15s, t)));
+
+				return t < Lifetime;
+			}
+
+			Vec2 pos_;
+			double rate_;
+		};
 	}
 
 	MainScene::MainScene(const InitData& init)
@@ -227,6 +253,12 @@ namespace hand
 								obj_.items.emplace_back(MakeItem<ItemMoney, ItemType::Money>(obj_.effect, enemy->pos()));
 							}
 						}
+
+						// その場に倍率エフェクト
+						if (scoreRate_() > 1.99)
+						{
+							obj_.effect.add<ScoreRateEffect>(enemy->pos(), scoreRate_());
+						}
 					}
 				}
 			}
@@ -257,6 +289,12 @@ namespace hand
 					// スコアレート減少タイマーの残り時間を加算
 					const auto timerDecrScoreRateRemain = Clamp(timerDecrScoreRate_.remaining() + ScoreRateDecrTimeOnGetMoney, ScoreRateDecrTime, ScoreRateDecrTimeMax);
 					timerDecrScoreRate_.restart(timerDecrScoreRateRemain);
+
+					// その場に倍率エフェクト
+					if (scoreRate_() > 1.99)
+					{
+						obj_.effect.add<ScoreRateEffect>(item->pos(), scoreRate_());
+					}
 
 					item->kill();
 				}
@@ -395,11 +433,11 @@ namespace hand
 
 		// 倍率
 		{
-			const auto rateRect = FontAsset(U"H68Thin")(U"x{:.1f}"_fmt(scoreRateRaw_)).drawAt(SceneWidth - 12, 6 + 0, Theme::Black);
+			const auto rateRect = DrawScoreRate(Vec2{ SceneWidth - 12, 6 + 0 }, scoreRate_(), Theme::Black);
 
 			const double scoreRateGauge0_1 = Clamp((timerDecrScoreRate_.sF() - ScoreRateDecrTime.count()) / (ScoreRateDecrTimeMax.count() - ScoreRateDecrTime.count()), 0.0, 1.0);
-			Line{ rateRect.bottomCenter().movedBy(-8, 4), rateRect.bottomCenter().movedBy(8, 4) }.draw(Theme::Lighter);
-			Line{ rateRect.bottomCenter().movedBy(-8, 4), rateRect.bottomCenter().movedBy(-8 + 16 * scoreRateGauge0_1, 4) }.draw(Theme::Black);
+			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(8, 2) }.draw(Theme::Lighter);
+			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(-8 + 16 * scoreRateGauge0_1, 2) }.draw(Theme::Black);
 
 		}
 	}

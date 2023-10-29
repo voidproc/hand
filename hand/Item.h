@@ -32,6 +32,8 @@ namespace hand
 		// falseの場合衝突判定をしないでください
 		virtual bool enableCollision() const;
 
+		const Vec2& pos() const;
+
 	private:
 		ItemType type_;
 

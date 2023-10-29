@@ -88,6 +88,11 @@ namespace hand
 		return true;
 	}
 
+	const Vec2& Item::pos() const
+	{
+		return pos_;
+	}
+
 	ItemMoney::ItemMoney(ItemType type, Effect& effect, const Vec2& pos)
 		: Item{ type, effect, pos }, vel_{ Circular{ Random(1.0, 2.4), Random(-20_deg, 20_deg) } }, animSpeed_{ Random(0.2, 0.8) }
 	{
