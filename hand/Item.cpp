@@ -5,29 +5,6 @@
 
 namespace hand
 {
-	// コイン取得エフェクト
-	struct GetMoneyEffect : IEffect
-	{
-		GetMoneyEffect(const Vec2& pos)
-			: pos_{ pos }
-		{
-		}
-
-		bool update(double t) override
-		{
-			constexpr double Lifetime = 0.15;
-			const double alpha = 0.9 - 0.5 * t / 0.15;
-			const double size = 2.0 + EaseOutCubic(t / Lifetime) * 6.0;
-
-			Circle{ pos_, size }
-				.drawFrame(8.0 - 8.0 * t / Lifetime, Theme::Lighter.lerp(Theme::Darker, Periodic::Square0_1(0.01s, t)));
-
-			return t < Lifetime;
-		}
-
-		Vec2 pos_;
-	};
-
 	int ItemScore(ItemType type)
 	{
 		switch (type)
@@ -36,6 +13,32 @@ namespace hand
 		}
 
 		return 0;
+	}
+
+	namespace
+	{
+		// コイン取得エフェクト
+		struct GetMoneyEffect : IEffect
+		{
+			GetMoneyEffect(const Vec2& pos)
+				: pos_{ pos }
+			{
+			}
+
+			bool update(double t) override
+			{
+				constexpr double Lifetime = 0.15;
+				const double alpha = 0.9 - 0.5 * t / 0.15;
+				const double size = 2.0 + EaseOutCubic(t / Lifetime) * 6.0;
+
+				Circle{ pos_, size }
+				.drawFrame(8.0 - 8.0 * t / Lifetime, Theme::Lighter.lerp(Theme::Darker, Periodic::Square0_1(0.01s, t)));
+
+				return t < Lifetime;
+			}
+
+			Vec2 pos_;
+		};
 	}
 
 	Item::Item(ItemType type, Effect& effect, const Vec2& pos)

@@ -6,54 +6,86 @@
 
 namespace hand
 {
-	struct SmokeEffect : IEffect
+	namespace
 	{
-		SmokeEffect(const Vec2& pos, const Vec2& playerVel)
-			:
-			pos_{ pos.x, pos.y + Random(-2.0, 2.0) },
-			playerVel_{ playerVel },
-			lifetime_{Random(0.05, 0.2)}
+		struct SmokeEffect : IEffect
 		{
-		}
+			SmokeEffect(const Vec2& pos, const Vec2& playerVel)
+				:
+				pos_{ pos.x, pos.y + Random(-2.0, 2.0) },
+				playerVel_{ playerVel },
+				lifetime_{ Random(0.05, 0.2) }
+			{
+			}
 
-		bool update(double t) override
+			bool update(double t) override
+			{
+				const double t0_1 = t / lifetime_;
+				const double alpha = Periodic::Square0_1(0.08s, t);
+
+				Circle{ pos_.movedBy((-12 + playerVel_.x * 2.0) * EaseOutCubic(t0_1), 0), 2 + 3 * t0_1 }
+					.draw(ColorF{ Theme::Lighter, alpha })
+					.drawFrame(4.0 - 4.0 * t0_1, 0.0, ColorF{ Theme::Darker, alpha });
+
+				return t < lifetime_;
+			}
+
+			Vec2 pos_;
+			Vec2 playerVel_;
+			double lifetime_;
+		};
+
+		struct HandEffect : IEffect
 		{
-			const double t0_1 = t / lifetime_;
-			const double alpha = Periodic::Square0_1(0.08s, t);
+			HandEffect(const Vec2& pos, HandDirection dir)
+				: pos_{ pos }, dir_{ dir }
+			{
+				if (dir == HandDirection::Up)
+				{
+					pos_.y -= 16.0;
+					ySpeed_ = 40.0;
+				}
+				else if (dir == HandDirection::Down)
+				{
+					pos_.y += 16.0;
+					ySpeed_ = 40.0;
+				}
+			}
 
-			Circle{ pos_.movedBy((-12 + playerVel_.x * 2.0) * EaseOutCubic(t0_1), 0), 2 + 3 * t0_1 }
-				.draw(ColorF{ Theme::Lighter, alpha })
-				.drawFrame(4.0 - 4.0 * t0_1, 0.0, ColorF{ Theme::Darker, alpha });
+			bool update(double t) override
+			{
+				constexpr double Lifetime = 0.2;
 
-			return t < lifetime_;
-		}
+				pos_.x += 60 * (1.0 - EaseOutSine(t / Lifetime)) * Scene::DeltaTime();
+				pos_.y += ySpeed_ * Scene::DeltaTime();
 
-		Vec2 pos_;
-		Vec2 playerVel_;
-		double lifetime_;
-	};
+				ySpeed_ = Max(Abs(ySpeed_) - 50.0 * 3 * Scene::DeltaTime(), 0.0) * Sign(ySpeed_);
 
-	struct HandEffect : IEffect
-	{
-		HandEffect(const Vec2& pos)
-			: pos_{ pos }
+				TextureAsset(U"Hand").drawAt(pos_, AlphaF(0.7 - 0.7 * t / Lifetime));
+
+				return t < Lifetime;
+			}
+
+			Vec2 pos_;
+			HandDirection dir_;
+			double ySpeed_;
+		};
+
+		HandDirection GetHandDirectionByInput(InputDevice& input)
 		{
+			if (input.up().pressed())
+			{
+				return HandDirection::Up;
+			}
+
+			if (input.down().pressed())
+			{
+				return HandDirection::Down;
+			}
+
+			return HandDirection::None;
 		}
-
-		bool update(double t) override
-		{
-			constexpr double Lifetime = 0.2;
-
-			pos_.x += 60 * (1.0 - EaseOutSine(t / Lifetime)) * Scene::DeltaTime();
-
-			TextureAsset(U"Hand").drawAt(pos_, AlphaF(0.7 - 0.7 * t / Lifetime));
-
-			return t < Lifetime;
-		}
-
-		Vec2 pos_;
-	};
-
+	}
 
 	Player::Player(InputDevice& input, Array<HandPtr>& hands)
 		:
@@ -146,6 +178,7 @@ namespace hand
 			pos_ += vel_ * (60.0 / 4.0) * Scene::DeltaTime();
 			pos_.clamp(SceneRect.stretched(-20, -12, -12, -12));
 
+			// Hand の生成
 			// 他の Hand が存在していないとき、Hand を生成できる
 			if (input_.action().down())
 			{
@@ -154,10 +187,11 @@ namespace hand
 					karma_ = Clamp(karma_ - KarmaCostOnAction, 0.1, KarmaMax);
 
 					const Vec2 handPos = pos_.movedBy(24, 0);
-					hands_.emplace_back(std::make_unique<Hand>(handPos));
+					const auto handDir = GetHandDirectionByInput(input_);
+					hands_.emplace_back(std::make_unique<Hand>(handPos, handDir));
 
 					// エフェクト
-					effect_.add<HandEffect>(handPos);
+					effect_.add<HandEffect>(handPos, handDir);
 				}
 			}
 

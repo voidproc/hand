@@ -4,17 +4,32 @@
 
 namespace hand
 {
-	Hand::Hand(const Vec2& pos)
+	Hand::Hand(const Vec2& pos, HandDirection dir)
 		:
 		pos_{ pos },
+		dir_{ dir },
+		ySpeed_{ 0 },
 		time_{ StartImmediately::Yes, GlobalClock::Get() },
 		killed_{ false }
 	{
+		if (dir == HandDirection::Up)
+		{
+			pos_.y -= 16.0;
+			ySpeed_ = -50.0;
+		}
+		else if (dir == HandDirection::Down)
+		{
+			pos_.y += 16.0;
+			ySpeed_ = 50.0;
+		}
 	}
 
 	void Hand::update()
 	{
 		pos_.x += 100.0 * (1.0 - EaseOutSine(Clamp(time_.sF(), 0.0, 0.3) / 0.3)) * Scene::DeltaTime();
+		pos_.y += ySpeed_ * Scene::DeltaTime();
+
+		ySpeed_ = Max(Abs(ySpeed_) - 50.0 * 2 * Scene::DeltaTime(), 0.0) * Sign(ySpeed_);
 	}
 
 	void Hand::draw() const

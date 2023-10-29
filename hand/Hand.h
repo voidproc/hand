@@ -2,10 +2,17 @@
 
 namespace hand
 {
+	enum class HandDirection
+	{
+		None,
+		Up,
+		Down,
+	};
+
 	class Hand
 	{
 	public:
-		Hand(const Vec2& pos);
+		Hand(const Vec2& pos, HandDirection dir);
 
 		void update();
 
@@ -19,6 +26,11 @@ namespace hand
 
 	private:
 		Vec2 pos_;
+
+		HandDirection dir_;
+
+		// Hand 生成時に決定する縦方向のスピード
+		double ySpeed_;
 
 		Stopwatch time_;
 

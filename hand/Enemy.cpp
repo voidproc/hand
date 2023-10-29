@@ -48,82 +48,84 @@ namespace hand
 	}
 
 
-	// 爆発エフェクト
-	// 爆発の破片
-	struct ExplodeFragmentEffect : IEffect
+	namespace
 	{
-		ExplodeFragmentEffect(const Vec2& pos)
-			: pos_{ pos }, vel_{ Circular{ Random(0.2, 3.0), Random(Math::TwoPi) } }, lifetime_{ Random(0.2, 0.45) }, prevT_{ 0 }
+		// 爆発エフェクト
+		// 爆発の破片
+		struct ExplodeFragmentEffect : IEffect
 		{
-			// 中心からちょっと進んだ位置からスタート
-			pos_ += vel_ * 60.0 * Scene::DeltaTime() * 4;
-		}
+			ExplodeFragmentEffect(const Vec2& pos)
+				: pos_{ pos }, vel_{ Circular{ Random(0.2, 3.0), Random(Math::TwoPi) } }, lifetime_{ Random(0.2, 0.45) }, prevT_{ 0 }
+			{
+				// 中心からちょっと進んだ位置からスタート
+				pos_ += vel_ * 60.0 * Scene::DeltaTime() * 4;
+			}
 
-		bool update(double t) override
+			bool update(double t) override
+			{
+				const double deltaTime = t - prevT_;
+				prevT_ = t;
+
+				vel_.y += 4.0 * deltaTime;
+
+				pos_ += vel_ * 60.0 * deltaTime;
+
+				const double alpha = Periodic::Square0_1(0.07s, t);
+				const double size = EaseOutCubic(1.0 - t / lifetime_) * 4.0;
+
+				RectF{ Arg::center = pos_, size }
+					.rotated(Random(Math::TwoPi))
+					.draw(ColorF{ Theme::Darker, alpha });
+
+				return t < lifetime_;
+			}
+
+			Vec2 pos_;
+			Vec2 vel_;
+			double lifetime_;
+			double prevT_;
+		};
+
+		// 爆発エフェクト
+		// 爆発の中心
+		struct ExplodeEffect : IEffect
 		{
-			const double deltaTime = t - prevT_;
-			prevT_ = t;
+			ExplodeEffect(const Vec2& pos, double scale = 1.0)
+				: pos_{ pos }, scale_{ scale }
+			{
+			}
 
-			vel_.y += 4.0 * deltaTime;
+			bool update(double t) override
+			{
+				constexpr double Lifetime = 0.24;
+				const double alpha = Periodic::Pulse0_1(0.08s, 0.75 - 0.50 * t / Lifetime, t);
+				const double size = EaseOutCubic(t / Lifetime) * 14.0 * scale_;
 
-			pos_ += vel_ * 60.0 * deltaTime;
-
-			const double alpha = Periodic::Square0_1(0.07s, t);
-			const double size = EaseOutCubic(1.0 - t / lifetime_) * 4.0;
-
-			RectF{ Arg::center = pos_, size }
-				.rotated(Random(Math::TwoPi))
-				.draw(ColorF{Theme::Darker, alpha});
-
-			return t < lifetime_;
-		}
-
-		Vec2 pos_;
-		Vec2 vel_;
-		double lifetime_;
-		double prevT_;
-	};
-
-	// 爆発エフェクト
-	// 爆発の中心
-	struct ExplodeEffect : IEffect
-	{
-		ExplodeEffect(const Vec2& pos, double scale = 1.0)
-			: pos_{ pos }, scale_{ scale }
-		{
-		}
-
-		bool update(double t) override
-		{
-			constexpr double Lifetime = 0.24;
-			const double alpha = Periodic::Pulse0_1(0.08s, 0.75 - 0.50 * t / Lifetime, t);
-			const double size = EaseOutCubic(t / Lifetime) * 14.0 * scale_;
-
-			Circle{ pos_, size }
+				Circle{ pos_, size }
 				.drawFrame(8.0 - 8.0 * t / Lifetime, ColorF{ Theme::Darker, alpha });
 
-			return t < Lifetime;
-		}
+				return t < Lifetime;
+			}
 
-		Vec2 pos_;
-		double scale_;
-	};
+			Vec2 pos_;
+			double scale_;
+		};
 
-	void AddExplodeEffect(Effect& effect, const Vec2& pos)
-	{
-		effect.add<ExplodeEffect>(pos);
-
-		for (int i : step(Random(6, 10)))
+		void AddExplodeEffect(Effect& effect, const Vec2& pos)
 		{
-			effect.add<ExplodeFragmentEffect>(pos);
+			effect.add<ExplodeEffect>(pos);
+
+			for (int i : step(Random(6, 10)))
+			{
+				effect.add<ExplodeFragmentEffect>(pos);
+			}
+		}
+
+		void AddExplodeEffectForBullet(Effect& effect, const Vec2& pos)
+		{
+			effect.add<ExplodeEffect>(pos, 0.5);
 		}
 	}
-
-	void AddExplodeEffectForBullet(Effect& effect, const Vec2& pos)
-	{
-		effect.add<ExplodeEffect>(pos, 0.5);
-	}
-
 
 	Enemy::Enemy(EnemyType type, Objects& obj, const Vec2& pos)
 		:
