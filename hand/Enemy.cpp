@@ -322,22 +322,25 @@ namespace hand
 			.start();
 
 		anim2_
-			.set(U"SpeedX", { 0s, 0 }, { 1.2s, -180 }, EaseInCubic)
+			.set(U"SpeedX", { 0s, -20 }, { 1.2s, -180 }, EaseInSine)
 			.set(U"Texture", { 0s, 0 }, { 0.01s, 0 })
 			.set(U"Texture", { 0.01s, 1 }, { 999s, 1 });
 	}
 
 	void BirdB1::update()
 	{
-		if (obj_.player.pos().y <= pos_.y || anim1_.posSec() > 1.2)
+		const bool isStartedAnim2 = anim2_.posSec() > 1e-3;
+
+		if (obj_.player.pos().y <= pos_.y || anim1_.posSec() > 1.0)
 		{
-			if (Abs(anim2_[U"SpeedX"]) < 1e-3) //まだanim2がスタートしてない
+			if (not isStartedAnim2) //まだanim2がスタートしてない
 			{
 				anim2_.start();
 			}
 		}
 
-		pos_.x += anim2_[U"SpeedX"] * Scene::DeltaTime();
+		pos_.x += (isStartedAnim2 ? anim2_[U"SpeedX"] : 0) * Scene::DeltaTime();
+		pos_.x += 10 * Scene::DeltaTime();
 		pos_.y += anim1_[U"SpeedY"] * Scene::DeltaTime();
 	}
 
