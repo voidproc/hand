@@ -157,7 +157,8 @@ namespace hand
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No, GlobalClock::Get() },
 		timerDecrScoreRate_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
-		eventList_{ obj_ }
+		eventList_{ obj_ },
+		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() }
 	{
 		getData().currentStage += 1;
 
@@ -450,6 +451,10 @@ namespace hand
 			TextureAsset(U"BgTree")
 				.mapped(400, 32)
 				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
+
+
+			const double bgDarkOverlayAlpha = 0.3 * Clamp(timeBgDarkOverlayAlpha_.sF() / 5.0, 0.0, 1.0);
+			SceneRect.draw(ColorF{ Theme::Black, bgDarkOverlayAlpha });
 		}
 		else if (stage == 2)
 		{
@@ -608,6 +613,10 @@ namespace hand
 				const Vec2 pos{ ParseX(textX), ParseY(textY) };
 				obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos, speedScale));
 				}, lifetime, interval);
+		}
+		else if (textType == U"bgdark1")
+		{
+			timeBgDarkOverlayAlpha_.start();
 		}
 	}
 }

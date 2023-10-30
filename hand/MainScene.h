@@ -59,5 +59,9 @@ namespace hand
 		Timer timerDecrScoreRate_;
 
 		EventList eventList_;
+
+		// BG用
+		Stopwatch timeBgDarkOverlayAlpha_;
+
 	};
 }

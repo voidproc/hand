@@ -1,5 +1,6 @@
 ﻿#Time(0),Type(1),X(2),Y(3),Param4,Param5,Param6,Param7,Param8,Param9,Param10
 # Start,,,,,,,,,,
+1,BGDark1,,,,,,,,,
 3,GenBird1,Right,72,3.1,0.6,1.2,,,,
 5,GenBird1,Right,48,3.1,0.6,1.2,,,,
 5,GenBird1,Right,96,3.1,0.6,1.2,,,,
@@ -30,3 +31,5 @@
 1,BirdB1,120,Top,200,,,,,,
 2,GenBird1,Right,Random,5.1,0.6,1.5,,,,
 0.3,GenBird1,Right,Random,5.1,0.6,2.2,,,,
+,,,,,,,,,,
+1,BGDark1,,,,,,,,,
