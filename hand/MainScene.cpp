@@ -438,8 +438,8 @@ namespace hand
 			// 倍率ゲージ
 			// ゲージがなくなると倍率が減っていく感じ
 			const double scoreRateGauge0_1 = Clamp((timerDecrScoreRate_.sF() - ScoreRateDecrTime.count()) / (ScoreRateDecrTimeMax.count() - ScoreRateDecrTime.count()), 0.0, 1.0);
-			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(8, 2) }.draw(Theme::Lighter);
-			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(-8 + 16 * scoreRateGauge0_1, 2) }.draw(Theme::Black);
+			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(8, 2) }.draw(2.0, Theme::Lighter);
+			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(-8 + 16 * scoreRateGauge0_1, 2) }.draw(2.0, Theme::Black);
 
 		}
 	}
