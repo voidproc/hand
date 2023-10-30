@@ -158,7 +158,8 @@ namespace hand
 		timeIncrScoreRate_{ StartImmediately::No, GlobalClock::Get() },
 		timerDecrScoreRate_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
 		eventList_{ obj_ },
-		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() }
+		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
+		timeBgRain_{ StartImmediately::No, GlobalClock::Get() }
 	{
 		getData().currentStage += 1;
 
@@ -452,9 +453,19 @@ namespace hand
 				.mapped(400, 32)
 				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
 
-
+			// Dark
 			const double bgDarkOverlayAlpha = 0.3 * Clamp(timeBgDarkOverlayAlpha_.sF() / 5.0, 0.0, 1.0);
 			SceneRect.draw(ColorF{ Theme::Black, bgDarkOverlayAlpha });
+
+			// Rain
+			if (timeBgRain_.isRunning())
+			{
+				for (int iRain : step(24))
+				{
+					Line{ RandomVec2(SceneRect), Arg::angle = 45_deg, Random(6.0, 9.0) }
+					.draw(ColorF{ Theme::White, Random(0.7, 1.0) });
+				}
+			}
 		}
 		else if (stage == 2)
 		{
@@ -464,6 +475,10 @@ namespace hand
 		{
 			//...
 		}
+
+		// ステータスエリアの背景は常に白
+		Rect{ 0, 0, SceneWidth, 14 }.draw(Theme::White);
+
 	}
 
 	void MainScene::drawStageTitle_() const
@@ -526,7 +541,7 @@ namespace hand
 		// スコア
 		{
 			const String scoreText = U"{:08d}"_fmt(getData().score);
-			Vec2 penPos{ 74, 2 };
+			Vec2 penPos{ 74, 3 };
 			bool grayed = true;
 			for (auto [index, glyph] : Indexed(FontAsset(U"H68").getGlyphs(scoreText)))
 			{
@@ -617,6 +632,10 @@ namespace hand
 		else if (textType == U"bgdark1")
 		{
 			timeBgDarkOverlayAlpha_.start();
+		}
+		else if (textType == U"bgrain1")
+		{
+			timeBgRain_.start();
 		}
 	}
 }

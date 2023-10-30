@@ -62,6 +62,6 @@ namespace hand
 
 		// BG用
 		Stopwatch timeBgDarkOverlayAlpha_;
-
+		Stopwatch timeBgRain_;
 	};
 }
