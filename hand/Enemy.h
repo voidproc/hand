@@ -8,6 +8,7 @@ namespace hand
 		Bird2,
 		Bird3,
 		BirdB1,
+		JellyFish1,
 
 		Bullet1,
 		Bullet2,
@@ -127,6 +128,24 @@ namespace hand
 	private:
 		SimpleAnimation anim1_;
 		SimpleAnimation anim2_;
+	};
+
+	// クラゲ
+	// ...
+	class JellyFish1 : public Enemy
+	{
+	public:
+		JellyFish1(EnemyType type, Objects& obj, const Vec2& pos);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+	private:
+		double speedX_;
+		int fire_;
 	};
 
 	// 敵弾（小）

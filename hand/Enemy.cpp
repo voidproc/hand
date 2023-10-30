@@ -14,6 +14,7 @@ namespace hand
 		case EnemyType::Bird2:
 		case EnemyType::Bird3:
 		case EnemyType::BirdB1:
+		case EnemyType::JellyFish1:
 			return true;
 		}
 
@@ -41,6 +42,7 @@ namespace hand
 		case EnemyType::Bird2:return 200;
 		case EnemyType::Bird3:return 200;
 		case EnemyType::BirdB1:return 300;
+		case EnemyType::JellyFish1:return 350;
 		case EnemyType::Bullet1: return 50;
 		case EnemyType::Bullet2: return 50;
 		case EnemyType::Bullet3: return 50;
@@ -357,6 +359,41 @@ namespace hand
 	RectF BirdB1::collision() const
 	{
 		return RectF{ Arg::center = pos_, 14, 8 };
+	}
+
+	JellyFish1::JellyFish1(EnemyType type, Objects& obj, const Vec2& pos)
+		:
+		Enemy{ type, obj, pos },
+		speedX_{ Random(-16.0, 4.0) },
+		fire_{ 0 }
+	{
+	}
+
+	void JellyFish1::update()
+	{
+		pos_.y -= 16 * Scene::DeltaTime();
+		pos_.y -= 48 * Periodic::Sine1_1(1.2s, time_.sF()) * Scene::DeltaTime();
+		pos_.x += speedX_ * Scene::DeltaTime();
+
+		if (fire_ == 0 && pos_.y < 80)
+		{
+			for (int i : step(8))
+			{
+				obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(obj_, pos_, Circular{ 1.3, i * Math::TwoPi / 8 }));
+			}
+			fire_ = 1;
+		}
+	}
+
+	void JellyFish1::draw() const
+	{
+		auto tex = SpriteSheet::GetFrame(TextureAsset(U"JellyFish"), 3, 0.50s, time_.sF());
+		tex.drawAt(pos_, Palette::White);
+	}
+
+	RectF JellyFish1::collision() const
+	{
+		return RectF{ Arg::center = pos_.movedBy(0, 2), 8, 8 };
 	}
 
 }

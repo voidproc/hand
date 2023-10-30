@@ -20,6 +20,7 @@ namespace hand
 
 		void drawBG_() const;
 		void drawStageTitle_() const;
+		void drawStatusBG_() const;
 		void drawKarma_() const;
 		void drawScore_() const;
 

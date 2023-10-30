@@ -280,6 +280,7 @@ namespace hand
 		drawStageTitle_();
 
 		// ステータス
+		drawStatusBG_();
 		drawKarma_();
 		drawScore_();
 
@@ -460,9 +461,6 @@ namespace hand
 				.draw(ColorF{ Theme::White, Random(0.7, 1.0) });
 			}
 		}
-
-		// ステータスエリアの背景は常に白
-		Rect{ 0, 0, SceneWidth, 14 }.draw(Theme::White);
 	}
 
 	void MainScene::drawStageTitle_() const
@@ -491,6 +489,12 @@ namespace hand
 			FontAsset(U"H68Thin")(stageText).drawAt(x - xOut + 1, SceneHeight - 7 + 1, Theme::Lighter);
 			FontAsset(U"H68Thin")(stageText).drawAt(x - xOut + 0, SceneHeight - 7 + 0, Theme::Black);
 		};
+	}
+
+	void MainScene::drawStatusBG_() const
+	{
+		// ステータスエリアの背景は常に白
+		Rect{ 0, 0, SceneWidth, 14 }.draw(Theme::White);
 	}
 
 	void MainScene::drawKarma_() const
@@ -597,6 +601,10 @@ namespace hand
 			const double speedY0 = ParseOr<double>(eventCsvRow[4], 200.0);
 			obj_.enemies.emplace_back(MakeEnemy<BirdB1, EnemyType::BirdB1>(obj_, pos, speedY0));
 		}
+		else if (textType == U"jellyfish1")
+		{
+			obj_.enemies.emplace_back(MakeEnemy<JellyFish1, EnemyType::JellyFish1>(obj_, pos));
+		}
 		else if (textType == U"genbird1")
 		{
 			const double lifetime = ParseFloat<double>(eventCsvRow[4]);
@@ -615,6 +623,15 @@ namespace hand
 			obj_.effect.add<GenerateEnemies>([&, speedScale, textX, textY]() {
 				const Vec2 pos{ ParseX(textX), ParseY(textY) };
 				obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos, speedScale));
+				}, lifetime, interval);
+		}
+		else if (textType == U"genjellyfish1")
+		{
+			const double lifetime = ParseFloat<double>(eventCsvRow[4]);
+			const double interval = ParseFloat<double>(eventCsvRow[5]);
+			obj_.effect.add<GenerateEnemies>([&, textX, textY]() {
+				const Vec2 pos{ Random(SceneWidth / 2, SceneWidth), ParseY(textY)};
+				obj_.enemies.emplace_back(MakeEnemy<JellyFish1, EnemyType::JellyFish1>(obj_, pos));
 				}, lifetime, interval);
 		}
 		else if (textType == U"bgdark1")
