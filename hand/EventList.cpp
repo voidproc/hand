@@ -69,4 +69,22 @@ namespace hand
 	{
 		return eventCsv_.getRow(currentRow_);
 	}
+
+	void EventList::gotoLabel(StringView label)
+	{
+		int row = currentRow_;
+
+		while (row < eventCsv_.rows())
+		{
+			String cell0 = eventCsv_.get(row, 0).trimmed();
+
+			if (U":{}"_fmt(label).case_insensitive_equals(cell0))
+			{
+				currentRow_ = row;
+				return;
+			}
+
+			++row;
+		}
+	}
 }

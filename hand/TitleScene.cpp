@@ -17,7 +17,6 @@ namespace hand
 		cursor_{ 0 }
 	{
 		getData().score = 0;
-		getData().currentStage = 0;
 	}
 
 	void TitleScene::update()

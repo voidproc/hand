@@ -9,8 +9,6 @@ namespace hand
 		IScene{ init },
 		time_{ StartImmediately::Yes, GlobalClock::Get() }
 	{
-
-		getData().currentStage = 0;
 	}
 
 	void GameOverScene::update()

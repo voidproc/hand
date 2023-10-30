@@ -18,9 +18,9 @@ namespace hand
 
 		const Array<String>& getRow() const;
 
-	private:
-		void doEvent_();
+		void gotoLabel(StringView label);
 
+	private:
 		Objects& obj_;
 		CSV eventCsv_;
 		int currentRow_;

@@ -15,8 +15,8 @@ namespace hand
 		static inline constexpr double KarmaRecoveryPerSec = 0.25;
 		static inline constexpr double KarmaRecoveryOnGetMoney = 4;
 
-		static inline constexpr double KarmaCostOnAction = 5.0;
-		static inline constexpr double KarmaCostOnActionPerSec = 12.0;
+		static inline constexpr double KarmaCostOnAction = 8.0;
+		static inline constexpr double KarmaCostOnActionPerSec = 15.0;
 		static inline constexpr double KarmaEmptyThreshold = 2.0;
 
 		static inline constexpr double TimeDamageInvSec = 2.0;

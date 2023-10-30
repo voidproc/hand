@@ -18,8 +18,8 @@ namespace hand
 		constexpr std::array<StringView, 4> StageEventFilePath = {
 			U""_sv,
 			U"event/stage1.csv"_sv,
-			U"event/stage2.csv"_sv,
-			U"event/stage3.csv"_sv,
+			U""_sv,
+			U""_sv,
 		};
 
 		RectF DrawScoreRate(const Vec2& pos, double rate, const Color& color)
@@ -161,9 +161,7 @@ namespace hand
 		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
 		timeBgRain_{ StartImmediately::No, GlobalClock::Get() }
 	{
-		getData().currentStage += 1;
-
-		eventList_.load(RES(StageEventFilePath[getData().currentStage]));
+		eventList_.load(RES(StageEventFilePath[1]));
 	}
 
 	void MainScene::update()
@@ -279,7 +277,7 @@ namespace hand
 		}
 
 		// ステージ表記
-		//drawStageTitle_();
+		drawStageTitle_();
 
 		// ステータス
 		drawKarma_();
@@ -430,78 +428,68 @@ namespace hand
 
 	void MainScene::drawBG_() const
 	{
-		const int stage = getData().currentStage;
+		const ScopedRenderStates2D sampler{ SamplerState::RepeatNearest };
 
-		if (stage == 1)
+		TextureAsset(U"BgMountain2")
+			.mapped(640, 64)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, AlphaF(0.5));
+
+		TextureAsset(U"BgMountain")
+			.mapped(640, 64)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight });
+
+		TextureAsset(U"BgTree")
+			.mapped(400, 32)
+			.mirrored(true)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 110.0) % 200), SceneHeight + 2 }, AlphaF(0.5));
+
+		TextureAsset(U"BgTree")
+			.mapped(400, 32)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
+
+		// Dark
+		const double bgDarkOverlayAlpha = 0.3 * Clamp(timeBgDarkOverlayAlpha_.sF() / 5.0, 0.0, 1.0);
+		SceneRect.draw(ColorF{ Theme::Black, bgDarkOverlayAlpha });
+
+		// Rain
+		if (timeBgRain_.isRunning())
 		{
-			const ScopedRenderStates2D sampler{ SamplerState::RepeatNearest };
-
-			TextureAsset(U"BgMountain2")
-				.mapped(640, 64)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, AlphaF(0.5));
-
-			TextureAsset(U"BgMountain")
-				.mapped(640, 64)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight });
-
-			TextureAsset(U"BgTree")
-				.mapped(400, 32)
-				.mirrored(true)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 110.0) % 200), SceneHeight + 2 }, AlphaF(0.5));
-
-			TextureAsset(U"BgTree")
-				.mapped(400, 32)
-				.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 140.0) % 200), SceneHeight + 4 }, AlphaF(1));
-
-			// Dark
-			const double bgDarkOverlayAlpha = 0.3 * Clamp(timeBgDarkOverlayAlpha_.sF() / 5.0, 0.0, 1.0);
-			SceneRect.draw(ColorF{ Theme::Black, bgDarkOverlayAlpha });
-
-			// Rain
-			if (timeBgRain_.isRunning())
+			for (int iRain : step(24))
 			{
-				for (int iRain : step(24))
-				{
-					Line{ RandomVec2(SceneRect), Arg::angle = 45_deg, Random(6.0, 9.0) }
-					.draw(ColorF{ Theme::White, Random(0.7, 1.0) });
-				}
+				Line{ RandomVec2(SceneRect), Arg::angle = 45_deg, Random(6.0, 9.0) }
+				.draw(ColorF{ Theme::White, Random(0.7, 1.0) });
 			}
-		}
-		else if (stage == 2)
-		{
-			//...
-		}
-		else if (stage == 3)
-		{
-			//...
 		}
 
 		// ステータスエリアの背景は常に白
 		Rect{ 0, 0, SceneWidth, 14 }.draw(Theme::White);
-
 	}
 
 	void MainScene::drawStageTitle_() const
 	{
-		if (time_ < 3s)
+		if (timeStageTitle_.isRunning() && timeStageTitle_ < 3s)
 		{
-			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - time_.sF() / 0.6), 0.0, 1.0);
-			const double xOut = (time_ > 2.4s) ? 200 * EaseInCubic((time_.sF() - 2.4) / 0.6) : 0.0;
+			const double t = timeStageTitle_.sF();
+			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - t / 0.6), 0.0, 1.0);
+			const double xOut = (t > 2.4) ? 200 * EaseInCubic((t - 2.4) / 0.6) : 0.0;
+
+			double h = Clamp(t / 0.6, 0.0, 1.0);
+			if (t > 2.4) h = 1.0 - Clamp((t - 2.4) / 0.6, 0.0, 1.0);
 
 			const auto stageTextFunc = [](int stage) {
 				switch (stage)
 				{
-				case 1: return std::make_pair<String, String>(U"STAGE 1", U"- CLEAR SKY PASSAGE -");
-				case 2: return std::make_pair<String, String>(U"STAGE 2", U"- DUSK AND TEARFUL RAIN -");
-				case 3: return std::make_pair<String, String>(U"STAGE 3", U"- BACK TO NOSTALGIC DAY -");
+				case 1: return U"AREA 1 - CLEAR SKY "_sv;
+				case 2: return U"AREA 2 - TEARFUL RAIN"_sv;
+				case 3: return U"AREA 3 - TO NOSTALGIC PLACE"_sv;
 				}
-				return std::make_pair<String, String>(U"", U"");
+				return U""_sv;
 				};
-			const auto stageText = stageTextFunc(getData().currentStage);
+			const auto stageText = stageTextFunc(stage_);
 
-			FontAsset(U"H68Thin")(stageText.first).drawAt(16, x - xOut + 1, SceneCenter.y - 4 + 1, Theme::Lighter);
-			FontAsset(U"H68Thin")(stageText.first).drawAt(16, x - xOut + 0, SceneCenter.y - 4 + 0, Theme::Black);
-			FontAsset(U"H68Thin")(stageText.second).drawAt(x - xOut, SceneCenter.y + 12, Theme::Black);
+			RectF{ Arg::center = Vec2{ SceneWidth / 2, SceneHeight - 6 }, SceneWidth, 9 * h }.draw(Theme::White);
+			FontAsset(U"H68Thin")(stageText).drawAt(x - xOut + 1, SceneHeight - 7 + 1, Theme::Lighter);
+			FontAsset(U"H68Thin")(stageText).drawAt(x - xOut + 0, SceneHeight - 7 + 0, Theme::Black);
 		};
 	}
 
@@ -631,11 +619,20 @@ namespace hand
 		}
 		else if (textType == U"bgdark1")
 		{
-			timeBgDarkOverlayAlpha_.start();
+			timeBgDarkOverlayAlpha_.restart();
 		}
 		else if (textType == U"bgrain1")
 		{
-			timeBgRain_.start();
+			timeBgRain_.restart();
+		}
+		else if (textType == U"stagetitle")
+		{
+			stage_ = ParseInt<int>(eventCsvRow[4]);
+			timeStageTitle_.restart();
+		}
+		else if (textType == U"goto")
+		{
+			eventList_.gotoLabel(eventCsvRow[4]);
 		}
 	}
 }
