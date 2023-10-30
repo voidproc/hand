@@ -134,7 +134,7 @@ namespace hand
 		type_{ type },
 		obj_{ obj },
 		pos_{ pos },
-		life_{ 10 },
+		life_{ 1.0 },
 		time_{ StartImmediately::Yes, GlobalClock::Get() }
 	{
 	}
@@ -169,7 +169,7 @@ namespace hand
 		return (life_ > 0) && SceneRect.stretched(32).intersects(pos_);
 	}
 
-	void Enemy::damage(int damageAmount)
+	void Enemy::damage(double damageAmount)
 	{
 		if (life_ > 0)
 		{

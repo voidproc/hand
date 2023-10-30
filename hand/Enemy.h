@@ -43,7 +43,7 @@ namespace hand
 
 		bool isAlive() const;
 
-		void damage(int damageAmount);
+		void damage(double damageAmount);
 
 		const Vec2& pos() const;
 
@@ -55,7 +55,7 @@ namespace hand
 
 		Vec2 pos_;
 
-		int life_;
+		double life_;
 
 		Stopwatch time_;
 	};

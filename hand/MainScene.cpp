@@ -49,6 +49,103 @@ namespace hand
 		};
 	}
 
+	// ステージイベント関係
+	namespace
+	{
+		struct GenerateEnemies : IEffect
+		{
+			GenerateEnemies(std::function<void()> f, double lifetime, double interval)
+				:
+				f_{ f },
+				lifetime_{ lifetime },
+				timerInterval_{ SecondsF{ interval }, StartImmediately::Yes, GlobalClock::Get() }
+			{
+			}
+
+			bool update(double t) override
+			{
+				if (timerInterval_.reachedZero())
+				{
+					timerInterval_.restart();
+					f_();
+				}
+
+				return t < lifetime_;
+			}
+
+			std::function<void()> f_;
+			double lifetime_;
+			Timer timerInterval_;
+		};
+
+		double RandomX()
+		{
+			return Random(16.0, SceneWidth - 16.0);
+		}
+
+		double PosRight()
+		{
+			return SceneWidth + 16;
+		}
+
+		double PosLeft()
+		{
+			return -16;
+		}
+
+		double ParseX(const String& text)
+		{
+			if (text == U"random")
+			{
+				return RandomX();
+			}
+			else if (text == U"right")
+			{
+				return PosRight();
+			}
+			else if (text == U"left")
+			{
+				return PosLeft();
+			}
+
+			return ParseFloat<double>(text);
+		}
+
+		double RandomY()
+		{
+			return Random(16.0, SceneHeight - 16.0);
+		}
+
+		double PosBottom()
+		{
+			return SceneHeight + 16;
+		}
+
+		double PosTop()
+		{
+			return -16;
+		}
+
+		double ParseY(const String& text)
+		{
+			if (text == U"random")
+			{
+				return RandomY();
+			}
+			else if (text == U"bottom")
+			{
+				return PosBottom();
+			}
+			else if (text == U"top")
+			{
+				return PosTop();
+			}
+
+			return ParseFloat<double>(text);
+		}
+	}
+
+
 	MainScene::MainScene(const InitData& init)
 		:
 		IScene{ init },
@@ -133,7 +230,13 @@ namespace hand
 		}
 
 		// ステージイベント
-		while (eventList_.update(time_.sF())) {}
+		while (eventList_.hasActiveEvent(time_.sF()))
+		{
+			const auto& row = eventList_.getRow();
+			doEvent_(row);
+
+			eventList_.next();
+		}
 	}
 
 	void MainScene::draw() const
@@ -174,7 +277,7 @@ namespace hand
 		}
 
 		// ステージ表記
-		drawStageTitle_();
+		//drawStageTitle_();
 
 		// ステータス
 		drawKarma_();
@@ -457,5 +560,54 @@ namespace hand
 	void MainScene::addScore_(double score)
 	{
 		getData().score += static_cast<int>(score / 10) * 10;
+	}
+
+	void MainScene::doEvent_(const Array<String>& eventCsvRow)
+	{
+		const String textType = eventCsvRow[1].trimmed().lowercased();
+		const String textX = eventCsvRow[2].trimmed().lowercased();
+		const String textY = eventCsvRow[3].trimmed().lowercased();
+
+		const Vec2 pos{ ParseX(textX), ParseY(textY) };
+
+		if (textType == U"bird1")
+		{
+			const double speedScale = ParseOr<double>(eventCsvRow[4], 1.0);
+			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale));
+		}
+		else if (textType == U"bird2")
+		{
+			const double speedScale = ParseOr<double>(eventCsvRow[4], 1.0);
+			obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos, speedScale));
+		}
+		else if (textType == U"bird3")
+		{
+			obj_.enemies.emplace_back(MakeEnemy<Bird3, EnemyType::Bird3>(obj_, pos));
+		}
+		else if (textType == U"birdb1")
+		{
+			const double speedY0 = ParseOr<double>(eventCsvRow[4], 200.0);
+			obj_.enemies.emplace_back(MakeEnemy<BirdB1, EnemyType::BirdB1>(obj_, pos, speedY0));
+		}
+		else if (textType == U"genbird1")
+		{
+			const double lifetime = ParseFloat<double>(eventCsvRow[4]);
+			const double interval = ParseFloat<double>(eventCsvRow[5]);
+			const double speedScale = ParseFloat<double>(eventCsvRow[6]);
+			obj_.effect.add<GenerateEnemies>([&, speedScale, textX, textY]() {
+				const Vec2 pos{ ParseX(textX), ParseY(textY) };
+				obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale));
+				}, lifetime, interval);
+		}
+		else if (textType == U"genbird2")
+		{
+			const double lifetime = ParseFloat<double>(eventCsvRow[4]);
+			const double interval = ParseFloat<double>(eventCsvRow[5]);
+			const double speedScale = ParseFloat<double>(eventCsvRow[6]);
+			obj_.effect.add<GenerateEnemies>([&, speedScale, textX, textY]() {
+				const Vec2 pos{ ParseX(textX), ParseY(textY) };
+				obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, pos, speedScale));
+				}, lifetime, interval);
+		}
 	}
 }

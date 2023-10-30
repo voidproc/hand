@@ -32,6 +32,9 @@ namespace hand
 		// スコア加算
 		void addScore_(double score);
 
+		// ステージイベントの実行
+		void doEvent_(const Array<String>& e);
+
 		// 画面内のオブジェクト
 		Objects obj_;
 

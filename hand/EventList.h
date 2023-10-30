@@ -12,7 +12,11 @@ namespace hand
 
 		void load(FilePathView eventCsvPath);
 
-		bool update(double t);
+		bool hasActiveEvent(double t);
+
+		void next();
+
+		const Array<String>& getRow() const;
 
 	private:
 		void doEvent_();
@@ -20,6 +24,6 @@ namespace hand
 		Objects& obj_;
 		CSV eventCsv_;
 		int currentRow_;
-		double nextTime_;
+		double elapsedTime_;
 	};
 }
