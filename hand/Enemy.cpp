@@ -137,7 +137,8 @@ namespace hand
 		obj_{ obj },
 		pos_{ pos },
 		life_{ 1.0 },
-		time_{ StartImmediately::Yes, GlobalClock::Get() }
+		time_{ StartImmediately::Yes, GlobalClock::Get() },
+		timerDamaged_{ 0.2s, StartImmediately::No }
 	{
 	}
 
@@ -176,6 +177,7 @@ namespace hand
 		if (life_ > 0)
 		{
 			life_ -= damageAmount;
+			timerDamaged_.restart();
 
 			// 爆発エフェクト
 			if (life_ <= 0)
@@ -188,6 +190,11 @@ namespace hand
 	const Vec2& Enemy::pos() const
 	{
 		return pos_;
+	}
+
+	Vec2 Enemy::drawPos() const
+	{
+		return timerDamaged_.isRunning() ? pos_.movedBy(RandomVec2(2.0)) : pos_;
 	}
 
 	Bird1::Bird1(EnemyType type, Objects& obj, const Vec2& pos, double speedScale)
@@ -203,7 +210,7 @@ namespace hand
 
 	void Bird1::draw() const
 	{
-		SpriteSheet::DrawAt(TextureAsset(U"Bird"), 3, pos_, Palette::White, 0.4s, time_.sF());
+		SpriteSheet::DrawAt(TextureAsset(U"Bird"), 3, drawPos(), Palette::White, 0.4s, time_.sF());
 
 		Enemy::draw();
 	}
@@ -227,7 +234,7 @@ namespace hand
 
 	void Bird2::draw() const
 	{
-		SpriteSheet::DrawAt(TextureAsset(U"Bird"), 3, pos_, Palette::White, 0.4s, time_.sF());
+		SpriteSheet::DrawAt(TextureAsset(U"Bird"), 3, drawPos(), Palette::White, 0.4s, time_.sF());
 
 		Enemy::draw();
 	}
@@ -252,7 +259,7 @@ namespace hand
 	void Bullet1::draw() const
 	{
 		const auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bullet"), 4, 0.4s, time_.sF());
-		tex.scaled(Clamp(2.0 - 1.0 * time_.sF() / 0.15, 1.0, 2.0)).drawAt(pos_, Palette::White);
+		tex.scaled(Clamp(2.0 - 1.0 * time_.sF() / 0.15, 1.0, 2.0)).drawAt(drawPos(), Palette::White);
 
 		Enemy::draw();
 	}
@@ -273,6 +280,8 @@ namespace hand
 		anim_{ GlobalClock::Get() },
 		timerFire_{ 0.5s, StartImmediately::Yes }
 	{
+		life_ = 4.0;
+
 		anim_
 			.set(U"SpeedX", { 0s, -60 }, { 2.2s, 0 }, EaseOutSine)
 			.set(U"SpeedX", { 2.8s, 0 }, { 5.0s, 60 }, EaseInSine)
@@ -303,7 +312,7 @@ namespace hand
 	void Bird3::draw() const
 	{
 		auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bird"), 3, 0.4s, time_.sF());
-		tex.mirrored(anim_[U"Mirrored"]).drawAt(pos_, Palette::White);
+		tex.mirrored(anim_[U"Mirrored"]).drawAt(drawPos(), Palette::White);
 
 		Enemy::draw();
 	}
@@ -319,6 +328,8 @@ namespace hand
 		anim1_{ GlobalClock::Get() },
 		anim2_{ GlobalClock::Get() }
 	{
+		life_ = 4.0;
+
 		anim1_
 			.set(U"SpeedY", { 0s, speedY0 }, { 1.3s, 0 }, EaseOutSine)
 			.start();
@@ -351,7 +362,7 @@ namespace hand
 		std::pair<int, int> frame = (anim2_[U"Texture"] < 1) ? std::make_pair(0, 1) : std::make_pair(2, 3);
 
 		auto tex = SpriteSheet::GetFrame(TextureAsset(U"BirdB"), 4, frame.first, frame.second, 0.10s, time_.sF());
-		tex.drawAt(pos_, Palette::White);
+		tex.drawAt(drawPos(), Palette::White);
 
 		Enemy::draw();
 	}
@@ -388,7 +399,7 @@ namespace hand
 	void JellyFish1::draw() const
 	{
 		auto tex = SpriteSheet::GetFrame(TextureAsset(U"JellyFish"), 3, 0.50s, time_.sF());
-		tex.drawAt(pos_, Palette::White);
+		tex.drawAt(drawPos(), Palette::White);
 	}
 
 	RectF JellyFish1::collision() const

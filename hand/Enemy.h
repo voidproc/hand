@@ -48,6 +48,8 @@ namespace hand
 
 		const Vec2& pos() const;
 
+		Vec2 drawPos() const;
+
 	private:
 		EnemyType type_;
 
@@ -59,6 +61,8 @@ namespace hand
 		double life_;
 
 		Stopwatch time_;
+
+		Timer timerDamaged_;
 	};
 
 	// 敵（鳥）

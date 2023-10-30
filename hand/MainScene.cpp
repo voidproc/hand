@@ -335,7 +335,7 @@ namespace hand
 			{
 				if (enemy->isAlive() && hand->collision().intersects(enemy->collision()))
 				{
-					enemy->damage(100);
+					enemy->damage(20.0 * Scene::DeltaTime());
 
 					if (not enemy->isAlive())
 					{
@@ -465,14 +465,17 @@ namespace hand
 
 	void MainScene::drawStageTitle_() const
 	{
-		if (timeStageTitle_.isRunning() && timeStageTitle_ < 3s)
+		constexpr double FadeTime = 0.6;
+		constexpr double FadeOutWait = 2.8;
+
+		if (timeStageTitle_.isRunning() && timeStageTitle_.sF() < FadeTime + FadeOutWait)
 		{
 			const double t = timeStageTitle_.sF();
-			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - t / 0.6), 0.0, 1.0);
-			const double xOut = (t > 2.4) ? 200 * EaseInCubic((t - 2.4) / 0.6) : 0.0;
+			const double x = SceneCenter.x + 200 * Clamp(EaseInCubic(1.0 - t / FadeTime), 0.0, 1.0);
+			const double xOut = (t > FadeOutWait) ? 200 * EaseInCubic((t - FadeOutWait) / FadeTime) : 0.0;
 
-			double h = Clamp(t / 0.6, 0.0, 1.0);
-			if (t > 2.4) h = 1.0 - Clamp((t - 2.4) / 0.6, 0.0, 1.0);
+			double h = Clamp(t / FadeTime, 0.0, 1.0);
+			if (t > FadeOutWait) h = 1.0 - Clamp((t - FadeOutWait) / FadeTime, 0.0, 1.0);
 
 			const auto stageTextFunc = [](int stage) {
 				switch (stage)
