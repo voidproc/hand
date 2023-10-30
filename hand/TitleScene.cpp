@@ -21,7 +21,7 @@ namespace hand
 
 	void TitleScene::update()
 	{
-		if (time_ > 0.5s)
+		if (time_ > 0.8s)
 		{
 			if (getData().input.left().down())
 			{
@@ -67,6 +67,7 @@ namespace hand
 		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(1, 1 + 24 - 20), Theme::Lighter);
 		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(0, 0 + 24 - 20), Theme::Black);
 
+		if (time_ > 0.8s)
 		{
 			const double alpha = timeEnter_.isStarted() ? Periodic::Square0_1(0.2s) : 1.0;
 
@@ -87,6 +88,12 @@ namespace hand
 			TextureAsset(U"ArrowLeft").drawAt(region.leftCenter().movedBy(-16, 0), ColorF{ Theme::Black, arrowAlpha });
 			TextureAsset(U"ArrowLeft").mirrored().drawAt(region.rightCenter().movedBy(16, 0), ColorF{ Theme::Black, arrowAlpha });
 		}
-		
+
+		// フェードイン
+		{
+			const double t = 1.0 - Clamp(time_.sF() / 0.5, 0.0, 1.0);
+			SceneRect.draw(ColorF{ Theme::Black, static_cast<int>(4.0 * t) / 4.0 });
+		}
+
 	}
 }

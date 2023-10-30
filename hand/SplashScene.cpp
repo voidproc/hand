@@ -13,7 +13,7 @@ namespace hand
 
 	void SplashScene::update()
 	{
-		if (time_ > 3.2s + 1.2s + 1.3s || (time_ > 1.0s && getData().input.decide().down()))
+		if (time_ > 2.8s + 1.0s + 0.5s + 0.7s || (time_ > 1.0s && getData().input.decide().down()))
 		{
 			changeScene(U"TitleScene", 0s);
 		}
@@ -32,26 +32,26 @@ namespace hand
 			}
 		}
 
-		if (time_ > 0.75s)
+		if (time_ > 0.60s)
 		{
 			TextureAsset(U"Powered")(0, 0, 80, 8).draw(160 / 2 - 80 / 2, 144 / 2 - 80 / 2);
 		}
 
-		if (time_ > 1.20s)
+		if (time_ > 1.00s)
 		{
-			const double t = Clamp((time_.sF() - 1.2) / 1.2, 0.0, 1.0);
+			const double t = Clamp((time_.sF() - 1.0) / 1.0, 0.0, 1.0);
 			TextureAsset(U"Powered")(0, 8, 80, 56).draw(160 / 2 - 80 / 2, 144 / 2 - 80 / 2 + 8, AlphaF(static_cast<int>(4.0 * t) / 4.0));
 		}
 
-		if (time_ > 2.4s + 0.8s)
+		if (time_ > 2.0s + 0.8s)
 		{
 			TextureAsset(U"Powered")(0, 8 + 56, 80, 16).draw(160 / 2 - 80 / 2, 144 / 2 - 80 / 2 + 8 + 56);
 		}
 
-		if (time_ > 3.2s + 1.2s)
+		if (time_ > 2.8s + 1.0s)
 		{
-			const double t = Clamp((time_.sF() - 3.2 - 1.2) / 1.0, 0.0, 1.0);
-			SceneRect.draw(ColorF{ Theme::White, static_cast<int>(4.0 * t) / 4.0 });
+			const double t = Clamp((time_.sF() - 2.8 - 1.0) / 0.5, 0.0, 1.0);
+			SceneRect.draw(ColorF{ Theme::Black, static_cast<int>(4.0 * t) / 4.0 });
 		}
 	}
 }
