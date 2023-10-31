@@ -23,12 +23,12 @@ namespace hand
 	{
 		if (time_ > 0.8s)
 		{
-			if (getData().input.left().down())
+			if (getData().input.leftDown())
 			{
 				cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
 			}
 
-			if (getData().input.right().down())
+			if (getData().input.rightDown())
 			{
 				cursor_ = (cursor_ + 1) % ItemCount;
 			}

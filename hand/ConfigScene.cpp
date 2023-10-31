@@ -19,12 +19,12 @@ namespace hand
 
 	void ConfigScene::update()
 	{
-		if (getData().input.up().down())
+		if (getData().input.upDown())
 		{
 			cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
 		}
 
-		if (getData().input.down().down())
+		if (getData().input.downDown())
 		{
 			cursor_ = (cursor_ + 1) % ItemCount;
 		}
@@ -36,13 +36,13 @@ namespace hand
 		{
 		case 0:
 			// ウィンドウサイズの変更
-			if (getData().input.left().down())
+			if (getData().input.leftDown())
 			{
 				config.windowScale = Clamp(config.windowScale - 1, 1, 8);
 				Window::Resize((SceneSize * config.windowScale));
 			}
 
-			if (getData().input.right().down())
+			if (getData().input.rightDown())
 			{
 				config.windowScale = Clamp(config.windowScale + 1, 1, 8);
 				Window::Resize((SceneSize * config.windowScale));
@@ -51,7 +51,7 @@ namespace hand
 
 		case 1:
 			// エフェクト使用
-			if ((getData().input.left() | getData().input.right()).down())
+			if (getData().input.leftDown() || getData().input.rightDown())
 			{
 				config.useEffect = not config.useEffect;
 			}

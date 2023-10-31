@@ -4,12 +4,14 @@ namespace hand
 {
 	InputDevice::InputDevice()
 	{
-		inputLeft_ = KeyLeft | KeyA;
-		inputRight_ = KeyRight | KeyD;
-		inputUp_ = KeyUp | KeyW;
-		inputDown_ = KeyDown | KeyS;
-		inputAction_ = KeySpace;
-		inputPause_ = KeyEnter;
+		inputLeft_ = KeyLeft | KeyA | xinput_().buttonLeft;
+		inputRight_ = KeyRight | KeyD | xinput_().buttonRight;
+		inputUp_ = KeyUp | KeyW | xinput_().buttonUp;
+		inputDown_ = KeyDown | KeyS | xinput_().buttonDown;
+		inputAction_ = KeySpace | xinput_().buttonA;
+		inputPause_ = KeyEnter | xinput_().buttonStart;
+
+		prevLeftPressed_ = prevRightPressed_ = prevUpPressed_ = prevDownPressed_ = false;
 	}
 
 	InputGroup InputDevice::left() const
@@ -45,5 +47,79 @@ namespace hand
 	InputGroup InputDevice::decide() const
 	{
 		return action() | pause();
+	}
+
+	const s3d::detail::XInput_impl& InputDevice::xinput_() const
+	{
+		return XInput(0);
+	}
+
+	bool InputDevice::leftPressed() const
+	{
+		return left().pressed() || xinput_().leftThumbX < -0.5;
+	}
+
+	bool InputDevice::rightPressed() const
+	{
+		return right().pressed() || xinput_().leftThumbX > 0.5;
+	}
+
+	bool InputDevice::upPressed() const
+	{
+		return up().pressed() || xinput_().leftThumbY > 0.5;
+	}
+
+	bool InputDevice::downPressed() const
+	{
+		return down().pressed() || xinput_().leftThumbY < -0.5;
+	}
+
+	bool InputDevice::leftDown() const
+	{
+		return not prevLeftPressed_ && leftPressed();
+	}
+
+	bool InputDevice::rightDown() const
+	{
+		return not prevRightPressed_ && rightPressed();
+	}
+
+	bool InputDevice::upDown() const
+	{
+		return not prevUpPressed_ && upPressed();
+	}
+
+	bool InputDevice::downDown() const
+	{
+		return not prevDownPressed_ && downPressed();
+	}
+
+	bool InputDevice::leftUp() const
+	{
+		return prevLeftPressed_ && not leftPressed();
+	}
+
+	bool InputDevice::rightUp() const
+	{
+		return prevRightPressed_ && not rightPressed();
+	}
+
+	bool InputDevice::upUp() const
+	{
+		return prevUpPressed_ && not upPressed();
+	}
+
+	bool InputDevice::downUp() const
+	{
+		return prevDownPressed_ && not downPressed();
+	}
+
+
+	void InputDevice::update()
+	{
+		prevLeftPressed_ = leftPressed();
+		prevRightPressed_ = rightPressed();
+		prevUpPressed_ = upPressed();
+		prevDownPressed_ = downPressed();
 	}
 }

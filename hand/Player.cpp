@@ -73,12 +73,12 @@ namespace hand
 
 		HandDirection GetHandDirectionByInput(InputDevice& input)
 		{
-			if (input.up().pressed())
+			if (input.upPressed())
 			{
 				return HandDirection::Up;
 			}
 
-			if (input.down().pressed())
+			if (input.downPressed())
 			{
 				return HandDirection::Down;
 			}
@@ -148,10 +148,10 @@ namespace hand
 			// 移動のためのキー入力
 
 			Vec2 vel{};
-			if (input_.left().pressed()) vel.x = -1;
-			if (input_.right().pressed()) vel.x = 1;
-			if (input_.up().pressed()) vel.y = -1;
-			if (input_.down().pressed()) vel.y = 1;
+			if (input_.leftPressed()) vel.x = -1;
+			if (input_.rightPressed()) vel.x = 1;
+			if (input_.upPressed()) vel.y = -1;
+			if (input_.downPressed()) vel.y = 1;
 			vel.limitLengthSelf(1.0);
 
 			// ダメージ中は入力無効
@@ -196,7 +196,7 @@ namespace hand
 			}
 
 			// カルマが切れるかボタンが離されたらすべての Hand を破棄
-			if (not input_.action().pressed() || karma_ < KarmaEmptyThreshold)
+			if (not hands_.isEmpty() && (not input_.action().pressed() || karma_ < KarmaEmptyThreshold))
 			{
 				for (auto& hand : hands_)
 				{

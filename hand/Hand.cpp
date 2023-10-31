@@ -49,8 +49,6 @@ namespace hand
 
 		if (time_ < 0.3s) return true;
 
-		if (not KeySpace.pressed()) return false;
-
 		return true;
 	}
 

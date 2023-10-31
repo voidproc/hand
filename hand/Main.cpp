@@ -74,9 +74,9 @@ void Main()
 	app.setFadeColor(Theme::Black);
 
 	//app.init(U"SplashScene", 0s);
-	app.init(U"TitleScene", 0s);
+	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
-	//app.init(U"MainScene", 0s);
+	app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config
@@ -104,6 +104,8 @@ void Main()
 			{
 				break;
 			}
+
+			data->input.update();
 		}
 
 		{

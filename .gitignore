@@ -398,3 +398,7 @@ MigrationBackup/
 # VS
 
 *.hint
+
+# App
+
+**/App/config.ini

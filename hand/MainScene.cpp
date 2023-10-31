@@ -159,7 +159,9 @@ namespace hand
 		timerDecrScoreRate_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
 		eventList_{ obj_ },
 		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
-		timeBgRain_{ StartImmediately::No, GlobalClock::Get() }
+		timeBgRain_{ StartImmediately::No, GlobalClock::Get() },
+		timeStageTitle_{ StartImmediately::No, GlobalClock::Get() },
+		stage_{ 0 }
 	{
 		eventList_.load(RES(StageEventFilePath[1]));
 	}
