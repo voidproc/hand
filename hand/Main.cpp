@@ -63,10 +63,6 @@ void Main()
 	const ScopedRenderStates2D renderState{ SamplerState::ClampNearest };
 	RenderTexture renderTexture{ SceneSize };
 
-	// ウィンドウサイズ
-	constexpr double DefaultWindowScale = 3;
-	Window::Resize((SceneSize * DefaultWindowScale).asPoint());
-
 	// アプリケーション
 	App app;
 	app.add<SplashScene>(U"SplashScene");
@@ -77,16 +73,19 @@ void Main()
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
-	app.init(U"SplashScene", 0s);
-	//app.init(U"TitleScene", 0s);
+	//app.init(U"SplashScene", 0s);
+	app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
 	//app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config
 	auto data = app.get().get();
-	data->config.windowScale = DefaultWindowScale;
-	data->config.useEffect = true;
+	auto& config = data->config;
+	config.load(Config::ConfigFilePath);
+
+	// ウィンドウサイズ
+	Window::Resize(SceneSize * config.windowScale);
 
 	// シェーダ（スキャンラインエフェクト用）
 	const PixelShader ps = HLSL{ RES(U"shader/scanline.hlsl"), U"PS_Texture" };
@@ -108,9 +107,9 @@ void Main()
 		}
 
 		{
-			const Transformer2D scaler{ Mat3x2::Scale(data->config.windowScale) };
+			const Transformer2D scaler{ Mat3x2::Scale(config.windowScale) };
 
-			const bool useEffect = data->config.useEffect && data->config.windowScale >= 2;
+			const bool useEffect = config.useEffect && config.windowScale >= 2;
 			const ScopedCustomShader2D shader = useEffect ? ScopedCustomShader2D{ ps } : ScopedCustomShader2D{};
 
 			renderTexture.draw();

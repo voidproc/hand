@@ -61,7 +61,8 @@ namespace hand
 			// 戻る
 			if (getData().input.decide().down())
 			{
-				// TODO: 設定保存
+				// 設定保存
+				config.save(Config::ConfigFilePath);
 
 				changeScene(U"TitleScene", 0s);
 			}

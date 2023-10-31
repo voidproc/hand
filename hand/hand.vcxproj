@@ -115,6 +115,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="ConfigScene.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EventList.cpp" />
