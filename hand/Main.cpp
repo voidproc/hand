@@ -47,6 +47,8 @@ void LoadAssets()
 	TextureAsset::Register(U"ArrowLeft", RES(U"texture/arrow_left.png"));
 	TextureAsset::Register(U"PlayerIndicator", RES(U"texture/player_indicator.png"));
 	TextureAsset::Register(U"JellyFish", RES(U"texture/jellyfish.png"));
+	TextureAsset::Register(U"TitleBand", RES(U"texture/title_band.png"));
+	TextureAsset::Register(U"TitleText", RES(U"texture/title_text.png"));
 }
 
 void Main()
@@ -74,9 +76,9 @@ void Main()
 	app.setFadeColor(Theme::Black);
 
 	//app.init(U"SplashScene", 0s);
-	//app.init(U"TitleScene", 0s);
+	app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
-	app.init(U"MainScene", 0s);
+	//app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config

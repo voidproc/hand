@@ -14,9 +14,13 @@ namespace hand
 		IScene{ init },
 		time_{ StartImmediately::Yes },
 		timeEnter_{ StartImmediately::No },
+		timeCursor_{ StartImmediately::No },
 		cursor_{ 0 }
 	{
 		getData().score = 0;
+
+		timeCursor_.set(999s);
+		timeCursor_.start();
 	}
 
 	void TitleScene::update()
@@ -26,11 +30,13 @@ namespace hand
 			if (getData().input.leftDown())
 			{
 				cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
+				timeCursor_.restart();
 			}
 
 			if (getData().input.rightDown())
 			{
 				cursor_ = (cursor_ + 1) % ItemCount;
+				timeCursor_.restart();
 			}
 
 			if (getData().input.decide().down())
@@ -58,14 +64,9 @@ namespace hand
 		// 背景全体の色
 		Scene::Rect().draw(Theme::White);
 
-		Rect{ 0, 0, SceneWidth, 24 }.draw(Theme::Darker);
-		Rect{ Arg::bottomLeft = Point{ 0, SceneHeight }, Size{ SceneWidth, 24 } }.draw(Theme::Darker);
-
-		FontAsset(U"Title")(U"救いの手").drawAt(SceneCenter.movedBy(2, 2 - 20), Theme::Lighter);
-		FontAsset(U"Title")(U"救いの手").drawAt(SceneCenter.movedBy(0, 0 - 20), Theme::Black);
-
-		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(1, 1 + 24 - 20), Theme::Lighter);
-		FontAsset(U"Sub")(U"The HAND of Salvation").drawAt(SceneCenter.movedBy(0, 0 + 24 - 20), Theme::Black);
+		TextureAsset(U"TitleBand").draw();
+		TextureAsset(U"TitleBand").flipped().draw(Arg::bottomLeft = Vec2{ 0, SceneHeight });
+		TextureAsset(U"TitleText").draw(27, 17);
 
 		if (time_ > 0.8s)
 		{
@@ -81,8 +82,9 @@ namespace hand
 				};
 
 			const auto text = FontAsset(U"H88")(labelFunc(cursor_));
-			const auto region = text.regionAt(SceneCenter.movedBy(0, 28));
-			text.draw(region.pos, ColorF{ Theme::Black, alpha });
+			const double vibX = 2.0 * (1.0 - Clamp(timeCursor_.sF() / 0.18, 0.0, 1.0)) * Periodic::Sine1_1(0.06s);
+			const auto region = text.regionAt(SceneCenter.movedBy(0, 30));
+			text.draw(region.pos.movedBy(vibX, 0), ColorF{Theme::Black, alpha});
 
 			const double arrowAlpha = timeEnter_.isStarted() ? 0.0 : Periodic::Square0_1(0.75s);
 			TextureAsset(U"ArrowLeft").drawAt(region.leftCenter().movedBy(-16, 0), ColorF{ Theme::Black, arrowAlpha });
