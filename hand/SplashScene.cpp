@@ -4,15 +4,62 @@
 
 namespace hand
 {
+	namespace
+	{
+		void BeginPreloadAssets()
+		{
+			for (auto [name, info] : FontAsset::Enumerate())
+			{
+				FontAsset::LoadAsync(name, U"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,./;:[](){}@-=+*<>?!#$%&_");
+			}
+
+			for (auto [name, info] : TextureAsset::Enumerate())
+			{
+				TextureAsset::LoadAsync(name);
+			}
+		}
+
+		bool IsReadyAllAssets()
+		{
+			for (auto [name, info] : FontAsset::Enumerate())
+			{
+				if (not FontAsset::IsReady(name)) return false;
+			}
+
+			for (auto [name, info] : TextureAsset::Enumerate())
+			{
+				if (not TextureAsset::IsReady(name)) return false;
+			}
+
+			return true;
+		}
+	}
+
 	SplashScene::SplashScene(const InitData& init)
 		:
 		IScene{ init },
-		time_{ StartImmediately::Yes, GlobalClock::Get() }
+		time_{ StartImmediately::Yes, GlobalClock::Get() },
+		timerCheckAsset_{ 3s, StartImmediately::Yes }
 	{
+		BeginPreloadAssets();
 	}
 
 	void SplashScene::update()
 	{
+		if (timerCheckAsset_.reachedZero())
+		{
+			if (not IsReadyAllAssets())
+			{
+				timerCheckAsset_.restart();
+			}
+			else
+			{
+				timerCheckAsset_.reset();
+			}
+		}
+
+		if (timerCheckAsset_.isRunning()) return;
+
 		if (time_ > 2.8s + 1.0s + 0.5s + 0.7s || (time_ > 1.0s && getData().input.decide().down()))
 		{
 			changeScene(U"TitleScene", 0s);
@@ -52,6 +99,12 @@ namespace hand
 		{
 			const double t = Clamp((time_.sF() - 2.8 - 1.0) / 0.5, 0.0, 1.0);
 			SceneRect.draw(ColorF{ Theme::Black, static_cast<int>(4.0 * t) / 4.0 });
+		}
+
+		if (timerCheckAsset_.isRunning())
+		{
+			FontAsset(U"Sub")(U"Loading assets", String(1u + static_cast<size_t>(2.9 * Periodic::Sawtooth0_1(0.5s)), U'.'))
+				.draw(Arg::bottomLeft = Vec2{ 1, SceneHeight }, Theme::Darker);
 		}
 	}
 }

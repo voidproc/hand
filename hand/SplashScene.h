@@ -13,5 +13,6 @@ namespace hand
 
 	private:
 		Stopwatch time_;
+		Timer timerCheckAsset_;
 	};
 }
