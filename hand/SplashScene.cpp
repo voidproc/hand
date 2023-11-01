@@ -6,7 +6,7 @@ namespace hand
 {
 	namespace
 	{
-		void BeginPreloadAssets()
+		void PreloadAssets()
 		{
 			for (auto [name, info] : FontAsset::Enumerate())
 			{
@@ -19,7 +19,7 @@ namespace hand
 			}
 		}
 
-		bool IsReadyAllAssets()
+		bool IsCompletedPreloadingAssets()
 		{
 			for (auto [name, info] : FontAsset::Enumerate())
 			{
@@ -41,14 +41,14 @@ namespace hand
 		time_{ StartImmediately::Yes, GlobalClock::Get() },
 		timerCheckAsset_{ 3s, StartImmediately::Yes }
 	{
-		BeginPreloadAssets();
+		PreloadAssets();
 	}
 
 	void SplashScene::update()
 	{
 		if (timerCheckAsset_.reachedZero())
 		{
-			if (not IsReadyAllAssets())
+			if (not IsCompletedPreloadingAssets())
 			{
 				timerCheckAsset_.restart();
 			}
