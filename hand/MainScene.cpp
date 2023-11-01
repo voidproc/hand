@@ -11,8 +11,9 @@ namespace hand
 		constexpr double ScoreRateMax = 8.0;
 		constexpr double ScoreRateDecrOnTimer = 0.1;
 		constexpr auto ScoreRateDecrTime = 0.22s;
-		constexpr auto ScoreRateDecrTimeOnDestroyEnemy = 0.8s;
-		constexpr auto ScoreRateDecrTimeOnGetMoney = 0.4s;
+		constexpr auto ScoreRateGaugeIncrOnDestroyEnemy = 0.8s;
+		constexpr auto ScoreRateGaugeIncrOnGetMoney = 0.4s;
+		constexpr auto ScoreRateGaugeIncrOnCallHand = 0.2s;
 		constexpr auto ScoreRateDecrTimeMax = 2.0s;
 
 		constexpr std::array<StringView, 4> StageEventFilePath = {
@@ -150,13 +151,14 @@ namespace hand
 		:
 		IScene{ init },
 		obj_{ getData().input },
+		handExistsPrevFrame_{ false },
 		time_{ StartImmediately::Yes, GlobalClock::Get() },
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes, GlobalClock::Get() },
 		timePlayerDead_{ StartImmediately::No, GlobalClock::Get() },
 		timerShake_{ 0.4s, StartImmediately::No, GlobalClock::Get() },
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No, GlobalClock::Get() },
-		timerDecrScoreRate_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
+		timerScoreRateGaugeDecr_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
 		eventList_{ obj_ },
 		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
 		timeBgRain_{ StartImmediately::No, GlobalClock::Get() },
@@ -239,6 +241,9 @@ namespace hand
 
 			eventList_.next();
 		}
+
+		//
+		handExistsPrevFrame_ = not obj_.hands.isEmpty();
 	}
 
 	void MainScene::draw() const
@@ -304,7 +309,12 @@ namespace hand
 
 	void MainScene::updateScoreRate_()
 	{
-		if (not obj_.hands.isEmpty())
+		if (not handExistsPrevFrame_ && not obj_.hands.isEmpty())
+		{
+			// このフレームで Hand が生成されたのでゲージを少し維持する
+			addScoreRateGauge_(ScoreRateGaugeIncrOnCallHand);
+		}
+		else if (not obj_.hands.isEmpty())
 		{
 			// Hand が存在するのでスコアレートを加算する...
 
@@ -320,9 +330,9 @@ namespace hand
 
 			timeIncrScoreRate_.reset();
 
-			if (timerDecrScoreRate_.reachedZero())
+			if (timerScoreRateGaugeDecr_.reachedZero())
 			{
-				timerDecrScoreRate_.restart(ScoreRateDecrTime);
+				timerScoreRateGaugeDecr_.restart(ScoreRateDecrTime);
 				scoreRateRaw_ = Clamp(scoreRateRaw_ - ScoreRateDecrOnTimer, ScoreRateMin, ScoreRateMax);
 			}
 		}
@@ -348,8 +358,7 @@ namespace hand
 						scoreRateRaw_ = Clamp(scoreRateRaw_ + 0.1, ScoreRateMin, ScoreRateMax);
 
 						// スコアレート減少タイマーの残り時間を加算
-						const auto timerDecrScoreRateRemain = Clamp(timerDecrScoreRate_.remaining() + ScoreRateDecrTimeOnDestroyEnemy, ScoreRateDecrTime, ScoreRateDecrTimeMax);
-						timerDecrScoreRate_.restart(timerDecrScoreRateRemain);
+						addScoreRateGauge_(ScoreRateGaugeIncrOnDestroyEnemy);
 
 						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
@@ -393,8 +402,7 @@ namespace hand
 					addScore_(ItemScore(item->type()) * scoreRate_());
 
 					// スコアレート減少タイマーの残り時間を加算
-					const auto timerDecrScoreRateRemain = Clamp(timerDecrScoreRate_.remaining() + ScoreRateDecrTimeOnGetMoney, ScoreRateDecrTime, ScoreRateDecrTimeMax);
-					timerDecrScoreRate_.restart(timerDecrScoreRateRemain);
+					addScoreRateGauge_(ScoreRateGaugeIncrOnGetMoney);
 
 					// その場に倍率エフェクト
 					if (scoreRate_() > 1.99)
@@ -422,8 +430,8 @@ namespace hand
 						break;
 					}
 
-					// ダメージを受けるとスコアレートが半分になる
-					scoreRateRaw_ = Clamp(scoreRateRaw_ / 2, ScoreRateMin, ScoreRateMax);
+					// ダメージを受けるとスコアレートが 2/3 になる
+					scoreRateRaw_ = Clamp(scoreRateRaw_ * 2 / 3, ScoreRateMin, ScoreRateMax);
 				}
 			}
 		}
@@ -557,7 +565,7 @@ namespace hand
 
 			// 倍率ゲージ
 			// ゲージがなくなると倍率が減っていく感じ
-			const double scoreRateGauge0_1 = Clamp((timerDecrScoreRate_.sF() - ScoreRateDecrTime.count()) / (ScoreRateDecrTimeMax.count() - ScoreRateDecrTime.count()), 0.0, 1.0);
+			const double scoreRateGauge0_1 = Clamp((timerScoreRateGaugeDecr_.sF() - ScoreRateDecrTime.count()) / (ScoreRateDecrTimeMax.count() - ScoreRateDecrTime.count()), 0.0, 1.0);
 			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(8, 2) }.draw(2.0, Theme::Lighter);
 			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(-8 + 16 * scoreRateGauge0_1, 2) }.draw(2.0, Theme::Black);
 
@@ -577,6 +585,12 @@ namespace hand
 	void MainScene::addScore_(double score)
 	{
 		getData().score += static_cast<int>(score / 10) * 10;
+	}
+
+	void MainScene::addScoreRateGauge_(const Duration& gaugeAdd)
+	{
+		const auto timerRemain = Clamp(timerScoreRateGaugeDecr_.remaining() + gaugeAdd, ScoreRateDecrTime, ScoreRateDecrTimeMax);
+		timerScoreRateGaugeDecr_.restart(timerRemain);
 	}
 
 	void MainScene::doEvent_(const Array<String>& eventCsvRow)

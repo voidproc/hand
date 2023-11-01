@@ -33,11 +33,15 @@ namespace hand
 		// スコア加算
 		void addScore_(double score);
 
+		// スコアレートゲージ（秒）増加
+		void addScoreRateGauge_(const Duration& gaugeAdd);
+
 		// ステージイベントの実行
 		void doEvent_(const Array<String>& e);
 
 		// 画面内のオブジェクト
 		Objects obj_;
+		bool handExistsPrevFrame_;
 
 		// シーンの経過時間
 		Stopwatch time_;
@@ -57,8 +61,9 @@ namespace hand
 		// Handがない状態ではレートが減少する
 		double scoreRateRaw_;
 		Stopwatch timeIncrScoreRate_;
-		Timer timerDecrScoreRate_;
+		Timer timerScoreRateGaugeDecr_;
 
+		// ステージイベント
 		EventList eventList_;
 
 		// BG用
