@@ -197,15 +197,16 @@ namespace hand
 		return timerDamaged_.isRunning() ? pos_.movedBy(RandomVec2(2.0)) : pos_;
 	}
 
-	Bird1::Bird1(EnemyType type, Objects& obj, const Vec2& pos, double speedScale)
+	Bird1::Bird1(EnemyType type, Objects& obj, const Vec2& pos, double speedScale, double accel)
 		:
-		Enemy{ type, obj, pos }, speedScale_{ speedScale }
+		Enemy{ type, obj, pos }, vel_{ 0.5 * 60, 0 }, speedScale_{ speedScale }, accel_{ accel }
 	{
 	}
 
 	void Bird1::update()
 	{
-		pos_.x -= 0.5 * 60 * Scene::DeltaTime() * speedScale_;
+		pos_.x -= vel_.x * Scene::DeltaTime() * speedScale_;
+		vel_.x += accel_ * Scene::DeltaTime();
 	}
 
 	void Bird1::draw() const
@@ -249,6 +250,7 @@ namespace hand
 		Enemy{ type, obj, pos },
 		vel_{ vel }
 	{
+		life_ = 0.1;
 	}
 
 	void Bullet1::update()

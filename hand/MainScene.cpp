@@ -2,6 +2,7 @@
 #include "SceneSize.h"
 #include "Theme.h"
 #include "Res.h"
+#include "SpriteSheet.h"
 
 namespace hand
 {
@@ -77,6 +78,31 @@ namespace hand
 			std::function<void()> f_;
 			double lifetime_;
 			Timer timerInterval_;
+		};
+
+		struct StarEffect : IEffect
+		{
+			StarEffect()
+				:
+				pos_{ RandomVec2(RectF{ 8, 14 + 4, SceneWidth - 16, 32 }) },
+				lifetime_{ Random(0.3, 0.7) },
+				textureName_{ Sample({ U"Star1", U"Star2" })}
+			{
+			}
+
+			bool update(double t) override
+			{
+				const double t0_1 = t / lifetime_;
+
+				const auto tex = SpriteSheet::GetFrame(TextureAsset(textureName_), 6, SecondsF{ lifetime_ }, t);
+				tex.drawAt(pos_, AlphaF(0.7 * Periodic::Sine0_1(lifetime_ * 0.18, t)));
+
+				return t < lifetime_;
+			}
+
+			Vec2 pos_;
+			double lifetime_;
+			String textureName_;
 		};
 
 		double RandomX()
@@ -163,6 +189,7 @@ namespace hand
 		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
 		timeBgRain_{ StartImmediately::No, GlobalClock::Get() },
 		timeStageTitle_{ StartImmediately::No, GlobalClock::Get() },
+		timerStar_{ 8s, StartImmediately::No },
 		stage_{ 0 }
 	{
 		eventList_.load(RES(StageEventFilePath[1]));
@@ -180,11 +207,13 @@ namespace hand
 			{
 				clock->start();
 				obj_.effect.resume();
+				obj_.bgEffect.resume();
 			}
 			else
 			{
 				clock->pause();
 				obj_.effect.pause();
+				obj_.bgEffect.pause();
 			}
 		}
 
@@ -242,6 +271,16 @@ namespace hand
 			eventList_.next();
 		}
 
+		// NightSky
+		if (timeNightSky_.isRunning())
+		{
+			if (timerStar_.reachedZero())
+			{
+				timerStar_.restart(SecondsF{ Random(0.3, 2.0) });
+				obj_.bgEffect.add<StarEffect>();
+			}
+		}
+
 		//
 		handExistsPrevFrame_ = not obj_.hands.isEmpty();
 	}
@@ -258,6 +297,7 @@ namespace hand
 
 		// BG Texture
 		drawBG_();
+		obj_.bgEffect.update();
 
 		// Player
 		obj_.player.draw();
@@ -417,6 +457,8 @@ namespace hand
 			// 衝突判定 - Player vs Enemy
 			for (auto& enemy : obj_.enemies)
 			{
+				if (KeyI.pressed()) break; // [DEBUG]
+
 				if (not obj_.player.isInvincible() && obj_.player.collision().intersects(enemy->collision()))
 				{
 					shake_();
@@ -465,11 +507,29 @@ namespace hand
 		// Rain
 		if (timeBgRain_.isRunning())
 		{
-			for (int iRain : step(24))
+			for ([[maybe_unused]] int iRain : step(24))
 			{
 				Line{ RandomVec2(SceneRect), Arg::angle = 45_deg, Random(6.0, 9.0) }
 				.draw(ColorF{ Theme::White, Random(0.7, 1.0) });
 			}
+		}
+
+		// NightSky
+		if (timeNightSky_.isRunning())
+		{
+			const double alpha = 0.50 * Clamp(timeNightSky_.sF() / 7.0, 0.0, 1.0);
+			TextureAsset(U"NightSky").draw(0, 14, AlphaF(alpha));
+
+			const double starsAlpha = 0.95 * Clamp(timeNightSky_.sF() / 14.0, 0.0, 1.0);
+
+			TextureAsset(U"Stars1")
+				.mapped(640, 64)
+				.draw(1.0 * -(static_cast<int>(time_.sF() * 1.2) % 320), 14.0, AlphaF(starsAlpha * Periodic::Sine0_1(SecondsF{ 0.1 + Random(0.1) } * (0.3 + 0.7 * Periodic::Sine0_1(3s)), time_.sF())));
+
+			TextureAsset(U"Stars2")
+				.mapped(640, 64)
+				.draw(1.0 * -(static_cast<int>(time_.sF() * 0.9) % 320), 14.0, AlphaF(starsAlpha * Periodic::Jump0_1(SecondsF{ 0.18 + Random(0.1) } * (0.3 + 0.7 * Periodic::Sine0_1(5s)), time_.sF())));
+
 		}
 	}
 
@@ -604,7 +664,8 @@ namespace hand
 		if (textType == U"bird1")
 		{
 			const double speedScale = ParseOr<double>(eventCsvRow[4], 1.0);
-			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale));
+			const double accel = ParseOr<double>(eventCsvRow[5], 0.0);
+			obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale, accel));
 		}
 		else if (textType == U"bird2")
 		{
@@ -628,10 +689,11 @@ namespace hand
 		{
 			const double lifetime = ParseFloat<double>(eventCsvRow[4]);
 			const double interval = ParseFloat<double>(eventCsvRow[5]);
-			const double speedScale = ParseFloat<double>(eventCsvRow[6]);
-			obj_.effect.add<GenerateEnemies>([&, speedScale, textX, textY]() {
+			const double speedScale = ParseOr<double>(eventCsvRow[6], 1.0);
+			const double accel = ParseOr<double>(eventCsvRow[7], 0.0);
+			obj_.effect.add<GenerateEnemies>([&, speedScale, accel, textX, textY]() {
 				const Vec2 pos{ ParseX(textX), ParseY(textY) };
-				obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale));
+				obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, pos, speedScale, accel));
 				}, lifetime, interval);
 		}
 		else if (textType == U"genbird2")
@@ -657,9 +719,22 @@ namespace hand
 		{
 			timeBgDarkOverlayAlpha_.restart();
 		}
+		else if (textType == U"bgdarkend")
+		{
+			timeBgDarkOverlayAlpha_.reset();
+		}
 		else if (textType == U"bgrain1")
 		{
 			timeBgRain_.restart();
+		}
+		else if (textType == U"bgrainend")
+		{
+			timeBgRain_.reset();
+		}
+		else if (textType == U"nightsky1")
+		{
+			timeNightSky_.restart();
+			timerStar_.restart();
 		}
 		else if (textType == U"stagetitle")
 		{

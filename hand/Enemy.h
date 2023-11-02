@@ -70,7 +70,7 @@ namespace hand
 	class Bird1 : public Enemy
 	{
 	public:
-		Bird1(EnemyType type, Objects& obj, const Vec2& pos, double speedScale = 1.0);
+		Bird1(EnemyType type, Objects& obj, const Vec2& pos, double speedScale = 1.0, double accel = 0.0);
 
 		void update() override;
 
@@ -79,7 +79,9 @@ namespace hand
 		RectF collision() const override;
 
 	private:
+		Vec2 vel_;
 		double speedScale_;
+		double accel_;
 	};
 
 	// 敵（鳥）

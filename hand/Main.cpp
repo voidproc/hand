@@ -51,6 +51,11 @@ void LoadAssets()
 	TextureAsset::Register(U"Bullet", RES(U"texture/bullet.png"));
 	TextureAsset::Register(U"PlayerIndicator", RES(U"texture/player_indicator.png"));
 	TextureAsset::Register(U"JellyFish", RES(U"texture/jellyfish.png"));
+	TextureAsset::Register(U"NightSky", RES(U"texture/night_sky.png"));
+	TextureAsset::Register(U"Stars1", RES(U"texture/stars1.png"));
+	TextureAsset::Register(U"Stars2", RES(U"texture/stars2.png"));
+	TextureAsset::Register(U"Star1", RES(U"texture/star1.png"));
+	TextureAsset::Register(U"Star2", RES(U"texture/star2.png"));
 
 	TextureAsset::Load(U"Powered");
 	FontAsset::Load(U"Sub");
@@ -80,10 +85,10 @@ void Main()
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
-	app.init(U"SplashScene", 0s);
+	//app.init(U"SplashScene", 0s);
 	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
-	//app.init(U"MainScene", 0s);
+	app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config

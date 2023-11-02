@@ -69,6 +69,8 @@ namespace hand
 		// BG用
 		Stopwatch timeBgDarkOverlayAlpha_;
 		Stopwatch timeBgRain_;
+		Stopwatch timeNightSky_;
+		Timer timerStar_;
 
 		// ステージタイトル表示用
 		Stopwatch timeStageTitle_;

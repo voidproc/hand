@@ -13,6 +13,7 @@ namespace hand
 	struct Objects
 	{
 		Effect effect;
+		Effect bgEffect;
 		Array<HandPtr> hands;
 		Array<EnemyPtr> enemies;
 		Array<ItemPtr> items;
@@ -21,6 +22,7 @@ namespace hand
 		Objects(InputDevice& input)
 			:
 			effect{},
+			bgEffect{},
 			hands{},
 			enemies{},
 			items{},
