@@ -21,10 +21,6 @@ void InitSivSystem()
 
 void LoadAssets()
 {
-	TextureAsset::Register(U"Powered", RES(U"texture/powered.png"));
-	TextureAsset::Load(U"PlayerIndicator");
-
-	FontAsset::Register(U"Title", 20, RES(U"font/JF-Dot-Kappa20.ttf"), FontStyle::BoldBitmap);
 	FontAsset::Register(U"Sub", 8, RES(U"font/misaki_mincho.ttf"), FontStyle::Bitmap);
 	FontAsset::Register(U"Goh", 12, RES(U"font/JF-Dot-ShinonomeMin12.ttf"), FontStyle::Bitmap);
 	FontAsset::Register(U"StageTitle", 12, RES(U"font/JF-Dot-ShinonomeMin12.ttf"), FontStyle::BoldBitmap);
@@ -32,6 +28,15 @@ void LoadAssets()
 	FontAsset::Register(U"H68Thin", 8, RES(U"font/hand6x8.ttf"), FontStyle::Bitmap);
 	FontAsset::Register(U"H88", 8, RES(U"font/hand8x8.ttf"), FontStyle::Bitmap);
 
+	// Splash
+	TextureAsset::Register(U"Powered", RES(U"texture/powered.png"));
+
+	// Title
+	TextureAsset::Register(U"TitleBand", RES(U"texture/title_band.png"));
+	TextureAsset::Register(U"TitleText", RES(U"texture/title_text.png"));
+	TextureAsset::Register(U"ArrowLeft", RES(U"texture/arrow_left.png"));
+
+	// Main
 	TextureAsset::Register(U"Girl", RES(U"texture/girl.png"));
 	TextureAsset::Register(U"Airplane", RES(U"texture/airplane.png"));
 	TextureAsset::Register(U"Hand", RES(U"texture/hand.png"));
@@ -44,11 +49,11 @@ void LoadAssets()
 	TextureAsset::Register(U"BirdB", RES(U"texture/bird_b.png"));
 	TextureAsset::Register(U"Money", RES(U"texture/money.png"));
 	TextureAsset::Register(U"Bullet", RES(U"texture/bullet.png"));
-	TextureAsset::Register(U"ArrowLeft", RES(U"texture/arrow_left.png"));
 	TextureAsset::Register(U"PlayerIndicator", RES(U"texture/player_indicator.png"));
 	TextureAsset::Register(U"JellyFish", RES(U"texture/jellyfish.png"));
-	TextureAsset::Register(U"TitleBand", RES(U"texture/title_band.png"));
-	TextureAsset::Register(U"TitleText", RES(U"texture/title_text.png"));
+
+	TextureAsset::Load(U"Powered");
+	FontAsset::Load(U"Sub");
 }
 
 void Main()
