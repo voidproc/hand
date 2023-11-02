@@ -54,7 +54,7 @@ void LoadAssets()
 	TextureAsset::Register(U"Bird", RES(U"texture/bird.png"));
 	TextureAsset::Register(U"BirdB", RES(U"texture/bird_b.png"));
 	TextureAsset::Register(U"Money", RES(U"texture/money.png"));
-	TextureAsset::Register(U"Bullet", RES(U"texture/bullet.png"));
+	TextureAsset::Register(U"Bullet", RES(U"texture/bullet2.png"));
 	TextureAsset::Register(U"PlayerIndicator", RES(U"texture/player_indicator.png"));
 	TextureAsset::Register(U"JellyFish", RES(U"texture/jellyfish.png"));
 	TextureAsset::Register(U"NightSky", RES(U"texture/night_sky.png"));
@@ -93,9 +93,9 @@ void Main()
 	app.setFadeColor(Theme::Black);
 
 	//app.init(U"SplashScene", 0s);
-	//app.init(U"TitleScene", 0s);
+	app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
-	app.init(U"MainScene", 0s);
+	//app.init(U"MainScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config
