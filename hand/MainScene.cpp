@@ -683,6 +683,11 @@ namespace hand
 		{
 			obj_.enemies.emplace_back(MakeEnemy<JellyFish1, EnemyType::JellyFish1>(obj_, pos));
 		}
+		else if (textType == U"bat1")
+		{
+			const double y = ParseOr<double>(eventCsvRow[4], 72.0);
+			obj_.enemies.emplace_back(MakeEnemy<Bat1, EnemyType::Bat1>(obj_, pos, y));
+		}
 		else if (textType == U"genbird1")
 		{
 			const double lifetime = ParseFloat<double>(eventCsvRow[4]);

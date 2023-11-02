@@ -9,6 +9,8 @@ namespace hand
 		Bird3,
 		BirdB1,
 		JellyFish1,
+		Bat1,
+		Bat2,
 
 		Bullet1,
 		Bullet2,
@@ -152,6 +154,44 @@ namespace hand
 	private:
 		double speedX_;
 		int fire_;
+	};
+
+	// コウモリ
+	// ...
+	class Bat1 : public Enemy
+	{
+	public:
+		Bat1(EnemyType type, Objects& obj, const Vec2& pos, const double y);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+	private:
+		Vec2 posBase_;
+		double y_;
+		Vec2 vel_;
+		Timer timerSpawnBat2_;
+	};
+
+	// コウモリ
+	// ...
+	class Bat2 : public Enemy
+	{
+	public:
+		Bat2(EnemyType type, Objects& obj, const Vec2& pos, const Vec2& vel);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+	private:
+		Vec2 posBase_;
+		Vec2 vel_;
 	};
 
 	// 敵弾（小）

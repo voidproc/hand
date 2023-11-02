@@ -15,6 +15,8 @@ namespace hand
 		case EnemyType::Bird3:
 		case EnemyType::BirdB1:
 		case EnemyType::JellyFish1:
+		case EnemyType::Bat1:
+		case EnemyType::Bat2:
 			return true;
 		}
 
@@ -38,11 +40,13 @@ namespace hand
 	{
 		switch (type)
 		{
-		case EnemyType::Bird1:return 200;
-		case EnemyType::Bird2:return 200;
-		case EnemyType::Bird3:return 200;
-		case EnemyType::BirdB1:return 300;
-		case EnemyType::JellyFish1:return 350;
+		case EnemyType::Bird1: return 200;
+		case EnemyType::Bird2: return 200;
+		case EnemyType::Bird3: return 200;
+		case EnemyType::BirdB1: return 300;
+		case EnemyType::JellyFish1: return 350;
+		case EnemyType::Bat1: return 400;
+		case EnemyType::Bat2: return 200;
 		case EnemyType::Bullet1: return 50;
 		case EnemyType::Bullet2: return 50;
 		case EnemyType::Bullet3: return 50;
@@ -136,7 +140,7 @@ namespace hand
 		type_{ type },
 		obj_{ obj },
 		pos_{ pos },
-		life_{ 1.0 },
+		life_{ 0.1 },
 		time_{ StartImmediately::Yes, GlobalClock::Get() },
 		timerDamaged_{ 0.2s, StartImmediately::No }
 	{
@@ -250,7 +254,6 @@ namespace hand
 		Enemy{ type, obj, pos },
 		vel_{ vel }
 	{
-		life_ = 0.1;
 	}
 
 	void Bullet1::update()
@@ -407,6 +410,88 @@ namespace hand
 	RectF JellyFish1::collision() const
 	{
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 8, 8 };
+	}
+
+	Bat1::Bat1(EnemyType type, Objects& obj, const Vec2& pos, const double y)
+		:
+		Enemy{ type, obj, pos },
+		posBase_{ pos },
+		y_{ y },
+		vel_{ Circular{ 100.0, 185_deg } },
+		timerSpawnBat2_{ 0.2s, StartImmediately::No, GlobalClock::Get() }
+	{
+		life_ = 3.0;
+	}
+
+	void Bat1::update()
+	{
+		posBase_ += vel_ * Scene::DeltaTime();
+
+		if (posBase_.y > y_)
+		{
+			vel_ = Circular{ 30.0, 270_deg };
+
+			if (not timerSpawnBat2_.isRunning())
+			{
+				timerSpawnBat2_.start();
+			}
+		}
+
+		if (timerSpawnBat2_.reachedZero())
+		{
+			timerSpawnBat2_.restart(999s);
+
+			for (int i : step(8))
+			{
+				obj_.enemies.emplace_back(MakeEnemy<Bat2, EnemyType::Bat2>(obj_, pos_, Circular{ 45.0, i * Math::TwoPi / 8 }));
+			}
+		}
+
+		pos_ = posBase_ + Vec2{ 0, 13 * (0.3 + 0.7 * Periodic::Sine0_1(0.8s)) * Periodic::Triangle1_1(0.24s, time_.sF()) };
+	}
+
+	void Bat1::draw() const
+	{
+		auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bat"), 4, 0.20s, time_.sF());
+		tex.drawAt(drawPos(), Palette::White);
+
+		Enemy::draw();
+	}
+
+	RectF Bat1::collision() const
+	{
+		return RectF{ Arg::center = pos_.movedBy(0, 2), SizeF{ 10, 6 } };
+	}
+
+	Bat2::Bat2(EnemyType type, Objects& obj, const Vec2& pos, const Vec2& vel)
+		:
+		Enemy{ type, obj, pos },
+		posBase_{ pos },
+		vel_{ vel }
+	{
+	}
+
+	void Bat2::update()
+	{
+		vel_.x = Max(vel_.x - 50.0 * Scene::DeltaTime(), -80.0);
+
+		posBase_ += vel_ * Scene::DeltaTime();
+
+		pos_ = posBase_ + Vec2{ 0, 4 * (0.3 + 0.7 * Periodic::Sine0_1(0.8s)) * Periodic::Triangle1_1(0.24s, time_.sF()) };
+
+	}
+
+	void Bat2::draw() const
+	{
+		auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bat"), 4, 0.20s, time_.sF());
+		tex.drawAt(drawPos(), Palette::White);
+
+		Enemy::draw();
+	}
+
+	RectF Bat2::collision() const
+	{
+		return RectF{ Arg::center = pos_.movedBy(0, 2), SizeF{ 10, 6 } };
 	}
 
 }

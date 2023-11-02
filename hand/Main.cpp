@@ -56,6 +56,7 @@ void LoadAssets()
 	TextureAsset::Register(U"Stars2", RES(U"texture/stars2.png"));
 	TextureAsset::Register(U"Star1", RES(U"texture/star1.png"));
 	TextureAsset::Register(U"Star2", RES(U"texture/star2.png"));
+	TextureAsset::Register(U"Bat", RES(U"texture/bat.png"));
 
 	TextureAsset::Load(U"Powered");
 	FontAsset::Load(U"Sub");

@@ -1,5 +1,5 @@
 ﻿#Time(0),Type(1),X(2),Y(3),Param4,Param5,Param6,Param7,Param8,Param9,Param10
-0,Goto,,,:Stage1-1b,,,,,,
+0,Goto,,,:Stage3,,,,,,
 :Stage1,,,,,,,,,,
 0.5,StageTitle,,,1,,,,,,
 3,GenBird1,Right,72,3.1,0.6,1.2,,,,
@@ -179,3 +179,8 @@
 1,BGRainEnd,,,,,,,,,
 #0.5,BGDarkEnd,,,,,,,,,
 0,NightSky1,,,,,,,,,
+,,,,,,,,,,
+:Stage3-0,,,,,,,,,,
+1,Bat1,135,Top,72,,,,,,
+4,Bat1,135,Top,48,,,,,,
+4,Bat1,135,Top,96,,,,,,
