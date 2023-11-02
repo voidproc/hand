@@ -120,15 +120,19 @@ void Main()
 			data->input.update();
 		}
 
+		const bool useEffect = config.useEffect && config.windowScale >= 2;
+
 		{
 			const Transformer2D scaler{ Mat3x2::Scale(config.windowScale) };
 
-			const bool useEffect = config.useEffect && config.windowScale >= 2;
 			const ScopedCustomShader2D shader = useEffect ? ScopedCustomShader2D{ ps } : ScopedCustomShader2D{};
 
 			renderTexture.draw();
 		}
 
-		Circle{ Scene::CenterF(), Scene::Width() * Math::Sqrt2 / 2 * 1.2 }.draw(ColorF{ 0, 0 }, ColorF{ 0, 0.20 });
+		if (useEffect)
+		{
+			Circle{ Scene::CenterF(), Scene::Width() * Math::Sqrt2 / 2 * 1.2 }.draw(ColorF{ 0, 0 }, ColorF{ 0, 0.20 });
+		}
 	}
 }
