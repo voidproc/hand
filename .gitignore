@@ -402,3 +402,4 @@ MigrationBackup/
 # App
 
 **/App/config.ini
+**/desktop.ini

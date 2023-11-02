@@ -741,7 +741,8 @@ namespace hand
 		}
 		else if (textType == U"goto")
 		{
-			eventList_.gotoLabel(eventCsvRow[4]);
+			StringView labelDest = eventCsvRow[4].starts_with(U':') ? eventCsvRow[4].substrView(1) : eventCsvRow[4];
+			eventList_.gotoLabel(labelDest);
 		}
 	}
 }

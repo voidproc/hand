@@ -285,13 +285,13 @@ namespace hand
 		life_ = 4.0;
 
 		anim_
-			.set(U"SpeedX", { 0s, -60 }, { 2.2s, 0 }, EaseOutSine)
-			.set(U"SpeedX", { 2.8s, 0 }, { 5.0s, 60 }, EaseInSine)
-			.set(U"Fire", { 0s, 0 }, { 1.9s, 0 })
-			.set(U"Fire", { 1.9s, 1 }, { 2.3s, 1 })
-			.set(U"Fire", { 2.3s, 0 }, { 999s, 0 })
-			.set(U"Mirrored", { 0s, 0 }, { 2.9s, 0 })
-			.set(U"Mirrored", { 2.9s, 1 }, { 999s, 1 })
+			.set(U"SpeedX", { 0s, -60 }, { 1.6s, -20 }, EaseOutSine)
+			.set(U"SpeedX", { 1.6s, -20 }, { 3.0s, -80 }, EaseInSine)
+			.set(U"Fire", { 0s, 0 }, { 1.5s, 0 })
+			.set(U"Fire", { 1.5s, 1 }, { 2.0s, 1 })
+			.set(U"Fire", { 2.0s, 0 }, { 999s, 0 })
+			//.set(U"Mirrored", { 0s, 0 }, { 2.9s, 0 })
+			//.set(U"Mirrored", { 2.9s, 1 }, { 999s, 1 })
 			.start();
 	}
 
@@ -314,7 +314,7 @@ namespace hand
 	void Bird3::draw() const
 	{
 		auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bird"), 3, 0.4s, time_.sF());
-		tex.mirrored(anim_[U"Mirrored"]).drawAt(drawPos(), Palette::White);
+		tex.drawAt(drawPos(), Palette::White);
 
 		Enemy::draw();
 	}
