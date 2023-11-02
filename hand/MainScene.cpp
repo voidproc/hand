@@ -19,7 +19,7 @@ namespace hand
 
 		constexpr std::array<StringView, 4> StageEventFilePath = {
 			U""_sv,
-			U"event/stage1.csv"_sv,
+			U"event/stage.csv"_sv,
 			U""_sv,
 			U""_sv,
 		};
@@ -92,8 +92,6 @@ namespace hand
 
 			bool update(double t) override
 			{
-				const double t0_1 = t / lifetime_;
-
 				const auto tex = SpriteSheet::GetFrame(TextureAsset(textureName_), 6, SecondsF{ lifetime_ }, t);
 				tex.drawAt(pos_, AlphaF(0.7 * Periodic::Sine0_1(lifetime_ * 0.18, t)));
 
