@@ -39,7 +39,7 @@ namespace hand
 		:
 		IScene{ init },
 		time_{ StartImmediately::Yes, GlobalClock::Get() },
-		timerCheckAsset_{ 3s, StartImmediately::Yes }
+		timerCheckAsset_{ 1s, StartImmediately::Yes }
 	{
 		PreloadAssets();
 	}
