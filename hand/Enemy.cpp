@@ -429,10 +429,9 @@ namespace hand
 
 		if (posBase_.y > y_)
 		{
-			vel_ = Circular{ 30.0, 270_deg };
-
 			if (not timerSpawnBat2_.isRunning())
 			{
+				vel_ = Circular{ 30.0, obj_.player.angleFrom(pos_) };
 				timerSpawnBat2_.start();
 			}
 		}
