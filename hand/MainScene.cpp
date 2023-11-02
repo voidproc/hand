@@ -3,6 +3,7 @@
 #include "Theme.h"
 #include "Res.h"
 #include "SpriteSheet.h"
+#include "DebugMode.h"
 
 namespace hand
 {
@@ -401,7 +402,7 @@ namespace hand
 						// 敵の撃破後にお金が散らばる
 						if (IsEnemy(enemy->type()))
 						{
-							for ([[maybe_unused]] int iMoney : step(4))
+							for ([[maybe_unused]] int iMoney : step(EnemyCoins(enemy->type())))
 							{
 								obj_.items.emplace_back(MakeItem<ItemMoney, ItemType::Money>(obj_.effect, enemy->pos()));
 							}
@@ -455,7 +456,9 @@ namespace hand
 			// 衝突判定 - Player vs Enemy
 			for (auto& enemy : obj_.enemies)
 			{
+#ifdef DEBUG_MODE
 				if (KeyI.pressed()) break; // [DEBUG]
+#endif
 
 				if (not obj_.player.isInvincible() && obj_.player.collision().intersects(enemy->collision()))
 				{
@@ -674,6 +677,10 @@ namespace hand
 		{
 			obj_.enemies.emplace_back(MakeEnemy<Bird3, EnemyType::Bird3>(obj_, pos));
 		}
+		else if (textType == U"bird4")
+		{
+			obj_.enemies.emplace_back(MakeEnemy<Bird4, EnemyType::Bird4>(obj_, pos));
+		}
 		else if (textType == U"birdb1")
 		{
 			const double speedY0 = ParseOr<double>(eventCsvRow[4], 200.0);
@@ -743,6 +750,11 @@ namespace hand
 		{
 			stage_ = ParseInt<int>(eventCsvRow[4]);
 			timeStageTitle_.restart();
+
+#ifdef DEBUG_MODE
+			// [DEBUG]
+			Print << time_.sF();
+#endif
 		}
 		else if (textType == U"goto")
 		{

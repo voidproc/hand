@@ -7,6 +7,7 @@ namespace hand
 		Bird1,
 		Bird2,
 		Bird3,
+		Bird4,
 		BirdB1,
 		JellyFish1,
 		Bat1,
@@ -23,6 +24,7 @@ namespace hand
 
 	int EnemyScore(EnemyType type);
 
+	int EnemyCoins(EnemyType type);
 
 	class Enemy;
 	using EnemyPtr = std::unique_ptr<Enemy>;
@@ -108,6 +110,22 @@ namespace hand
 	{
 	public:
 		Bird3(EnemyType type, Objects& obj, const Vec2& pos);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+	private:
+		SimpleAnimation anim_;
+		Timer timerFire_;
+	};
+
+	class Bird4 : public Enemy
+	{
+	public:
+		Bird4(EnemyType type, Objects& obj, const Vec2& pos);
 
 		void update() override;
 

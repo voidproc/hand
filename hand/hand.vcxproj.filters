@@ -878,5 +878,8 @@
     <ClInclude Include="SplashScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DebugMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

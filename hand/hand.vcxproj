@@ -332,6 +332,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigScene.h" />
     <ClInclude Include="CustomClock.h" />
+    <ClInclude Include="DebugMode.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EventList.h" />
     <ClInclude Include="GameData.h" />

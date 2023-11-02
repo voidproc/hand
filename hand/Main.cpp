@@ -8,12 +8,18 @@
 #include "SandboxScene.h"
 #include "Theme.h"
 #include "Res.h"
+#include "DebugMode.h"
 
 void InitSivSystem()
 {
 	Scene::SetBackground(hand::Theme::Black);
 
-	Window::SetTitle(U"The HAND of Salvation - 救いの手 | v1.0.0");
+	auto title = U"The HAND of Salvation - 救いの手 | v1.0.0"_sv;
+#ifdef DEBUG_MODE
+	Window::SetTitle(U"★DEBUG MODE★ - " + title);
+#else
+	Window::SetTitle(title);
+#endif
 
 	// ESCキーで終了しない
 	System::SetTerminationTriggers(UserAction::CloseButtonClicked);

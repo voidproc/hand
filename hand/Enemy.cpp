@@ -13,6 +13,7 @@ namespace hand
 		case EnemyType::Bird1:
 		case EnemyType::Bird2:
 		case EnemyType::Bird3:
+		case EnemyType::Bird4:
 		case EnemyType::BirdB1:
 		case EnemyType::JellyFish1:
 		case EnemyType::Bat1:
@@ -43,6 +44,7 @@ namespace hand
 		case EnemyType::Bird1: return 200;
 		case EnemyType::Bird2: return 200;
 		case EnemyType::Bird3: return 200;
+		case EnemyType::Bird4: return 1000;
 		case EnemyType::BirdB1: return 300;
 		case EnemyType::JellyFish1: return 350;
 		case EnemyType::Bat1: return 400;
@@ -55,6 +57,25 @@ namespace hand
 		return 0;
 	}
 
+	int EnemyCoins(EnemyType type)
+	{
+		switch (type)
+		{
+		case EnemyType::Bird1: return 4;
+		case EnemyType::Bird2: return 4;
+		case EnemyType::Bird3: return 4;
+		case EnemyType::Bird4: return 12;
+		case EnemyType::BirdB1: return 8;
+		case EnemyType::JellyFish1: return 5;
+		case EnemyType::Bat1: return 6;
+		case EnemyType::Bat2: return 4;
+		case EnemyType::Bullet1: return 0;
+		case EnemyType::Bullet2: return 0;
+		case EnemyType::Bullet3: return 0;
+		}
+
+		return 4;
+	}
 
 	namespace
 	{
@@ -349,9 +370,9 @@ namespace hand
 	{
 		const bool isStartedAnim2 = anim2_.posSec() > 1e-3;
 
-		if (obj_.player.pos().y <= pos_.y || anim1_.posSec() > 1.0)
+		if (anim1_.posSec() > 1.0)
 		{
-			if (not isStartedAnim2) //まだanim2がスタートしてない
+			if (not isStartedAnim2)
 			{
 				anim2_.start();
 			}
@@ -491,6 +512,55 @@ namespace hand
 	RectF Bat2::collision() const
 	{
 		return RectF{ Arg::center = pos_.movedBy(0, 2), SizeF{ 10, 6 } };
+	}
+
+	Bird4::Bird4(EnemyType type, Objects& obj, const Vec2& pos)
+		:
+		Enemy{ type, obj, pos },
+		anim_{ GlobalClock::Get() },
+		timerFire_{ 0.75s, StartImmediately::Yes }
+	{
+		life_ = 10.0;
+
+		anim_
+			.set(U"SpeedX", { 0s, -80 }, { 1.1s, -4 }, EaseOutSine)
+			.set(U"SpeedX", { 1.8s, -4 }, { 4.0s, -50 }, EaseInSine)
+			.set(U"Fire", { 0s, 0 }, { 0.85s, 0 })
+			.set(U"Fire", { 0.85s, 1 }, { 2.36s, 1 })
+			.set(U"Fire", { 2.36s, 0 }, { 999s, 0 })
+			.start();
+	}
+
+	void Bird4::update()
+	{
+		pos_.x += anim_[U"SpeedX"] * Scene::DeltaTime();
+		pos_.y += 6.0 * Periodic::Sine1_1(2.2s, time_.sF()) * Scene::DeltaTime();
+
+		if (timerFire_.reachedZero())
+		{
+			timerFire_.restart();
+
+			if (anim_[U"Fire"] > 0)
+			{
+				for (int i = -1; i <= 1; ++i)
+				{
+					obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet1>(obj_, pos_, Circular{ 1.4, 270_deg + i * 36_deg }));
+				}
+			}
+		}
+	}
+
+	void Bird4::draw() const
+	{
+		auto tex = SpriteSheet::GetFrame(TextureAsset(U"Bird"), 3, 0.45s, time_.sF());
+		tex.scaled(2).drawAt(drawPos(), Palette::White);
+
+		Enemy::draw();
+	}
+
+	RectF Bird4::collision() const
+	{
+		return RectF{ Arg::center = pos_.movedBy(0, 4), 20 };
 	}
 
 }
