@@ -186,6 +186,7 @@ namespace hand
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No, GlobalClock::Get() },
 		timerScoreRateGaugeDecr_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
+		timerScoreRateAdded_{ 0.15s, StartImmediately::No, GlobalClock::Get() },
 		eventList_{ obj_ },
 		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
 		timeBgRain_{ StartImmediately::No, GlobalClock::Get() },
@@ -481,6 +482,7 @@ namespace hand
 
 						// 敵を撃破したのでスコアレートが少し増える
 						scoreRateRaw_ = Clamp(scoreRateRaw_ + 0.1, ScoreRateMin, ScoreRateMax);
+						timerScoreRateAdded_.restart();
 
 						// スコアレート減少タイマーの残り時間を加算
 						addScoreRateGauge_(ScoreRateGaugeIncrOnDestroyEnemy);
@@ -735,13 +737,16 @@ namespace hand
 
 		// 倍率
 		{
-			const auto rateRect = DrawScoreRate(Vec2{ SceneWidth - 12, 6 + 0 }, scoreRate_(), Theme::Black);
+			const double ratePosVibY = timerScoreRateAdded_.isRunning() ? 2.0 * Periodic::Jump1_1(0.05s, time_.sF()) : 0.0;
+			const Vec2 ratePos{ SceneWidth - 12, 6 + 0 };
+			const auto rateRect = DrawScoreRate(ratePos.movedBy(0, ratePosVibY), scoreRate_(), Theme::Black);
 
 			// 倍率ゲージ
 			// ゲージがなくなると倍率が減っていく感じ
+			const Vec2 gaugePos = rateRect.bottomCenter().movedBy(0, -ratePosVibY);
 			const double scoreRateGauge0_1 = Clamp((timerScoreRateGaugeDecr_.sF() - ScoreRateDecrTime.count()) / (ScoreRateDecrTimeMax.count() - ScoreRateDecrTime.count()), 0.0, 1.0);
-			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(8, 2) }.draw(2.0, Theme::Lighter);
-			Line{ rateRect.bottomCenter().movedBy(-8, 2), rateRect.bottomCenter().movedBy(-8 + 16 * scoreRateGauge0_1, 2) }.draw(2.0, Theme::Black);
+			Line{ gaugePos.movedBy(-8, 2), gaugePos.movedBy(8, 2) }.draw(2.0, Theme::Lighter);
+			Line{ gaugePos.movedBy(-8, 2), gaugePos.movedBy(-8 + 16 * scoreRateGauge0_1, 2) }.draw(2.0, Theme::Black);
 
 		}
 	}

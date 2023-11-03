@@ -66,6 +66,7 @@ namespace hand
 		double scoreRateRaw_;
 		Stopwatch timeIncrScoreRate_;
 		Timer timerScoreRateGaugeDecr_;
+		Timer timerScoreRateAdded_;
 
 		// ステージイベント
 		EventList eventList_;
