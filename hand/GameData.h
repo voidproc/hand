@@ -9,7 +9,7 @@ namespace hand
 	{
 		Config config;
 
-		InputDevice input;
+		InputDevice input{ config };
 
 		// スコア
 		int score = 0;

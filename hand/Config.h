@@ -12,6 +12,15 @@ namespace hand
 		// スキャンラインなどのエフェクトを使う
 		bool useEffect;
 
+		// SEの音量 (0-100)
+		int seVolume;
+
+		// BGMの音量 (0-100)
+		int bgmVolume;
+
+		// ゲームコントローラの ID
+		int controllerId;
+
 		int hiscore;
 
 		Config();

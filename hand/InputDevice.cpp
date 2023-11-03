@@ -2,7 +2,8 @@
 
 namespace hand
 {
-	InputDevice::InputDevice()
+	InputDevice::InputDevice(Config& config)
+		: config_{ config }
 	{
 		inputLeft_ = KeyLeft | KeyA | xinput_().buttonLeft;
 		inputRight_ = KeyRight | KeyD | xinput_().buttonRight;
@@ -51,7 +52,7 @@ namespace hand
 
 	const s3d::detail::XInput_impl& InputDevice::xinput_() const
 	{
-		return XInput(0);
+		return XInput(config_.controllerId);
 	}
 
 	bool InputDevice::leftPressed() const

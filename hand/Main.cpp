@@ -10,6 +10,7 @@
 #include "Theme.h"
 #include "Res.h"
 #include "DebugMode.h"
+#include "AudioVolume.h"
 
 void InitSivSystem()
 {
@@ -82,8 +83,6 @@ void LoadAssets()
 
 	TextureAsset::Load(U"Powered");
 	FontAsset::Load(U"Sub");
-
-	GlobalAudio::BusSetVolume(MixBus1, 0.75);
 }
 
 void Main()
@@ -111,8 +110,8 @@ void Main()
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
-	//app.init(U"SplashScene", 0s);
-	app.init(U"TitleScene", 0s);
+	app.init(U"SplashScene", 0s);
+	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
 	//app.init(U"MainScene", 0s);
 	//app.init(U"GameOverScene", 0s);
@@ -123,6 +122,9 @@ void Main()
 	auto data = app.get().get();
 	auto& config = data->config;
 	config.load(Config::ConfigFilePath);
+
+	// オーディオ音量初期化
+	ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
 	// ウィンドウサイズ
 	Window::Resize(SceneSize * config.windowScale);

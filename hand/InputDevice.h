@@ -5,7 +5,7 @@ namespace hand
 	class InputDevice
 	{
 	public:
-		InputDevice();
+		InputDevice(Config& config);
 
 		InputGroup left() const;
 		InputGroup right() const;
@@ -32,6 +32,8 @@ namespace hand
 
 	private:
 		const s3d::detail::XInput_impl& xinput_() const;
+
+		Config& config_;
 
 		InputGroup inputLeft_;
 		InputGroup inputRight_;

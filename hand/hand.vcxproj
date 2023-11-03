@@ -115,6 +115,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioVolume.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="ConfigScene.cpp" />
     <ClCompile Include="EndingScene.cpp" />
@@ -331,6 +332,7 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioVolume.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigScene.h" />
     <ClInclude Include="CustomClock.h" />

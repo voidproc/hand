@@ -1,12 +1,13 @@
 ﻿#include "ConfigScene.h"
 #include "SceneSize.h"
 #include "Theme.h"
+#include "AudioVolume.h"
 
 namespace hand
 {
 	namespace
 	{
-		constexpr int ItemCount = 3;
+		constexpr int ItemCount = 6;
 	}
 
 	ConfigScene::ConfigScene(const InitData& init)
@@ -68,6 +69,61 @@ namespace hand
 			break;
 
 		case 2:
+			// SE ボリューム変更
+			if (getData().input.leftDown())
+			{
+				config.seVolume = Clamp(config.seVolume - 10, 0, 100);
+				ApplyAudioVolume(config.seVolume, config.bgmVolume);
+
+				AudioAsset(U"Select").play();
+			}
+
+			if (getData().input.rightDown())
+			{
+				config.seVolume = Clamp(config.seVolume + 10, 0, 100);
+				ApplyAudioVolume(config.seVolume, config.bgmVolume);
+
+				AudioAsset(U"Select").play();
+			}
+			break;
+
+		case 3:
+			// BGM ボリューム変更
+			if (getData().input.leftDown())
+			{
+				config.bgmVolume = Clamp(config.bgmVolume - 10, 0, 100);
+				ApplyAudioVolume(config.seVolume, config.bgmVolume);
+
+				AudioAsset(U"Select").play();
+			}
+
+			if (getData().input.rightDown())
+			{
+				config.bgmVolume = Clamp(config.bgmVolume + 10, 0, 100);
+				ApplyAudioVolume(config.seVolume, config.bgmVolume);
+
+				AudioAsset(U"Select").play();
+			}
+			break;
+
+		case 4:
+			// コントローラ ID
+			if (getData().input.leftDown())
+			{
+				config.controllerId = Clamp(config.controllerId - 1, 0, 3);
+
+				AudioAsset(U"Select").play();
+			}
+
+			if (getData().input.rightDown())
+			{
+				config.controllerId = Clamp(config.controllerId + 1, 0, 3);
+
+				AudioAsset(U"Select").play();
+			}
+			break;
+
+		case 5:
 			// 戻る
 			if (getData().input.decide().down())
 			{
@@ -97,9 +153,9 @@ namespace hand
 		constexpr int PaddingR = 8;
 		constexpr int LineHeight = 12;
 
-		Vec2 itemPos{ PaddingL, 24 };
+		Vec2 itemPos{ PaddingL, 28 };
 
-		const auto drawItem = [&](int index, StringView label, StringView value) {
+		const auto drawItem = [&](int index, StringView label, StringView value, const Color& color = Theme::Black) {
 			if (index == cursor_)
 			{
 				RectF{ 0, itemPos.y - 2, SizeF{ SceneWidth, LineHeight } }.draw(ColorF{ Theme::Lighter, 0.5 + 0.5 * Periodic::Jump0_1(0.5s) });
@@ -107,9 +163,9 @@ namespace hand
 
 			FontAsset(U"H88")(label).draw(itemPos, Theme::Black);
 			FontAsset(U"H88")(value)
-				.draw(Arg::topRight = Vec2{ SceneWidth - PaddingR, itemPos.y }, Theme::Black);
+				.draw(Arg::topRight = Vec2{ SceneWidth - PaddingR, itemPos.y }, color);
 
-			itemPos.y += LineHeight;
+			itemPos.y += LineHeight + 2;
 			};
 
 
@@ -117,6 +173,9 @@ namespace hand
 
 		drawItem(0, U"WINDOW SIZE", Format(U"x", config.windowScale));
 		drawItem(1, U"USE SCREEN FX", config.useEffect ? U"ON" : U"OFF");
-		drawItem(2, U"BACK TO TITLE", U"");
+		drawItem(2, U"SE VOLUME", Format(config.seVolume));
+		drawItem(3, U"BGM VOLUME", Format(config.bgmVolume));
+		drawItem(4, U"CONTROLLER ID", Format(config.controllerId), XInput(config.controllerId).isConnected() ? Theme::Black : Theme::Darker);
+		drawItem(5, U"BACK TO TITLE", U"");
 	}
 }
