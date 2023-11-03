@@ -12,6 +12,8 @@ namespace hand
 		// スキャンラインなどのエフェクトを使う
 		bool useEffect;
 
+		int hiscore;
+
 		Config();
 
 		void load(FilePathView iniPath);

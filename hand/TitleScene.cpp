@@ -31,12 +31,16 @@ namespace hand
 			{
 				cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
 				timeCursor_.restart();
+
+				AudioAsset(U"Select").play();
 			}
 
 			if (getData().input.rightDown())
 			{
 				cursor_ = (cursor_ + 1) % ItemCount;
 				timeCursor_.restart();
+
+				AudioAsset(U"Select").play();
 			}
 
 			if (getData().input.decide().down())
@@ -44,9 +48,13 @@ namespace hand
 				if (cursor_ == 0)
 				{
 					timeEnter_.start();
+
+					AudioAsset(U"Decide").play();
 				}
 				else if (cursor_ == 1)
 				{
+					AudioAsset(U"Select").play();
+
 					changeScene(U"ConfigScene", 0s);
 					return;
 				}

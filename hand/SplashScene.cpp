@@ -17,6 +17,11 @@ namespace hand
 			{
 				TextureAsset::LoadAsync(name);
 			}
+
+			for (auto [name, info] : AudioAsset::Enumerate())
+			{
+				AudioAsset::LoadAsync(name);
+			}
 		}
 
 		bool IsCompletedPreloadingAssets()
@@ -29,6 +34,11 @@ namespace hand
 			for (auto [name, info] : TextureAsset::Enumerate())
 			{
 				if (not TextureAsset::IsReady(name)) return false;
+			}
+
+			for (auto [name, info] : AudioAsset::Enumerate())
+			{
+				if (not AudioAsset::IsReady(name)) return false;
 			}
 
 			return true;

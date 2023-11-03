@@ -5,6 +5,7 @@
 #include "ConfigScene.h"
 #include "MainScene.h"
 #include "GameOverScene.h"
+#include "EndingScene.h"
 #include "SandboxScene.h"
 #include "Theme.h"
 #include "Res.h"
@@ -47,6 +48,7 @@ void LoadAssets()
 	TextureAsset::Register(U"Airplane", RES(U"texture/airplane.png"));
 	TextureAsset::Register(U"Hand", RES(U"texture/hand.png"));
 	TextureAsset::Register(U"BgMountain", RES(U"texture/bg_mountain.png"));
+	TextureAsset::Register(U"BgMountainNight", RES(U"texture/bg_mountain_night.png"));
 	TextureAsset::Register(U"BgMountain2", RES(U"texture/bg_mountain2.png"));
 	TextureAsset::Register(U"BgTree", RES(U"texture/bg_tree.png"));
 	TextureAsset::Register(U"KarmaGaugeFrame", RES(U"texture/karma_gauge_frame.png"));
@@ -63,9 +65,23 @@ void LoadAssets()
 	TextureAsset::Register(U"Star1", RES(U"texture/star1.png"));
 	TextureAsset::Register(U"Star2", RES(U"texture/star2.png"));
 	TextureAsset::Register(U"Bat", RES(U"texture/bat.png"));
+	TextureAsset::Register(U"EndBg1", RES(U"texture/end_bg1.png"));
+
+	AudioAsset::Register(U"Select", RES(U"audio/select.wav"));
+	AudioAsset::Register(U"Coin", RES(U"audio/coin.ogg"));
+	AudioAsset::Register(U"HandShot", RES(U"audio/hand_shot.ogg"));
+	AudioAsset::Register(U"Explosion", RES(U"audio/explosion.ogg"));
+	AudioAsset::Register(U"Damage", RES(U"audio/damage.ogg"));
+	AudioAsset::Register(U"Decide", RES(U"audio/decide.ogg"));
+	AudioAsset::Register(U"Bgm1", RES(U"audio/World_without_time.ogg"));
+	AudioAsset::Register(U"Bgm2", RES(U"audio/white_darkness.ogg"));
+	AudioAsset::Register(U"Bgm3", RES(U"audio/blurred_light.ogg"));
+	AudioAsset::Register(U"Ending", RES(U"audio/ending.ogg"));
 
 	TextureAsset::Load(U"Powered");
 	FontAsset::Load(U"Sub");
+
+	GlobalAudio::BusSetVolume(MixBus1, 0.75);
 }
 
 void Main()
@@ -89,13 +105,15 @@ void Main()
 	app.add<ConfigScene>(U"ConfigScene");
 	app.add<MainScene>(U"MainScene");
 	app.add<GameOverScene>(U"GameOverScene");
+	app.add<EndingScene>(U"EndingScene");
 	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
 	//app.init(U"SplashScene", 0s);
-	app.init(U"TitleScene", 0s);
+	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
-	//app.init(U"MainScene", 0s);
+	app.init(U"MainScene", 0s);
+	//app.init(U"EndingScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 
 	// Config

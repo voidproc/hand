@@ -3,6 +3,7 @@
 #include "SceneSize.h"
 #include "SpriteSheet.h"
 #include "Theme.h"
+#include "DebugMode.h"
 
 namespace hand
 {
@@ -18,6 +19,7 @@ namespace hand
 		case EnemyType::JellyFish1:
 		case EnemyType::Bat1:
 		case EnemyType::Bat2:
+		case EnemyType::HandE:
 			return true;
 		}
 
@@ -49,6 +51,7 @@ namespace hand
 		case EnemyType::JellyFish1: return 350;
 		case EnemyType::Bat1: return 400;
 		case EnemyType::Bat2: return 200;
+		case EnemyType::HandE: return 0;
 		case EnemyType::Bullet1: return 50;
 		case EnemyType::Bullet2: return 50;
 		case EnemyType::Bullet3: return 50;
@@ -69,6 +72,7 @@ namespace hand
 		case EnemyType::JellyFish1: return 5;
 		case EnemyType::Bat1: return 6;
 		case EnemyType::Bat2: return 4;
+		case EnemyType::HandE: return 0;
 		case EnemyType::Bullet1: return 0;
 		case EnemyType::Bullet2: return 0;
 		case EnemyType::Bullet3: return 0;
@@ -144,7 +148,7 @@ namespace hand
 		{
 			effect.add<ExplodeEffect>(pos);
 
-			for (int i : step(Random(6, 10)))
+			for ([[maybe_unused]] int i : step(Random(6, 10)))
 			{
 				effect.add<ExplodeFragmentEffect>(pos);
 			}
@@ -154,6 +158,50 @@ namespace hand
 		{
 			effect.add<ExplodeEffect>(pos, 0.5);
 		}
+
+		struct GenerateExplodeEffect : IEffect
+		{
+			GenerateExplodeEffect(Effect& effect, const Vec2& pos, int n)
+				: effect_{ effect }, pos_{ pos }, timer_{ 0.2s, StartImmediately::Yes, GlobalClock::Get() }, n_{ n }
+			{
+			}
+
+			bool update(double) override
+			{
+				if (n_ <= 0) return false;
+
+				if (timer_.reachedZero())
+				{
+					timer_.restart();
+					--n_;
+					AddExplodeEffect(effect_, pos_ + Circular{ Random(4.0, 12.0), Random(Math::TwoPi) });
+					AudioAsset(U"Explosion").playOneShot();
+				}
+
+				return true;
+			}
+
+			Effect& effect_;
+			Vec2 pos_;
+			Timer timer_;
+			int n_;
+		};
+
+		struct DestroyedHandEffect : IEffect
+		{
+			DestroyedHandEffect(const Vec2& pos)
+				: pos_{ pos }
+			{
+			}
+
+			bool update(double t) override
+			{
+				TextureAsset(U"Hand").scaled(2).mirrored().drawAt(RandomVec2(Circle{ pos_, 4.0 }), AlphaF(0.3 + 0.5 * Periodic::Square0_1(0.07s, t)));
+				return t < 2.1;
+			}
+
+			Vec2 pos_;
+		};
 	}
 
 	Enemy::Enemy(EnemyType type, Objects& obj, const Vec2& pos)
@@ -178,8 +226,10 @@ namespace hand
 
 	void Enemy::draw() const
 	{
+#ifdef DEBUG_MODE
 		// [DEBUG] 当たり判定
 		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
+#endif
 	}
 
 	RectF Enemy::collision() const
@@ -190,6 +240,8 @@ namespace hand
 	void Enemy::explode()
 	{
 		AddExplodeEffect(obj_.effect, pos_);
+
+		AudioAsset(U"Explosion").playOneShot();
 	}
 
 	bool Enemy::isAlive() const
@@ -298,6 +350,8 @@ namespace hand
 	void Bullet1::explode()
 	{
 		AddExplodeEffectForBullet(obj_.effect, pos_);
+
+		//AudioAsset(U"Explosion").playOneShot();
 	}
 
 	Bird3::Bird3(EnemyType type, Objects& obj, const Vec2& pos)
@@ -561,6 +615,116 @@ namespace hand
 	RectF Bird4::collision() const
 	{
 		return RectF{ Arg::center = pos_.movedBy(0, 4), 20 };
+	}
+
+	HandE::HandE(EnemyType type, Objects& obj, const Vec2& pos)
+		:
+		Enemy{ type, obj, pos },
+		anim1_{ GlobalClock::Get() },
+		anim2_{ GlobalClock::Get() },
+		timerSpawnEnemy_{ 0.7s, StartImmediately::No, GlobalClock::Get() },
+		timerFire_{ 0.8s, StartImmediately::No, GlobalClock::Get() },
+		fireCount_{ 0 }
+	{
+		life_ = 1.0;
+
+		anim1_
+			.set(U"SpeedX", { 0s, -40 }, { 3.0s, 0 }, EaseInOutCubic)
+
+			.set(U"SpeedX", { 7.3s, 0 }, { 7.6s, 30 }, EaseInOutCubic)
+			.set(U"SpeedX", { 7.6s, 30 }, { 7.9s, 0 }, EaseInOutCubic)
+
+			.set(U"SpeedX", { 7.9s, 0 }, { 8.7s, -70 }, EaseInOutCubic)
+			.set(U"SpeedX", { 8.7s, -70 }, { 9.5s, 0 }, EaseInOutCubic)
+
+			.set(U"SpeedX", { 9.6s, 0 }, { 10.4s, 60 }, EaseInOutCubic)
+			.set(U"SpeedX", { 10.4s, 60 }, { 11.2s, 0 }, EaseInOutCubic)
+
+			.set(U"SpeedY", { 4.0s, 0 }, { 4.3s, -90 }, EaseInOutCubic)
+			.set(U"SpeedY", { 4.3s, -90 }, { 4.6s, 0 }, EaseInOutCubic)
+
+			.set(U"SpeedY", { 5.1s, 0 }, { 5.4s, 90 }, EaseInOutCubic)
+			.set(U"SpeedY", { 5.4s, 90 }, { 5.7s, 0 }, EaseInOutCubic)
+
+			.set(U"SpeedY", { 6.2s, 0 }, { 6.5s, 90 }, EaseInOutCubic)
+			.set(U"SpeedY", { 6.5s, 90 }, { 6.8s, 0 }, EaseInOutCubic)
+
+			.set(U"SpeedY", { 7.3s, 0 }, { 7.6s, -90 }, EaseInOutCubic)
+			.set(U"SpeedY", { 7.6s, -90 }, { 7.9s, 0 }, EaseInOutCubic)
+
+			.setLoop(4.0s, 11.3s)
+			.start();
+
+	}
+
+	void HandE::update()
+	{
+		if (time_ > 33s)
+		{
+			pos_.x += 20 * Scene::DeltaTime();
+		}
+
+		if (timerSpawnEnemy_.reachedZero())
+		{
+			timerSpawnEnemy_.restart();
+
+			const Vec2 enemyPos{ SceneWidth + 16, pos_.y + Random(-8, 8) };
+
+			if (RandomBool())
+			{
+				obj_.enemies.emplace_back(MakeEnemy<Bird1, EnemyType::Bird1>(obj_, enemyPos, 2.0 + Random(-1.0, 1.0) ));
+			}
+			else
+			{
+				obj_.enemies.emplace_back(MakeEnemy<Bird2, EnemyType::Bird2>(obj_, enemyPos, 1.6 + Random(-0.7, 0.7)));
+			}
+		}
+
+		if (timerFire_.reachedZero())
+		{
+			timerFire_.restart(SecondsF{ Random(0.3, 0.8) });
+
+			if ((++fireCount_) % 2 == 0)
+			{
+				for (int i : step(12))
+				{
+					obj_.enemies.emplace_back(MakeEnemy<Bullet1, EnemyType::Bullet2>(obj_, pos_, Circular{ 1.3, obj_.player.angleFrom(pos_) + i * Math::TwoPi / 8 }));
+				}
+			}
+		}
+
+		if (time_ > 4.0s && not timerSpawnEnemy_.isRunning())
+		{
+			timerSpawnEnemy_.restart();
+			timerFire_.restart();
+		}
+
+		pos_.x += anim1_[U"SpeedX"] * Scene::DeltaTime();
+		pos_.y += anim1_[U"SpeedY"] * Scene::DeltaTime();
+		pos_.y += 10.0 * Periodic::Sine1_1(2.8s, time_.sF()) * Scene::DeltaTime();
+	}
+
+	void HandE::draw() const
+	{
+		const double alpha = 0.7 + 0.3 * Periodic::Square0_1(0.08s, time_.sF());
+		const ColorF color{ Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.13s, time_.sF())), alpha };
+
+		TextureAsset(U"Hand").scaled(2).mirrored().drawAt(drawPos(), color);
+
+		Enemy::draw();
+	}
+
+	RectF HandE::collision() const
+	{
+		if (time_ < 3.9s) return RectF{};
+
+		return RectF{ Arg::center = pos_.movedBy(0, -4), SizeF{ 16, 40 } * 2 };
+	}
+
+	void HandE::explode()
+	{
+		obj_.effect.add<GenerateExplodeEffect>(obj_.effect, pos_, 10);
+		obj_.effect.add<DestroyedHandEffect>(pos_);
 	}
 
 }

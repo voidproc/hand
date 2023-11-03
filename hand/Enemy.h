@@ -12,6 +12,7 @@ namespace hand
 		JellyFish1,
 		Bat1,
 		Bat2,
+		HandE,
 
 		Bullet1,
 		Bullet2,
@@ -212,7 +213,7 @@ namespace hand
 		Vec2 vel_;
 	};
 
-	// 敵弾（小）
+	// 敵弾
 	// 直進する
 	class Bullet1 : public Enemy
 	{
@@ -230,6 +231,29 @@ namespace hand
 	private:
 		Vec2 vel_;
 	};
+
+	class HandE : public Enemy
+	{
+	public:
+		HandE(EnemyType type, Objects& obj, const Vec2& pos);
+
+		void update() override;
+
+		void draw() const override;
+
+		RectF collision() const override;
+
+		void explode() override;
+
+	private:
+		SimpleAnimation anim1_;
+		SimpleAnimation anim2_;
+		Vec2 vel_;
+		Timer timerSpawnEnemy_;
+		Timer timerFire_;
+		int fireCount_;
+	};
+
 
 	template <class T, EnemyType E, class ... Args>
 	EnemyPtr MakeEnemy(Args&& ... args)

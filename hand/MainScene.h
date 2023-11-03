@@ -23,6 +23,7 @@ namespace hand
 		void drawStatusBG_() const;
 		void drawKarma_() const;
 		void drawScore_() const;
+		void drawMsg_() const;
 
 		// 画面を振動させる
 		void shake_();
@@ -38,6 +39,8 @@ namespace hand
 
 		// ステージイベントの実行
 		void doEvent_(const Array<String>& e);
+
+		AudioAsset currentBgm_();
 
 		// 画面内のオブジェクト
 		Objects obj_;
@@ -75,5 +78,19 @@ namespace hand
 		// ステージタイトル表示用
 		Stopwatch timeStageTitle_;
 		int stage_;
+
+		// メッセージ
+		Timer timerMsg_;
+		std::pair<int, int> msgRange_;
+		int currentMsg_;
+
+		// シーン終了
+		Stopwatch timeEndScene_;
+
+		// BGM
+		int bgm_;
+
+		// SE
+		Timer timerSe_;
 	};
 }

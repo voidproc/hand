@@ -4,6 +4,7 @@
 #include "Res.h"
 #include "SpriteSheet.h"
 #include "DebugMode.h"
+#include "MsgData.h"
 
 namespace hand
 {
@@ -188,14 +189,43 @@ namespace hand
 		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
 		timeBgRain_{ StartImmediately::No, GlobalClock::Get() },
 		timeStageTitle_{ StartImmediately::No, GlobalClock::Get() },
-		timerStar_{ 8s, StartImmediately::No },
-		stage_{ 0 }
+		timerStar_{ 8s, StartImmediately::No, GlobalClock::Get() },
+		stage_{ 0 },
+		timerMsg_{ 4.5s, StartImmediately::No, GlobalClock::Get() },
+		msgRange_{},
+		currentMsg_{},
+		bgm_{ 1 },
+		timerSe_{ 0.08s, StartImmediately::Yes }
 	{
 		eventList_.load(RES(StageEventFilePath[1]));
 	}
 
 	void MainScene::update()
 	{
+		// BGMフェードアウト
+		if (currentBgm_().isPlaying() && bgm_ == 0)
+		{
+			currentBgm_().stop(2s);
+		}
+
+		// BGMフェードイン
+		// TODO: フェードアウト中でない場合
+		//if (time_.sF() > 2.0 && not currentBgm_().isPlaying() && bgm_ != 0 && not GlobalClock::Get()->isPaused())
+		//{
+		//	currentBgm_()
+		//		.setVolume(0)
+		//		.play(3s);
+		//}
+
+		// シーンエンド
+		if (timeEndScene_ > 2s + 4.5s)
+		{
+			changeScene(U"EndingScene", 0s);
+			return;
+		}
+
+		if (timeEndScene_ > 2s) return;
+
 		// ポーズのためのカスタムクロック
 		auto clock = GlobalClock::Get();
 
@@ -207,12 +237,21 @@ namespace hand
 				clock->start();
 				obj_.effect.resume();
 				obj_.bgEffect.resume();
+
+				if (currentBgm_().isPaused())
+				{
+					currentBgm_().play(MixBus1);
+				}
 			}
 			else
 			{
 				clock->pause();
 				obj_.effect.pause();
 				obj_.bgEffect.pause();
+
+				AudioAsset(U"Select").playOneShot();
+
+				currentBgm_().pause();
 			}
 		}
 
@@ -222,7 +261,10 @@ namespace hand
 
 		// 各オブジェクトの更新…
 
-		obj_.player.update();
+		if (not timeEndScene_.isStarted())
+		{
+			obj_.player.update();
+		}
 
 		for (auto& hand : obj_.hands)
 		{
@@ -243,11 +285,24 @@ namespace hand
 		updateScoreRate_();
 
 		// 衝突判定
-		checkCollision_();
+		if (not timeEndScene_.isStarted())
+		{
+			checkCollision_();
+		}
 
 		// 期限切れの Hand を破棄
 		obj_.hands.remove_if([](const auto& hand) { return not hand->isAlive(); });
 
+		// 期限切れの Enemy のなかに HandE がある？
+		for (const auto& enemy : obj_.enemies)
+		{
+			if (enemy->type() == EnemyType::HandE && not enemy->isAlive())
+			{
+				getData().endingType = 0;
+				timeEndScene_.start();
+			}
+		}
+		
 		// 期限切れの Enemy を破棄
 		obj_.enemies.remove_if([](const auto& enemy) { return not enemy->isAlive(); });
 
@@ -277,6 +332,20 @@ namespace hand
 			{
 				timerStar_.restart(SecondsF{ Random(0.3, 2.0) });
 				obj_.bgEffect.add<StarEffect>();
+			}
+		}
+
+		// Msg
+		if (timerMsg_.reachedZero())
+		{
+			++currentMsg_;
+			if (currentMsg_ > msgRange_.second)
+			{
+				timerMsg_.reset();
+			}
+			else
+			{
+				timerMsg_.restart();
 			}
 		}
 
@@ -330,12 +399,22 @@ namespace hand
 		drawKarma_();
 		drawScore_();
 
+		drawMsg_();
+
 		// ゲームオーバーへ移行直前のフェードアウト
 		if (timePlayerDead_ > 2.0s)
 		{
 			constexpr double FadeTime = 2.0;
 			const double t = Clamp((timePlayerDead_.sF() - 2.0) / FadeTime, 0.0, 1.0);
 			SceneRect.draw(ColorF{ Theme::Black, t });
+		}
+
+		// エンディングへ移行直前のフェードアウト
+		if (timeEndScene_ > 2.0s)
+		{
+			constexpr double FadeTime = 4.0;
+			const double t = Clamp((timeEndScene_.sF() - 2.0) / FadeTime, 0.0, 1.0);
+			SceneRect.draw(ColorF{ Theme::White, t });
 		}
 
 		// ポーズ
@@ -390,6 +469,13 @@ namespace hand
 
 					if (not enemy->isAlive())
 					{
+						if (enemy->type() == EnemyType::HandE)
+						{
+							getData().endingType = 0;
+							timeEndScene_.start();
+							break;
+						}
+
 						// 敵を撃破したのでスコアを加算する
 						addScore_(EnemyScore(enemy->type()) * scoreRate_());
 
@@ -450,6 +536,13 @@ namespace hand
 					}
 
 					item->kill();
+
+					// 同時再生数が多くなりすぎないよう制限
+					if (timerSe_.reachedZero())
+					{
+						AudioAsset(U"Coin").playOneShot();
+						timerSe_.restart();
+					}
 				}
 			}
 
@@ -464,12 +557,25 @@ namespace hand
 				{
 					shake_();
 
+					AudioAsset(U"Damage").playOneShot();
+
+					if (enemy->type() == EnemyType::Bullet2 || enemy->type() == EnemyType::HandE)
+					{
+						timeEndScene_.start();
+						getData().endingType = 1;
+						break;
+					}
+
 					obj_.player.damage(20.0);
 
 					// このダメージでプレイヤーがしんでしまった
 					if (not obj_.player.isAlive())
 					{
 						timePlayerDead_.start();
+
+						currentBgm_().stop(2s);
+						bgm_ = 0;
+
 						break;
 					}
 
@@ -486,11 +592,12 @@ namespace hand
 
 		TextureAsset(U"BgMountain2")
 			.mapped(640, 64)
-			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, AlphaF(0.5));
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, ColorF{ Palette::White, 0.5});
 
-		TextureAsset(U"BgMountain")
+
+		TextureAsset(timeNightSky_.isRunning() ? U"BgMountainNight" : U"BgMountain")
 			.mapped(640, 64)
-			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight });
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight }, ColorF{ Palette::White });
 
 		TextureAsset(U"BgTree")
 			.mapped(400, 32)
@@ -633,6 +740,16 @@ namespace hand
 		}
 	}
 
+	void MainScene::drawMsg_() const
+	{
+		if (timerMsg_.isRunning() && timerMsg_ > 1.5s)
+		{
+			RectF{ Arg::center = SceneCenter, SizeF{ SceneWidth, 32 } }.draw(ColorF{ Theme::White, 0.5 });
+
+			FontAsset(U"Sub")(Msg::Data[currentMsg_]).drawAt(SceneCenter, ColorF{ Theme::Black, 0.7 + 0.3 * Periodic::Square0_1(0.01s) });
+		}
+	}
+
 	void MainScene::shake_()
 	{
 		timerShake_.restart();
@@ -695,6 +812,10 @@ namespace hand
 			const double y = ParseOr<double>(eventCsvRow[4], 72.0);
 			obj_.enemies.emplace_back(MakeEnemy<Bat1, EnemyType::Bat1>(obj_, pos, y));
 		}
+		else if (textType == U"hand")
+		{
+			obj_.enemies.emplace_back(MakeEnemy<HandE, EnemyType::HandE>(obj_, pos));
+		}
 		else if (textType == U"genbird1")
 		{
 			const double lifetime = ParseFloat<double>(eventCsvRow[4]);
@@ -753,7 +874,7 @@ namespace hand
 
 #ifdef DEBUG_MODE
 			// [DEBUG]
-			Print << time_.sF();
+			//Print << time_.sF();
 #endif
 		}
 		else if (textType == U"goto")
@@ -761,5 +882,27 @@ namespace hand
 			StringView labelDest = eventCsvRow[4].starts_with(U':') ? eventCsvRow[4].substrView(1) : eventCsvRow[4];
 			eventList_.gotoLabel(labelDest);
 		}
+		else if (textType == U"msg")
+		{
+			const int msgRange0 = ParseInt<int>(eventCsvRow[4]);
+			const int msgRange1 = ParseInt<int>(eventCsvRow[5]);
+			msgRange_ = std::make_pair(msgRange0, msgRange1);
+			currentMsg_ = msgRange0;
+			timerMsg_.restart();
+		}
+		else if (textType == U"bgm")
+		{
+			const int bgmNum = ParseOr<int>(eventCsvRow[4], 0);
+
+			currentBgm_().stop(1s);
+			bgm_ = bgmNum;
+			currentBgm_().play(3s, MixBus1);
+
+		}
+	}
+
+	AudioAsset MainScene::currentBgm_()
+	{
+		return AudioAsset(Format(U"Bgm", bgm_));
 	}
 }

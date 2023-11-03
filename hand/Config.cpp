@@ -5,7 +5,8 @@ namespace hand
 	Config::Config()
 		:
 		windowScale{ 3 },
-		useEffect{ true }
+		useEffect{ true },
+		hiscore{ 0 }
 	{
 	}
 
@@ -16,6 +17,7 @@ namespace hand
 
 		windowScale = ini.getOr<int>(U"WindowScale", 3);
 		useEffect = ini.getOr<bool>(U"UseEffect", true);
+		hiscore = ini.getOr<int>(U"Score", 0);
 	}
 
 	void Config::save(FilePathView iniPath)
@@ -24,6 +26,7 @@ namespace hand
 
 		ini[U"WindowScale"] = windowScale;
 		ini[U"UseEffect"] = useEffect;
+		ini[U"Score"] = hiscore;
 
 		ini.save(iniPath);
 	}

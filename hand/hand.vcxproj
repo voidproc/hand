@@ -117,10 +117,12 @@
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="ConfigScene.cpp" />
+    <ClCompile Include="EndingScene.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EventList.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="Hand.cpp" />
+    <ClCompile Include="Hiscore.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -333,14 +335,17 @@
     <ClInclude Include="ConfigScene.h" />
     <ClInclude Include="CustomClock.h" />
     <ClInclude Include="DebugMode.h" />
+    <ClInclude Include="EndingScene.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EventList.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="Hand.h" />
+    <ClInclude Include="Hiscore.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="MainScene.h" />
+    <ClInclude Include="MsgData.h" />
     <ClInclude Include="Objects.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Res.h" />

@@ -22,11 +22,15 @@ namespace hand
 		if (getData().input.upDown())
 		{
 			cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
+
+			AudioAsset(U"Select").play();
 		}
 
 		if (getData().input.downDown())
 		{
 			cursor_ = (cursor_ + 1) % ItemCount;
+
+			AudioAsset(U"Select").play();
 		}
 
 
@@ -40,12 +44,16 @@ namespace hand
 			{
 				config.windowScale = Clamp(config.windowScale - 1, 1, 8);
 				Window::Resize((SceneSize * config.windowScale));
+
+				AudioAsset(U"Select").play();
 			}
 
 			if (getData().input.rightDown())
 			{
 				config.windowScale = Clamp(config.windowScale + 1, 1, 8);
 				Window::Resize((SceneSize * config.windowScale));
+
+				AudioAsset(U"Select").play();
 			}
 			break;
 
@@ -54,6 +62,8 @@ namespace hand
 			if (getData().input.leftDown() || getData().input.rightDown())
 			{
 				config.useEffect = not config.useEffect;
+
+				AudioAsset(U"Select").play();
 			}
 			break;
 
@@ -61,6 +71,8 @@ namespace hand
 			// 戻る
 			if (getData().input.decide().down())
 			{
+				AudioAsset(U"Select").play();
+
 				// 設定保存
 				config.save(Config::ConfigFilePath);
 

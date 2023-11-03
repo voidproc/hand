@@ -1,6 +1,7 @@
 ﻿#include "GameOverScene.h"
 #include "SceneSize.h"
 #include "Theme.h"
+#include "Hiscore.h"
 
 namespace hand
 {
@@ -9,6 +10,7 @@ namespace hand
 		IScene{ init },
 		time_{ StartImmediately::Yes, GlobalClock::Get() }
 	{
+		SaveHiscore(getData());
 	}
 
 	void GameOverScene::update()
@@ -18,6 +20,8 @@ namespace hand
 			if (getData().input.decide().down())
 			{
 				changeScene(U"TitleScene", 0s);
+
+				AudioAsset(U"Select").playOneShot();
 			}
 		}
 	}

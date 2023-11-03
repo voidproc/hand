@@ -13,5 +13,7 @@ namespace hand
 
 		// スコア
 		int score = 0;
+
+		bool endingType = 0;
 	};
 }

@@ -192,6 +192,8 @@ namespace hand
 
 					// エフェクト
 					effect_.add<HandEffect>(handPos, handDir);
+
+					AudioAsset(U"HandShot").playOneShot();
 				}
 			}
 
