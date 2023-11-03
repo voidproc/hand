@@ -401,6 +401,13 @@ namespace hand
 
 		drawMsg_();
 
+		// フェードイン
+		if (time_.sF() < 0.8)
+		{
+			const double t = 1.0 - Clamp(time_.sF() / 0.8, 0.0, 1.0);
+			SceneRect.draw(ColorF{ Theme::White, static_cast<int>(t * 4) / 4.0 });
+		}
+
 		// ゲームオーバーへ移行直前のフェードアウト
 		if (timePlayerDead_ > 2.0s)
 		{
