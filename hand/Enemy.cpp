@@ -45,10 +45,10 @@ namespace hand
 		{
 		case EnemyType::Bird1: return 200;
 		case EnemyType::Bird2: return 200;
-		case EnemyType::Bird3: return 200;
+		case EnemyType::Bird3: return 400;
 		case EnemyType::Bird4: return 1000;
-		case EnemyType::BirdB1: return 300;
-		case EnemyType::JellyFish1: return 350;
+		case EnemyType::BirdB1: return 500;
+		case EnemyType::JellyFish1: return 400;
 		case EnemyType::Bat1: return 400;
 		case EnemyType::Bat2: return 200;
 		case EnemyType::HandE: return 0;
@@ -66,9 +66,9 @@ namespace hand
 		{
 		case EnemyType::Bird1: return 4;
 		case EnemyType::Bird2: return 4;
-		case EnemyType::Bird3: return 4;
+		case EnemyType::Bird3: return 8;
 		case EnemyType::Bird4: return 12;
-		case EnemyType::BirdB1: return 8;
+		case EnemyType::BirdB1: return 10;
 		case EnemyType::JellyFish1: return 5;
 		case EnemyType::Bat1: return 6;
 		case EnemyType::Bat2: return 4;
@@ -161,8 +161,8 @@ namespace hand
 
 		struct GenerateExplodeEffect : IEffect
 		{
-			GenerateExplodeEffect(Effect& effect, const Vec2& pos, int n)
-				: effect_{ effect }, pos_{ pos }, timer_{ 0.2s, StartImmediately::Yes, GlobalClock::Get() }, n_{ n }
+			GenerateExplodeEffect(Effect& effect, const Vec2& pos, int n, double timerSec = 0.2)
+				: effect_{ effect }, pos_{ pos }, timer_{ SecondsF{ timerSec }, StartImmediately::Yes, GlobalClock::Get() }, n_{ n }
 			{
 			}
 
@@ -615,6 +615,12 @@ namespace hand
 	RectF Bird4::collision() const
 	{
 		return RectF{ Arg::center = pos_.movedBy(0, 4), 20 };
+	}
+
+	void Bird4::explode()
+	{
+		Enemy::explode();
+		obj_.effect.add<GenerateExplodeEffect>(obj_.effect, pos_, 4, 0.12);
 	}
 
 	HandE::HandE(EnemyType type, Objects& obj, const Vec2& pos)

@@ -1,5 +1,5 @@
 ﻿#Time(0),Type(1),X(2),Y(3),Param4,Param5,Param6,Param7,Param8,Param9,Param10
-0,Goto,,,:TempStage2,,,,,,
+0,Goto,,,:Stage3-2,,,,,,
 :Stage1,,,,,,,,,,
 0.5,StageTitle,,,1,,,,,,
 3,Bgm,,,1,,,,,,
@@ -40,9 +40,9 @@
 2,GenBird1,Right,Random,5.1,0.6,1.5,15,,,
 0.3,GenBird1,Right,Random,5.1,0.6,2.2,15,,,
 ,,,,,,,,,,
-0,Bgm,,,0,,,,,,
+4,Bgm,,,0,,,,,,
 ,,,,,,,,,,
-5,,,,,,,,,,
+1,,,,,,,,,,
 :Stage2,,,,,,,,,,
 0,StageTitle,,,2,,,,,,
 0,BGDark1,,,,,,,,,

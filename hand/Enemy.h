@@ -134,6 +134,8 @@ namespace hand
 
 		RectF collision() const override;
 
+		void explode() override;
+
 	private:
 		SimpleAnimation anim_;
 		Timer timerFire_;

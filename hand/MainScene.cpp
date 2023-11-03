@@ -590,14 +590,19 @@ namespace hand
 	{
 		const ScopedRenderStates2D sampler{ SamplerState::RepeatNearest };
 
+		const double nightAlpha = Clamp(timeNightSky_.sF() / 5.0, 0.0, 1.0);
+
 		TextureAsset(U"BgMountain2")
 			.mapped(640, 64)
-			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, ColorF{ Palette::White, 0.5});
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 12.0) % 320), SceneHeight }, ColorF{ Palette::White, 0.5 + 0.35 * nightAlpha });
 
-
-		TextureAsset(timeNightSky_.isRunning() ? U"BgMountainNight" : U"BgMountain")
+		TextureAsset(U"BgMountain")
 			.mapped(640, 64)
 			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight }, ColorF{ Palette::White });
+
+		TextureAsset(U"BgMountainNight")
+			.mapped(640, 64)
+			.draw(Arg::bottomLeft = Vec2{ -(static_cast<int>(time_.sF() * 20.0) % 320), SceneHeight }, ColorF{ Palette::White, nightAlpha });
 
 		TextureAsset(U"BgTree")
 			.mapped(400, 32)
