@@ -105,6 +105,14 @@ namespace hand
 			TextureAsset(U"ArrowLeft").mirrored().drawAt(region.rightCenter().movedBy(16, 0), ColorF{ Theme::Black, arrowAlpha });
 		}
 
+		// ハイスコア
+		if (getData().config.hiscore > 0)
+		{
+			const auto textScore = U"HISCORE {:08d}"_fmt(getData().config.hiscore);
+			FontAsset(U"H68Thin")(textScore).drawAt(SceneRect.bottomCenter() + Vec2{ 0, -7 + 1 }, Theme::Darker);
+			FontAsset(U"H68Thin")(textScore).drawAt(SceneRect.bottomCenter() + Vec2{ 0, -7 + 0 }, Theme::White);
+		}
+
 		// フェードイン
 		{
 			const double t = 1.0 - Clamp(time_.sF() / 0.5, 0.0, 1.0);
