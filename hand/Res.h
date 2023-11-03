@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-//#define USE_RESOURCE
+#define USE_RESOURCE
 #ifdef USE_RESOURCE
 #define RES(path) (Resource(path))
 #else
