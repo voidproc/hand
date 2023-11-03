@@ -182,6 +182,7 @@ namespace hand
 		timerSpawnEnemy_{ 5s, StartImmediately::Yes, GlobalClock::Get() },
 		timePlayerDead_{ StartImmediately::No, GlobalClock::Get() },
 		timerShake_{ 0.4s, StartImmediately::No, GlobalClock::Get() },
+		timerShakeLong_{ 5s, StartImmediately::No, GlobalClock::Get() },
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No, GlobalClock::Get() },
 		timerScoreRateGaugeDecr_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
@@ -202,20 +203,17 @@ namespace hand
 
 	void MainScene::update()
 	{
+		if (timerShakeLong_.reachedZero())
+		{
+			timerShakeLong_.reset();
+			AudioAsset(U"Quake").stop(3s);
+		}
+
 		// BGMフェードアウト
 		if (currentBgm_().isPlaying() && bgm_ == 0)
 		{
 			currentBgm_().stop(2s);
 		}
-
-		// BGMフェードイン
-		// TODO: フェードアウト中でない場合
-		//if (time_.sF() > 2.0 && not currentBgm_().isPlaying() && bgm_ != 0 && not GlobalClock::Get()->isPaused())
-		//{
-		//	currentBgm_()
-		//		.setVolume(0)
-		//		.play(3s);
-		//}
 
 		// シーンエンド
 		if (timeEndScene_ > 2s + 4.5s)
@@ -300,6 +298,7 @@ namespace hand
 			{
 				getData().endingType = 0;
 				timeEndScene_.start();
+				AudioAsset(U"NoiseFade").playOneShot();
 			}
 		}
 		
@@ -421,7 +420,7 @@ namespace hand
 		if (paused)
 		{
 			SceneRect.draw(ColorF{ Theme::Black, 0.8 });
-			FontAsset(U"Sub")(U"PAUSE").drawAt(SceneCenter, Theme::White);
+			FontAsset(U"H68Thin")(U"PAUSE").drawAt(SceneCenter, Theme::White);
 		}
 	}
 
@@ -473,6 +472,7 @@ namespace hand
 						{
 							getData().endingType = 0;
 							timeEndScene_.start();
+							AudioAsset(U"NoiseFade").playOneShot();
 							break;
 						}
 
@@ -563,6 +563,7 @@ namespace hand
 					{
 						timeEndScene_.start();
 						getData().endingType = 1;
+						AudioAsset(U"NoiseFade").playOneShot();
 						break;
 					}
 
@@ -757,7 +758,7 @@ namespace hand
 
 	void MainScene::shake_()
 	{
-		timerShake_.restart();
+		timerShake_.restart(0.4s);
 	}
 
 	double MainScene::scoreRate_() const
@@ -899,10 +900,17 @@ namespace hand
 		{
 			const int bgmNum = ParseOr<int>(eventCsvRow[4], 0);
 
-			currentBgm_().stop(1s);
+			currentBgm_().stop(3s);
 			bgm_ = bgmNum;
 			currentBgm_().play(3s, MixBus1);
 
+		}
+		else if (textType == U"quake")
+		{
+			AudioAsset(U"Quake").setLoop(true);
+			AudioAsset(U"Quake").play(MixBus1, 0.8s);
+			timerShake_.restart(8s);
+			timerShakeLong_.restart();
 		}
 	}
 

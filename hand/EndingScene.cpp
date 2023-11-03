@@ -11,12 +11,12 @@ namespace hand
 		:
 		IScene{ init },
 		time_{ StartImmediately::Yes, GlobalClock::Get() },
-		timerMsg_{ 5.0s, StartImmediately::No, GlobalClock::Get() },
+		timerMsg_{ 6.0s, StartImmediately::No, GlobalClock::Get() },
 		msgRange_{},
 		msg_{}
 	{
 #ifdef DEBUG_MODE
-		getData().endingType = 1;
+		//getData().endingType = 1;
 #endif
 
 		SaveHiscore(getData());
@@ -44,7 +44,7 @@ namespace hand
 			}
 		}
 
-		if (time_ > 1s && not timerMsg_.isRunning() && msg_ < msgRange_.second)
+		if (time_ > 2s && not timerMsg_.isRunning() && msg_ < msgRange_.second)
 		{
 			timerMsg_.restart();
 		}
@@ -52,7 +52,7 @@ namespace hand
 
 		// BGM制御
 
-		if (time_ > 2s && not isFinishedMsg_() && not AudioAsset(U"Ending").isPlaying())
+		if (time_ > 3.5s && not isFinishedMsg_() && not AudioAsset(U"Ending").isPlaying())
 		{
 			AudioAsset(U"Ending").setLoop(true);
 			AudioAsset(U"Ending").play(MixBus1, 2s);
@@ -60,7 +60,7 @@ namespace hand
 
 		if (isFinishedMsg_() && AudioAsset(U"Ending").isPlaying())
 		{
-			AudioAsset(U"Ending").stop(2s);
+			AudioAsset(U"Ending").stop(3s);
 		}
 
 
@@ -91,14 +91,16 @@ namespace hand
 			TextureAsset(U"EndBg1").draw(0, TopBandHeight, AlphaF(0.5 * Clamp((time_.sF() - 4.0) / 5.0, 0.0, 1.0)));
 		}
 
-		if (timerMsg_ < 4s)
+		if (timerMsg_ < 5s)
 		{
 			const auto text = Msg::Data[msg_];
 			const Vec2 textPos = Vec2{ SceneWidth / 2, TopBandHeight + (SceneHeight - (TopBandHeight + BottomBandHeight)) / 2 };
 			const double moveY = 6 * (1.0 - EaseOutCubic(Clamp((4.0 - timerMsg_.sF()) / 0.8, 0.0, 1.0)));
 			const double alpha = Clamp((4.0 - timerMsg_.sF()) / 0.4, 0.0, 1.0);
-			FontAsset(U"Sub")(text).drawAt(textPos + Vec2{ 0, 1 } + Vec2{ 0, moveY }, ColorF{ Theme::Lighter, alpha });
-			FontAsset(U"Sub")(text).drawAt(textPos + Vec2{ 0, 0 } + Vec2{ 0, moveY }, ColorF{ Theme::Darker, alpha });
+			const double alpha2 = (timerMsg_ > 1s || msg_ == msgRange_.second) ? 1.0 : static_cast<int>(4.0 * Clamp(timerMsg_.sF() / 1.0, 0.0, 1.0)) / 4.0;
+
+			FontAsset(U"Sub")(text).drawAt(textPos + Vec2{ 0, 1 } + Vec2{ 0, moveY }, ColorF{ Theme::Lighter, alpha * alpha2 });
+			FontAsset(U"Sub")(text).drawAt(textPos + Vec2{ 0, 0 } + Vec2{ 0, moveY }, ColorF{ Theme::Darker, alpha * alpha2 });
 		}
 
 		const auto bottomBandRect = Rect{ 0, SceneHeight - BottomBandHeight, SceneWidth, BottomBandHeight }.draw(Theme::Lighter);
@@ -113,6 +115,8 @@ namespace hand
 			FontAsset(U"H68")(textScore).drawAt(bottomBandRect.center() + Vec2{ 0, 6 + 1 }, Theme::Darker);
 			FontAsset(U"H68")(textScore).drawAt(bottomBandRect.center() + Vec2{ 0, 6 + 0 }, Theme::Black);
 		}
+
+		SceneRect.drawFrame(2, 0, ColorF{ Theme::Black, 0.5 });
 
 		// フェードイン
 		if (time_ < 0.5s)

@@ -32,7 +32,11 @@ namespace hand
 
 		if (time_ > 1s)
 		{
-			FontAsset(U"StageTitle")(U"ＧＡＭＥ ＯＶＥＲ").drawAt(SceneCenter, Theme::White);
+			FontAsset(U"StageTitle")(U"ＧＡＭＥ ＯＶＥＲ").drawAt(SceneCenter + Vec2{ 0, -12 }, Theme::White);
+
+			const auto textScore = U"{:08d}"_fmt(getData().score);
+			FontAsset(U"H68")(textScore).drawAt(SceneCenter + Vec2{ 0, 10 + 1 }, Theme::Darker);
+			FontAsset(U"H68")(textScore).drawAt(SceneCenter + Vec2{ 0, 10 + 0 }, Theme::White);
 		}
 	}
 }

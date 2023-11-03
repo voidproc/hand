@@ -77,6 +77,8 @@ void LoadAssets()
 	AudioAsset::Register(U"Bgm2", RES(U"audio/white_darkness.ogg"));
 	AudioAsset::Register(U"Bgm3", RES(U"audio/blurred_light.ogg"));
 	AudioAsset::Register(U"Ending", RES(U"audio/ending.ogg"));
+	AudioAsset::Register(U"Quake", RES(U"audio/quake.ogg"));
+	AudioAsset::Register(U"NoiseFade", RES(U"audio/noisefade.ogg"));
 
 	TextureAsset::Load(U"Powered");
 	FontAsset::Load(U"Sub");
@@ -113,6 +115,7 @@ void Main()
 	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
 	//app.init(U"MainScene", 0s);
+	//app.init(U"GameOverScene", 0s);
 	//app.init(U"EndingScene", 0s);
 	//app.init(U"SandboxScene", 0s);
 

@@ -632,7 +632,7 @@ namespace hand
 		timerFire_{ 0.8s, StartImmediately::No, GlobalClock::Get() },
 		fireCount_{ 0 }
 	{
-		life_ = 1.0;
+		life_ = 40.0;
 
 		anim1_
 			.set(U"SpeedX", { 0s, -40 }, { 3.0s, 0 }, EaseInOutCubic)

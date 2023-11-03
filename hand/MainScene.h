@@ -57,6 +57,7 @@ namespace hand
 
 		// 画面振動用
 		Timer timerShake_;
+		Timer timerShakeLong_;
 
 		// スコアレート関係
 		// 敵の撃破時やアイテム取得時に加算されるスコアにかかる倍率（1.0～8.0）
