@@ -2,13 +2,11 @@
 
 https://github.com/voidproc/hand
 
-![Title](./screenshot/title.png)
-
 「私を救ってくれるあなたは、誰？」<br>
 2D 横スクロールシューティングゲーム。
 謎の「手」に護られる少女が行き着く先は……？
 
-このゲームは [バンダイナムコスタジオ杯 Siv3D ゲームジャム](https://bandainamcostudios.connpass.com/event/295239/) 参加作品です。
+このゲームは、バンダイナムコスタジオ杯 Siv3D ゲームジャム参加作品です。
 
 ## 操作方法
 - 移動 : 方向キー（上下左右）、WASD キー
@@ -29,9 +27,3 @@ https://seadenden-8bit.com
 - Windows 11
 - Visual Studio 2022
 - OpenSiv3D v0.6.12
-
-## ソースコードのライセンス
-[LICENSE](./LICENSE)
-
-## スクリーンショット
-![Area 1](./screenshot/area1.png)
