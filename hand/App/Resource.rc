@@ -8,7 +8,7 @@
 DefineResource(100, ICON, icon.ico)
 
 //
-//	Shaders
+//	Shadersd
 //
 Resource(engine/shader/d3d11/sprite.vs)
 Resource(engine/shader/d3d11/shape.ps)
@@ -119,6 +119,16 @@ Resource(engine/texture/box-shadow/8.png)
 //
 //////////////////////////////////////////////////////
 
+Resource(audio/select.wav)
+Resource(audio/blurred_light.ogg)
+Resource(audio/coin.ogg)
+Resource(audio/damage.ogg)
+Resource(audio/decide.ogg)
+Resource(audio/ending.ogg)
+Resource(audio/explosion.ogg)
+Resource(audio/hand_shot.ogg)
+Resource(audio/white_darkness.ogg)
+Resource(audio/World_without_time.ogg)
 Resource(event/stage.csv)
 Resource(font/hand6x8.ttf)
 Resource(font/hand6x8_2.ttf)
@@ -129,12 +139,15 @@ Resource(font/misaki_mincho.ttf)
 Resource(shader/scanline.hlsl)
 Resource(texture/airplane.png)
 Resource(texture/arrow_left.png)
+Resource(texture/bat.png)
 Resource(texture/bg_mountain.png)
 Resource(texture/bg_mountain2.png)
 Resource(texture/bg_tree.png)
 Resource(texture/bird.png)
 Resource(texture/bird_b.png)
 Resource(texture/bullet.png)
+Resource(texture/bullet2.png)
+Resource(texture/end_bg1.png)
 Resource(texture/girl.png)
 Resource(texture/hand.png)
 Resource(texture/jellyfish.png)
