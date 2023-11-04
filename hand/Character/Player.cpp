@@ -233,9 +233,11 @@ namespace hand
 		// 死んでる？
 		if (timeDead_.isRunning())
 		{
-			const Color color = Palette::White.lerp(Theme::Black, EaseInQuad(Clamp(timeDead_.sF() / 1.0, 0.0, 1.0)));
+			const Color color = Palette::White.lerp(Theme::Black, EaseInQuad(Clamp(timeDead_.sF() / 3.0, 0.0, 1.0)));
 			TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
-			SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.5s, time_.sF());
+
+			const auto tex = SpriteSheet::GetFrameNoLoop(TextureAsset(U"Girl"), 6, 2, 5, 2s, timeDead_.sF());
+			tex.drawAt(pos_, color);
 			return;
 		}
 
@@ -259,7 +261,8 @@ namespace hand
 		TextureAsset(U"Airplane").drawAt(pos_.movedBy(0, 6), color);
 
 		// Girl
-		SpriteSheet::DrawAt(TextureAsset(U"Girl"), 2, pos_, color, 0.2s, time_.sF());
+		const auto texGirl = SpriteSheet::GetFrame(TextureAsset(U"Girl"), 6, 0, 1, 0.2s, time_.sF());
+		texGirl.drawAt(pos_, color);
 
 		// "Player(矢印)"
 		if (time_ < 3.5s)
