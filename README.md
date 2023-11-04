@@ -11,6 +11,7 @@ https://github.com/voidproc/hand
 このゲームは [バンダイナムコスタジオ杯 Siv3D ゲームジャム](https://bandainamcostudios.connpass.com/event/295239/) 参加作品です。
 
 ## 操作方法
+キーボードまたは XInput 対応のゲームパッド等で操作することができます。
 - 移動 : 方向キー（上下左右）、WASD キー
 - アクション : Space キー／長押しでチャージ
 - ポーズ : Enter キー
