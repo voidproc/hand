@@ -100,8 +100,9 @@ namespace hand
 
 			const auto text = FontAsset(U"H88")(labelFunc(cursor_));
 			const double vibX = 2.0 * (1.0 - Clamp(timeCursor_.sF() / 0.18, 0.0, 1.0)) * Periodic::Sine1_1(0.06s);
-			const auto region = text.regionAt(SceneCenter.movedBy(0, 30));
-			text.draw(region.pos.movedBy(vibX, 0), ColorF{Theme::Black, alpha});
+			const auto region = text.regionAt(SceneCenter.movedBy(0, 32));
+			text.draw(region.pos.movedBy(vibX, 1), ColorF{ Theme::Lighter, alpha });
+			text.draw(region.pos.movedBy(vibX, 0), ColorF{ Theme::Black, alpha });
 
 			const double arrowAlpha = timeEnter_.isStarted() ? 0.0 : Periodic::Square0_1(0.75s);
 			TextureAsset(U"ArrowLeft").drawAt(region.leftCenter().movedBy(-16, 0), ColorF{ Theme::Black, arrowAlpha });
