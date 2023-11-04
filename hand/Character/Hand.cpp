@@ -37,7 +37,9 @@ namespace hand
 		const double alpha = (time_ > 0.75s) ? 0.5 + 0.5 * Periodic::Square0_1(0.08s, time_.sF()) : 1.0;
 		const ColorF color{ Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.13s, time_.sF())), alpha };
 
-		TextureAsset(U"Hand").drawAt(pos_, color);
+		const Vec2 vib = RandomVec2(time_ > 0.75s ? 0.5 : 0.0);
+
+		TextureAsset(U"Hand").drawAt(pos_ + vib, color);
 
 		// [DEBUG] 当たり判定
 		//collision().drawFrame(1, 0, Palette::Magenta.withAlpha(128));
