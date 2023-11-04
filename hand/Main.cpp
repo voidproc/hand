@@ -75,9 +75,9 @@ void LoadAssets()
 	AudioAsset::Register(U"Explosion", RES(U"audio/explosion.ogg"));
 	AudioAsset::Register(U"Damage", RES(U"audio/damage.ogg"));
 	AudioAsset::Register(U"Decide", RES(U"audio/decide.ogg"));
-	AudioAsset::Register(U"Bgm1", RES(U"audio/World_without_time.ogg"));
-	AudioAsset::Register(U"Bgm2", RES(U"audio/white_darkness.ogg"));
-	AudioAsset::Register(U"Bgm3", RES(U"audio/blurred_light.ogg"));
+	AudioAsset::Register(U"Bgm1", Audio::Stream, RES(U"audio/World_without_time.ogg"));
+	AudioAsset::Register(U"Bgm2", Audio::Stream, RES(U"audio/white_darkness.ogg"));
+	AudioAsset::Register(U"Bgm3", Audio::Stream, RES(U"audio/blurred_light.ogg"));
 	AudioAsset::Register(U"Ending", RES(U"audio/ending.ogg"));
 	AudioAsset::Register(U"Quake", RES(U"audio/quake.ogg"));
 	AudioAsset::Register(U"NoiseFade", RES(U"audio/noisefade.ogg"));
@@ -113,11 +113,6 @@ void Main()
 	app.setFadeColor(Theme::Black);
 
 	app.init(U"SplashScene", 0s);
-	//app.init(U"TitleScene", 0s);
-	//app.init(U"ConfigScene", 0s);
-	//app.init(U"MainScene", 0s);
-	//app.init(U"GameOverScene", 0s);
-	//app.init(U"EndingScene", 0s);
 
 	// Config
 	auto data = app.get().get();
