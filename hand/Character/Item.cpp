@@ -99,7 +99,7 @@ namespace hand
 		animSpeed_{ Random(0.2, 0.8) }
 	{
 		// 画面右端に近い場合は、飛び出す角度を補正する
-		if (pos.x > SceneWidth * 0.9)
+		if (pos.x > SceneWidth * 0.85)
 		{
 			vel_ = Circular{ Random(1.0, 2.4), Random(-20_deg, 5_deg) };
 		}
