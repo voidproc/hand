@@ -91,8 +91,5 @@ namespace hand
 
 		// BGM
 		int bgm_;
-
-		// SE
-		Timer timerSe_;
 	};
 }

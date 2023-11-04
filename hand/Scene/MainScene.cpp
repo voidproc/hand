@@ -223,8 +223,7 @@ namespace hand
 		timerMsg_{ 4.5s, StartImmediately::No, GlobalClock::Get() },
 		msgRange_{},
 		currentMsg_{},
-		bgm_{ 1 },
-		timerSe_{ 0.08s, StartImmediately::Yes }
+		bgm_{ 1 }
 	{
 		eventList_.load(RES(StageEventFilePath[1]));
 	}
@@ -583,11 +582,6 @@ namespace hand
 
 					// 同時再生数が多くなりすぎないよう制限
 					PlayAudioOneShot(U"Coin");
-					//if (timerSe_.reachedZero())
-					//{
-					//	AudioAsset(U"Coin").playOneShot();
-					//	timerSe_.restart();
-					//}
 				}
 			}
 
