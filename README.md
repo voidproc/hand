@@ -5,8 +5,8 @@ https://github.com/voidproc/hand
 ![Title](./screenshot/title.png)
 
 「私を救ってくれるあなたは、誰？」<br>
-2D 横スクロールシューティングゲーム。
-謎の「手」に護られる少女が行き着く先は……？
+少女がひとり空をゆく。謎の「手」に護られながら、行き着く先は……？
+低解像度でレトロチックな 2D 横スクロールシューティングゲームです。
 
 このゲームは [バンダイナムコスタジオ杯 Siv3D ゲームジャム](https://bandainamcostudios.connpass.com/event/295239/) 参加作品です。
 
