@@ -109,7 +109,7 @@ namespace hand
 
 				RectF{ Arg::center = pos_, size }
 					.rotated(Random(Math::TwoPi))
-					.draw(ColorF{ Theme::Darker, alpha });
+					.draw(ColorF{ Theme::Black, alpha });
 
 				return t < lifetime_;
 			}
@@ -136,7 +136,7 @@ namespace hand
 				const double size = EaseOutCubic(t / Lifetime) * 14.0 * scale_;
 
 				Circle{ pos_, size }
-				.drawFrame(8.0 - 8.0 * t / Lifetime, ColorF{ Theme::Darker, alpha });
+				.drawFrame(8.0 - 8.0 * t / Lifetime, ColorF{ Theme::Black, alpha });
 
 				return t < Lifetime;
 			}
@@ -400,6 +400,12 @@ namespace hand
 		return RectF{ Arg::center = pos_.movedBy(0, 2), 12 };
 	}
 
+	void Bird3::explode()
+	{
+		Enemy::explode();
+		obj_.effect.add<GenerateExplodeEffect>(obj_.effect, pos_, 2, 0.12);
+	}
+
 	BirdB1::BirdB1(EnemyType type, Objects& obj, const Vec2& pos, double speedY0)
 		:
 		Enemy{ type, obj, pos },
@@ -448,6 +454,12 @@ namespace hand
 	RectF BirdB1::collision() const
 	{
 		return RectF{ Arg::center = pos_, 14, 8 };
+	}
+
+	void BirdB1::explode()
+	{
+		Enemy::explode();
+		obj_.effect.add<GenerateExplodeEffect>(obj_.effect, pos_, 2, 0.12);
 	}
 
 	JellyFish1::JellyFish1(EnemyType type, Objects& obj, const Vec2& pos)

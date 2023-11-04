@@ -670,8 +670,8 @@ namespace hand
 		// NightSky
 		if (timeNightSky_.isRunning())
 		{
-			const double alpha = 0.8 * Clamp(timeNightSky_.sF() / 7.0, 0.0, 1.0);
-			Rect{ 0, 14, 160, 120 }.draw(Arg::top = ColorF{ Theme::Black, alpha }, Arg::bottom = ColorF{ Theme::Black, 0 });
+			const double alpha = 0.5 * Clamp(timeNightSky_.sF() / 7.0, 0.0, 1.0);
+			Rect{ 0, 14, 160, 90 }.draw(Arg::top = ColorF{ Theme::Black, alpha }, Arg::bottom = ColorF{ Theme::Black, 0 });
 
 			const double starsAlpha = 0.95 * Clamp(timeNightSky_.sF() / 14.0, 0.0, 1.0);
 
@@ -944,8 +944,8 @@ namespace hand
 
 			currentBgm_().stop(3s);
 			bgm_ = bgmNum;
+			currentBgm_().setLoop(true);
 			currentBgm_().play(3s, MixBus1);
-
 		}
 		else if (textType == U"quake")
 		{

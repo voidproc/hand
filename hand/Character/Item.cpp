@@ -31,7 +31,7 @@ namespace hand
 				const double size = 2.0 + EaseOutCubic(t / Lifetime) * 6.0;
 
 				Circle{ pos_, size }
-					.drawFrame(8.0 - 8.0 * t / Lifetime, Theme::Lighter.lerp(Theme::Darker, Periodic::Square0_1(0.01s, t)));
+					.drawFrame(8.0 - 8.0 * t / Lifetime, Theme::White.lerp(Theme::Darker, Periodic::Square0_1(0.01s, t)));
 
 				return t < Lifetime;
 			}

@@ -69,7 +69,7 @@ namespace hand
 		// "Siv3D"
 		if (time_ > 2.0s + 0.8s)
 		{
-			TextureAsset(U"Powered")(0, 8 + 56, 80, 16).draw(160 / 2 - 80 / 2, 144 / 2 - 80 / 2 + 8 + 56);
+			TextureAsset(U"Powered")(0, 8 + 56, 80, 16).draw(160 / 2 - 80 / 2, 144 / 2 - 80 / 2 + 8 + 56 + 3);
 		}
 
 		// フェードアウト

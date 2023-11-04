@@ -118,6 +118,8 @@ namespace hand
 
 		RectF collision() const override;
 
+		void explode() override;
+
 	private:
 		SimpleAnimation anim_;
 		Timer timerFire_;
@@ -154,6 +156,8 @@ namespace hand
 		void draw() const override;
 
 		RectF collision() const override;
+
+		void explode() override;
 
 	private:
 		SimpleAnimation anim1_;
