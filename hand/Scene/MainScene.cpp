@@ -89,7 +89,7 @@ namespace hand
 				:
 				pos_{ RandomVec2(RectF{ 8, 14 + 4, SceneWidth - 16, 32 }) },
 				lifetime_{ Random(0.3, 0.7) },
-				textureName_{ Sample({ U"Star1", U"Star2" })}
+				textureName_{ Sample({ U"Star1", U"Star2" }) }
 			{
 			}
 
@@ -104,6 +104,32 @@ namespace hand
 			Vec2 pos_;
 			double lifetime_;
 			String textureName_;
+		};
+
+		struct ShootingStarEffect : IEffect
+		{
+			ShootingStarEffect()
+				:
+				pos_{ Random(32, SceneWidth - 16), Random(14, 36) },
+				lifetime_{ Random(0.4, 0.9) }
+			{
+			}
+
+			bool update(double t) override
+			{
+				const double t0_1 = Clamp(t / lifetime_, 0.0, 1.0);
+				const double alpha = 0.90 * (1.0 - EaseOutCubic(t0_1));
+				const double tailLength = 1.0 + 18.0 * (1.0 - EaseInSine(t0_1));
+
+				Line{ pos_, Arg::angle = 45_deg, tailLength }.draw(ColorF{ Theme::White, alpha });
+
+				pos_ += Circular{ 90.0 * (1.0 - EaseOutCubic(t0_1)), 45_deg + 180_deg }.fastToVec2() * Scene::DeltaTime();
+
+				return t < lifetime_;
+			}
+
+			Vec2 pos_;
+			double lifetime_;
 		};
 
 		double RandomX()
@@ -192,7 +218,7 @@ namespace hand
 		timeBgDarkOverlayAlpha_{ StartImmediately::No, GlobalClock::Get() },
 		timeBgRain_{ StartImmediately::No, GlobalClock::Get() },
 		timeStageTitle_{ StartImmediately::No, GlobalClock::Get() },
-		timerStar_{ 8s, StartImmediately::No, GlobalClock::Get() },
+		timerStar_{ 6s, StartImmediately::No, GlobalClock::Get() },
 		stage_{ 0 },
 		timerMsg_{ 4.5s, StartImmediately::No, GlobalClock::Get() },
 		msgRange_{},
@@ -331,8 +357,16 @@ namespace hand
 		{
 			if (timerStar_.reachedZero())
 			{
-				timerStar_.restart(SecondsF{ Random(0.3, 2.0) });
-				obj_.bgEffect.add<StarEffect>();
+				timerStar_.restart(SecondsF{ Random(0.2, 1.2) });
+
+				if (RandomBool(0.8))
+				{
+					obj_.bgEffect.add<StarEffect>();
+				}
+				else
+				{
+					obj_.bgEffect.add<ShootingStarEffect>();
+				}
 			}
 		}
 
