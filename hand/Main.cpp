@@ -68,6 +68,7 @@ void LoadAssets()
 	TextureAsset::Register(U"EndBg1", RES(U"texture/end_bg1.png"));
 
 	AudioAsset::Register(U"Select", RES(U"audio/select.wav"));
+	AudioAsset::Register(U"Change", RES(U"audio/change.ogg"));
 	AudioAsset::Register(U"Coin", RES(U"audio/coin.ogg"));
 	AudioAsset::Register(U"HandShot", RES(U"audio/hand_shot.ogg"));
 	AudioAsset::Register(U"Explosion", RES(U"audio/explosion.ogg"));

@@ -24,14 +24,14 @@ namespace hand
 		{
 			cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
 
-			AudioAsset(U"Select").play();
+			AudioAsset(U"Select").playOneShot();
 		}
 
 		if (getData().input.downDown())
 		{
 			cursor_ = (cursor_ + 1) % ItemCount;
 
-			AudioAsset(U"Select").play();
+			AudioAsset(U"Select").playOneShot();
 		}
 
 
@@ -46,7 +46,7 @@ namespace hand
 				config.windowScale = Clamp(config.windowScale - 1, 1, 8);
 				Window::Resize((SceneSize * config.windowScale));
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 
 			if (getData().input.rightDown())
@@ -54,7 +54,7 @@ namespace hand
 				config.windowScale = Clamp(config.windowScale + 1, 1, 8);
 				Window::Resize((SceneSize * config.windowScale));
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 			break;
 
@@ -64,7 +64,7 @@ namespace hand
 			{
 				config.useEffect = not config.useEffect;
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 			break;
 
@@ -75,7 +75,7 @@ namespace hand
 				config.seVolume = Clamp(config.seVolume - 10, 0, 100);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 
 			if (getData().input.rightDown())
@@ -83,7 +83,7 @@ namespace hand
 				config.seVolume = Clamp(config.seVolume + 10, 0, 100);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 			break;
 
@@ -94,7 +94,7 @@ namespace hand
 				config.bgmVolume = Clamp(config.bgmVolume - 10, 0, 100);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 
 			if (getData().input.rightDown())
@@ -102,7 +102,7 @@ namespace hand
 				config.bgmVolume = Clamp(config.bgmVolume + 10, 0, 100);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 			break;
 
@@ -112,14 +112,14 @@ namespace hand
 			{
 				config.controllerId = Clamp(config.controllerId - 1, 0, 3);
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 
 			if (getData().input.rightDown())
 			{
 				config.controllerId = Clamp(config.controllerId + 1, 0, 3);
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 			}
 			break;
 
@@ -127,7 +127,7 @@ namespace hand
 			// 戻る
 			if (getData().input.decide().down())
 			{
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Change").playOneShot();
 
 				// 設定保存
 				config.save(Config::ConfigFilePath);

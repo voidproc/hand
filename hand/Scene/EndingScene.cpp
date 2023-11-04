@@ -70,7 +70,7 @@ namespace hand
 			{
 				changeScene(U"TitleScene", 0s);
 
-				AudioAsset(U"Select").playOneShot();
+				AudioAsset(U"Change").playOneShot();
 			}
 		}
 	}

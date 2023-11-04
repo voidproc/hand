@@ -32,7 +32,7 @@ namespace hand
 				cursor_ = (cursor_ - 1 + ItemCount) % ItemCount;
 				timeCursor_.restart();
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Select").playOneShot();
 			}
 
 			if (getData().input.rightDown())
@@ -40,7 +40,7 @@ namespace hand
 				cursor_ = (cursor_ + 1) % ItemCount;
 				timeCursor_.restart();
 
-				AudioAsset(U"Select").play();
+				AudioAsset(U"Select").playOneShot();
 			}
 
 			if (getData().input.decide().down())
@@ -53,7 +53,7 @@ namespace hand
 				}
 				else if (cursor_ == 1)
 				{
-					AudioAsset(U"Select").play();
+					AudioAsset(U"Change").playOneShot();
 
 					changeScene(U"ConfigScene", 0s);
 					return;
