@@ -60,7 +60,6 @@ void LoadAssets()
 	TextureAsset::Register(U"Bullet", RES(U"texture/bullet2.png"));
 	TextureAsset::Register(U"PlayerIndicator", RES(U"texture/player_indicator.png"));
 	TextureAsset::Register(U"JellyFish", RES(U"texture/jellyfish.png"));
-	TextureAsset::Register(U"NightSky", RES(U"texture/night_sky.png"));
 	TextureAsset::Register(U"Stars1", RES(U"texture/stars1.png"));
 	TextureAsset::Register(U"Stars2", RES(U"texture/stars2.png"));
 	TextureAsset::Register(U"Star1", RES(U"texture/star1.png"));

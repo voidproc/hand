@@ -670,8 +670,8 @@ namespace hand
 		// NightSky
 		if (timeNightSky_.isRunning())
 		{
-			const double alpha = 0.50 * Clamp(timeNightSky_.sF() / 7.0, 0.0, 1.0);
-			TextureAsset(U"NightSky").draw(0, 14, AlphaF(alpha));
+			const double alpha = 0.8 * Clamp(timeNightSky_.sF() / 7.0, 0.0, 1.0);
+			Rect{ 0, 14, 160, 120 }.draw(Arg::top = ColorF{ Theme::Black, alpha }, Arg::bottom = ColorF{ Theme::Black, 0 });
 
 			const double starsAlpha = 0.95 * Clamp(timeNightSky_.sF() / 14.0, 0.0, 1.0);
 
