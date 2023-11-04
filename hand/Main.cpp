@@ -10,6 +10,7 @@
 #include "Res.h"
 #include "DebugMode.h"
 #include "AudioVolume.h"
+#include "AssetPreload.h"
 
 void InitSivSystem()
 {
@@ -83,6 +84,8 @@ void LoadAssets()
 
 	TextureAsset::Load(U"Powered");
 	FontAsset::Load(U"Sub");
+
+	hand::PreloadAssets();
 }
 
 void Main()
@@ -109,8 +112,8 @@ void Main()
 	app.add<EndingScene>(U"EndingScene");
 	app.setFadeColor(Theme::Black);
 
-	//app.init(U"SplashScene", 0s);
-	app.init(U"TitleScene", 0s);
+	app.init(U"SplashScene", 0s);
+	//app.init(U"TitleScene", 0s);
 	//app.init(U"ConfigScene", 0s);
 	//app.init(U"MainScene", 0s);
 	//app.init(U"GameOverScene", 0s);

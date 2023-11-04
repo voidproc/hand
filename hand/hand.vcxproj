@@ -117,6 +117,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssetPreload.cpp" />
     <ClCompile Include="AudioPlay.cpp" />
     <ClCompile Include="AudioVolume.cpp" />
     <ClCompile Include="Character\Enemy.cpp" />
@@ -334,6 +335,7 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssetPreload.h" />
     <ClInclude Include="AudioPlay.h" />
     <ClInclude Include="AudioVolume.h" />
     <ClInclude Include="Character\Enemy.h" />
