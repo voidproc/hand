@@ -24,6 +24,7 @@ namespace hand
 		void drawKarma_() const;
 		void drawScore_() const;
 		void drawMsg_() const;
+		void drawPaused_() const;
 
 		// 画面を振動させる
 		void shake_();

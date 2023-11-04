@@ -459,11 +459,7 @@ namespace hand
 		}
 
 		// ポーズ
-		if (paused)
-		{
-			SceneRect.draw(ColorF{ Theme::Black, 0.8 });
-			FontAsset(U"H68Thin")(U"PAUSE").drawAt(SceneCenter, Theme::White);
-		}
+		drawPaused_();
 	}
 
 	void MainScene::updateScoreRate_()
@@ -795,6 +791,16 @@ namespace hand
 			RectF{ Arg::center = SceneCenter, SizeF{ SceneWidth, 32 } }.draw(ColorF{ Theme::White, 0.5 });
 
 			FontAsset(U"Sub")(Msg::Data[currentMsg_]).drawAt(SceneCenter, ColorF{ Theme::Black, 0.7 + 0.3 * Periodic::Square0_1(0.01s) });
+		}
+	}
+
+	void MainScene::drawPaused_() const
+	{
+		if (GlobalClock::Get()->isPaused())
+		{
+			const double alpha = Periodic::Square0_1(0.8s);
+			RectF{ Arg::center = SceneCenter, SizeF{ SceneWidth, 16 } }.draw(ColorF{ Theme::Darker, 0.7 * alpha });
+			FontAsset(U"H68Thin")(U"PAUSE").drawAt(SceneCenter, ColorF{ Theme::White, alpha });
 		}
 	}
 
