@@ -20,10 +20,14 @@ https://github.com/voidproc/hand
 - 敵に当たったり、「手」を使ったりすると KARMA（カルマ、左上のゲージ）が減っていきます。KARMA がなくなるとゲームオーバーです。
 - 敵を連続で倒したり、「手」を呼び出したままにすると「スコアレート（倍率）」が上昇します。倍率をどんどん稼いで、高得点を狙ってみましょう！
 
-## BGM
-「seadenden 8bit freeBGM」様が公開されている BGM を使用しています。
+## 使用しているフォント
+次のフォントを使用しています。
+- 美咲フォント : Little Limit 様 (https://littlelimit.net/)
+- JFドットM+H10、JFドット東雲明朝12 : 自家製フォント工房 様 (http://jikasei.me/)
 
-https://seadenden-8bit.com
+## 使用している BGM
+次のサイトで公開されている BGM を使用しています。
+- seadenden 8bit freeBGM 様 (https://seadenden-8bit.com)
 
 ## 開発環境
 - Windows 11
