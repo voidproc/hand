@@ -47,9 +47,12 @@ namespace hand
 			{
 				if (cursor_ == 0)
 				{
-					timeEnter_.start();
+					if (not timeEnter_.isRunning())
+					{
+						timeEnter_.start();
 
-					AudioAsset(U"Decide").play();
+						AudioAsset(U"Decide").play();
+					}
 				}
 				else if (cursor_ == 1)
 				{

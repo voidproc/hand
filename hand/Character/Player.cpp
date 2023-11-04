@@ -14,7 +14,7 @@ namespace hand
 				:
 				pos_{ pos.x, pos.y + Random(-2.0, 2.0) },
 				playerVel_{ playerVel },
-				lifetime_{ Random(0.05, 0.2) }
+				lifetime_{ Random(0.1, 0.4) }
 			{
 			}
 
@@ -23,9 +23,8 @@ namespace hand
 				const double t0_1 = t / lifetime_;
 				const double alpha = Periodic::Square0_1(0.08s, t);
 
-				Circle{ pos_.movedBy((-12 + playerVel_.x * 2.0) * EaseOutCubic(t0_1), 0), 2 + 3 * t0_1 }
-					.draw(ColorF{ Theme::Lighter, alpha })
-					.drawFrame(4.0 - 4.0 * t0_1, 0.0, ColorF{ Theme::Darker, alpha });
+				SpriteSheet::DrawAt(TextureAsset(U"Smoke"), 7, pos_.movedBy((-12 + playerVel_.x * 2.0) * EaseOutCubic(t0_1), 0),
+					Theme::Black.lerp(Theme::White, Periodic::Triangle0_1(0.08s, t)), SecondsF{ lifetime_ }, t);
 
 				return t < lifetime_;
 			}
@@ -217,7 +216,7 @@ namespace hand
 		// 飛行機から煙が出る
 		if (timerSmoke_.reachedZero())
 		{
-			timerSmoke_.restart(SecondsF{ Random(0.1, 0.3) });
+			timerSmoke_.restart(SecondsF{ Random(0.08, 0.3) });
 			effect_.add<SmokeEffect>(pos_.movedBy(-8, 8), vel_);
 		}
 

@@ -66,6 +66,7 @@ void LoadAssets()
 	TextureAsset::Register(U"Star2", RES(U"texture/star2.png"));
 	TextureAsset::Register(U"Bat", RES(U"texture/bat.png"));
 	TextureAsset::Register(U"EndBg1", RES(U"texture/end_bg1.png"));
+	TextureAsset::Register(U"Smoke", RES(U"texture/smoke.png"));
 
 	AudioAsset::Register(U"Select", RES(U"audio/select.wav"));
 	AudioAsset::Register(U"Change", RES(U"audio/change.ogg"));
