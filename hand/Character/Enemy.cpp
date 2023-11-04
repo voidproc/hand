@@ -4,6 +4,7 @@
 #include "SpriteSheet.h"
 #include "Theme.h"
 #include "DebugMode.h"
+#include "AudioPlay.h"
 
 namespace hand
 {
@@ -175,7 +176,8 @@ namespace hand
 					timer_.restart();
 					--n_;
 					AddExplodeEffect(effect_, pos_ + Circular{ Random(4.0, 12.0), Random(Math::TwoPi) });
-					AudioAsset(U"Explosion").playOneShot();
+
+					PlayAudioOneShot(U"Explosion");
 				}
 
 				return true;
@@ -241,7 +243,7 @@ namespace hand
 	{
 		AddExplodeEffect(obj_.effect, pos_);
 
-		AudioAsset(U"Explosion").playOneShot();
+		PlayAudioOneShot(U"Explosion");
 	}
 
 	bool Enemy::isAlive() const
@@ -351,7 +353,7 @@ namespace hand
 	{
 		AddExplodeEffectForBullet(obj_.effect, pos_);
 
-		//AudioAsset(U"Explosion").playOneShot();
+		//PlayAudioOneShot(U"Explosion");
 	}
 
 	Bird3::Bird3(EnemyType type, Objects& obj, const Vec2& pos)

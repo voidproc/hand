@@ -8,6 +8,8 @@ namespace hand
 	namespace
 	{
 		constexpr int ItemCount = 6;
+		constexpr int VolumeMax = 200;
+		constexpr int XInputDeviceIDMax = detail::XInput_helper::MaxPlayerCount - 1;
 	}
 
 	ConfigScene::ConfigScene(const InitData& init)
@@ -72,7 +74,7 @@ namespace hand
 			// SE ボリューム変更
 			if (getData().input.leftDown())
 			{
-				config.seVolume = Clamp(config.seVolume - 10, 0, 100);
+				config.seVolume = Clamp(config.seVolume - 10, 0, VolumeMax);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
 				AudioAsset(U"Change").playOneShot();
@@ -80,7 +82,7 @@ namespace hand
 
 			if (getData().input.rightDown())
 			{
-				config.seVolume = Clamp(config.seVolume + 10, 0, 100);
+				config.seVolume = Clamp(config.seVolume + 10, 0, VolumeMax);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
 				AudioAsset(U"Change").playOneShot();
@@ -91,7 +93,7 @@ namespace hand
 			// BGM ボリューム変更
 			if (getData().input.leftDown())
 			{
-				config.bgmVolume = Clamp(config.bgmVolume - 10, 0, 100);
+				config.bgmVolume = Clamp(config.bgmVolume - 10, 0, VolumeMax);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
 				AudioAsset(U"Change").playOneShot();
@@ -99,7 +101,7 @@ namespace hand
 
 			if (getData().input.rightDown())
 			{
-				config.bgmVolume = Clamp(config.bgmVolume + 10, 0, 100);
+				config.bgmVolume = Clamp(config.bgmVolume + 10, 0, VolumeMax);
 				ApplyAudioVolume(config.seVolume, config.bgmVolume);
 
 				AudioAsset(U"Change").playOneShot();
@@ -110,14 +112,14 @@ namespace hand
 			// コントローラ ID
 			if (getData().input.leftDown())
 			{
-				config.controllerId = Clamp(config.controllerId - 1, 0, 3);
+				config.controllerId = Clamp(config.controllerId - 1, 0, XInputDeviceIDMax);
 
 				AudioAsset(U"Change").playOneShot();
 			}
 
 			if (getData().input.rightDown())
 			{
-				config.controllerId = Clamp(config.controllerId + 1, 0, 3);
+				config.controllerId = Clamp(config.controllerId + 1, 0, XInputDeviceIDMax);
 
 				AudioAsset(U"Change").playOneShot();
 			}

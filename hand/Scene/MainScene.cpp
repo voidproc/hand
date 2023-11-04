@@ -5,6 +5,7 @@
 #include "SpriteSheet.h"
 #include "DebugMode.h"
 #include "MsgData.h"
+#include "AudioPlay.h"
 
 namespace hand
 {
@@ -547,11 +548,12 @@ namespace hand
 					item->kill();
 
 					// 同時再生数が多くなりすぎないよう制限
-					if (timerSe_.reachedZero())
-					{
-						AudioAsset(U"Coin").playOneShot();
-						timerSe_.restart();
-					}
+					PlayAudioOneShot(U"Coin");
+					//if (timerSe_.reachedZero())
+					//{
+					//	AudioAsset(U"Coin").playOneShot();
+					//	timerSe_.restart();
+					//}
 				}
 			}
 

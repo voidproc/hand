@@ -1,5 +1,5 @@
 ﻿#Time(0),Type(1),X(2),Y(3),Param4,Param5,Param6,Param7,Param8,Param9,Param10
-0,Goto,,,:Stage3-3,,,,,,
+0,Goto,,,:Stage3,,,,,,
 :Stage1,,,,,,,,,,
 0.5,StageTitle,,,1,,,,,,
 3,Bgm,,,1,,,,,,
