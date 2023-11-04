@@ -87,7 +87,7 @@ namespace hand
 		// ノイズ
 		if (time_ < 0.09s)
 		{
-			for (int i : step(Random(3)))
+			for ([[maybe_unused]] int i : step(Random(3)))
 			{
 				const double y = Random(SceneHeight);
 				Line{ 0, y, SceneWidth, y }.draw(Theme::Black);

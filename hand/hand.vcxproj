@@ -75,6 +75,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <BuildStlModules>false</BuildStlModules>
+      <AdditionalIncludeDirectories>$(ProjectDir)Character;$(ProjectDir)Scene;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -102,6 +103,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <BuildStlModules>false</BuildStlModules>
+      <AdditionalIncludeDirectories>$(ProjectDir)Character;$(ProjectDir)Scene;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -116,26 +118,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioVolume.cpp" />
+    <ClCompile Include="Character\Enemy.cpp" />
+    <ClCompile Include="Character\Hand.cpp" />
+    <ClCompile Include="Character\Item.cpp" />
+    <ClCompile Include="Character\Player.cpp" />
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="ConfigScene.cpp" />
-    <ClCompile Include="EndingScene.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EventList.cpp" />
-    <ClCompile Include="GameOverScene.cpp" />
-    <ClCompile Include="Hand.cpp" />
     <ClCompile Include="Hiscore.cpp" />
     <ClCompile Include="InputDevice.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MainScene.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SplashScene.cpp" />
+    <ClCompile Include="Scene\ConfigScene.cpp" />
+    <ClCompile Include="Scene\EndingScene.cpp" />
+    <ClCompile Include="Scene\GameOverScene.cpp" />
+    <ClCompile Include="Scene\MainScene.cpp" />
+    <ClCompile Include="Scene\SplashScene.cpp" />
+    <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="App\engine\texture\box-shadow\128.png" />
@@ -332,30 +334,30 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioVolume.h" />
+    <ClInclude Include="Character\Enemy.h" />
+    <ClInclude Include="Character\Hand.h" />
+    <ClInclude Include="Character\Item.h" />
+    <ClInclude Include="Character\Player.h" />
     <ClInclude Include="Config.h" />
-    <ClInclude Include="ConfigScene.h" />
     <ClInclude Include="CustomClock.h" />
     <ClInclude Include="DebugMode.h" />
-    <ClInclude Include="EndingScene.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="EventList.h" />
     <ClInclude Include="GameData.h" />
-    <ClInclude Include="GameOverScene.h" />
-    <ClInclude Include="Hand.h" />
     <ClInclude Include="Hiscore.h" />
     <ClInclude Include="InputDevice.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="MainScene.h" />
     <ClInclude Include="MsgData.h" />
     <ClInclude Include="Objects.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Res.h" />
     <ClInclude Include="SceneSize.h" />
-    <ClInclude Include="SplashScene.h" />
+    <ClInclude Include="Scene\ConfigScene.h" />
+    <ClInclude Include="Scene\EndingScene.h" />
+    <ClInclude Include="Scene\GameOverScene.h" />
+    <ClInclude Include="Scene\MainScene.h" />
+    <ClInclude Include="Scene\SplashScene.h" />
+    <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Theme.h" />
-    <ClInclude Include="TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\example\obj\blacksmith.obj">
