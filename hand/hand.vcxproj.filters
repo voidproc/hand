@@ -168,9 +168,6 @@
     <ClCompile Include="GameOverScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SandboxScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ConfigScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -861,9 +858,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameOverScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SandboxScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConfigScene.h">

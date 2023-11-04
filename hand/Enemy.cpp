@@ -577,7 +577,7 @@ namespace hand
 		life_ = 10.0;
 
 		anim_
-			.set(U"SpeedX", { 0s, -80 }, { 1.1s, -4 }, EaseOutSine)
+			.set(U"SpeedX", { 0s, -100 }, { 1.1s, -4 }, EaseOutSine)
 			.set(U"SpeedX", { 1.8s, -4 }, { 4.0s, -50 }, EaseInSine)
 			.set(U"Fire", { 0s, 0 }, { 0.85s, 0 })
 			.set(U"Fire", { 0.85s, 1 }, { 2.36s, 1 })

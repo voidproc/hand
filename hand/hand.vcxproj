@@ -129,7 +129,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SandboxScene.cpp" />
     <ClCompile Include="SplashScene.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -351,7 +350,6 @@
     <ClInclude Include="Objects.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Res.h" />
-    <ClInclude Include="SandboxScene.h" />
     <ClInclude Include="SceneSize.h" />
     <ClInclude Include="SplashScene.h" />
     <ClInclude Include="SpriteSheet.h" />

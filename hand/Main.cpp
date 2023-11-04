@@ -6,7 +6,6 @@
 #include "MainScene.h"
 #include "GameOverScene.h"
 #include "EndingScene.h"
-#include "SandboxScene.h"
 #include "Theme.h"
 #include "Res.h"
 #include "DebugMode.h"
@@ -107,7 +106,6 @@ void Main()
 	app.add<MainScene>(U"MainScene");
 	app.add<GameOverScene>(U"GameOverScene");
 	app.add<EndingScene>(U"EndingScene");
-	//app.add<SandboxScene>(U"SandboxScene");
 	app.setFadeColor(Theme::Black);
 
 	//app.init(U"SplashScene", 0s);
@@ -116,7 +114,6 @@ void Main()
 	//app.init(U"MainScene", 0s);
 	//app.init(U"GameOverScene", 0s);
 	//app.init(U"EndingScene", 0s);
-	//app.init(U"SandboxScene", 0s);
 
 	// Config
 	auto data = app.get().get();
