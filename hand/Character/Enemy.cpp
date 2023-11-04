@@ -352,8 +352,6 @@ namespace hand
 	void Bullet1::explode()
 	{
 		AddExplodeEffectForBullet(obj_.effect, pos_);
-
-		//PlayAudioOneShot(U"Explosion");
 	}
 
 	Bird3::Bird3(EnemyType type, Objects& obj, const Vec2& pos)
@@ -370,8 +368,6 @@ namespace hand
 			.set(U"Fire", { 0s, 0 }, { 1.5s, 0 })
 			.set(U"Fire", { 1.5s, 1 }, { 2.0s, 1 })
 			.set(U"Fire", { 2.0s, 0 }, { 999s, 0 })
-			//.set(U"Mirrored", { 0s, 0 }, { 2.9s, 0 })
-			//.set(U"Mirrored", { 2.9s, 1 }, { 999s, 1 })
 			.start();
 	}
 

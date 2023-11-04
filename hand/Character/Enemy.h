@@ -123,6 +123,7 @@ namespace hand
 		Timer timerFire_;
 	};
 
+	// でかい鳥
 	class Bird4 : public Enemy
 	{
 	public:
@@ -160,7 +161,8 @@ namespace hand
 	};
 
 	// クラゲ
-	// ...
+	// ふわふわと上に移動する
+	// 弾を撃つ
 	class JellyFish1 : public Enemy
 	{
 	public:
@@ -178,7 +180,7 @@ namespace hand
 	};
 
 	// コウモリ
-	// ...
+	// 急降下して分裂
 	class Bat1 : public Enemy
 	{
 	public:
@@ -198,7 +200,7 @@ namespace hand
 	};
 
 	// コウモリ
-	// ...
+	// 分裂後
 	class Bat2 : public Enemy
 	{
 	public:
