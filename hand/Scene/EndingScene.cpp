@@ -4,6 +4,7 @@
 #include "Hiscore.h"
 #include "MsgData.h"
 #include "DebugMode.h"
+#include "AudioPlay.h"
 
 namespace hand
 {
@@ -60,7 +61,7 @@ namespace hand
 
 		if (isFinishedMsg_() && AudioAsset(U"Ending").isPlaying())
 		{
-			AudioAsset(U"Ending").stop(3s);
+			StopAllBgm(3s);
 		}
 
 
@@ -71,6 +72,7 @@ namespace hand
 				changeScene(U"TitleScene", 0s);
 
 				AudioAsset(U"Change").playOneShot();
+				StopAllBgm(0s);
 			}
 		}
 	}

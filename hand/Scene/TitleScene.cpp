@@ -1,6 +1,7 @@
 ﻿#include "TitleScene.h"
 #include "SceneSize.h"
 #include "Theme.h"
+#include "AudioPlay.h"
 
 namespace hand
 {
@@ -17,6 +18,9 @@ namespace hand
 		timeCursor_{ StartImmediately::No },
 		cursor_{ 0 }
 	{
+		// 無音のシーンなので一応 BGM を止めておく
+		StopAllBgm(0s);
+
 		getData().score = 0;
 
 		timeCursor_.set(999s);

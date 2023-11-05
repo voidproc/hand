@@ -12,4 +12,12 @@ namespace hand
 			AudioAsset(assetName).playOneShot();
 		}
 	}
+
+	void StopAllBgm(const Duration& fade)
+	{
+		AudioAsset(U"Bgm1").stop(fade);
+		AudioAsset(U"Bgm2").stop(fade);
+		AudioAsset(U"Bgm3").stop(fade);
+		AudioAsset(U"Ending").stop(fade);
+	}
 }

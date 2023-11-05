@@ -239,7 +239,7 @@ namespace hand
 		// BGMフェードアウト
 		if (currentBgm_().isPlaying() && bgm_ == 0)
 		{
-			currentBgm_().stop(2s);
+			StopAllBgm(2s);
 		}
 
 		// シーンエンド
@@ -343,12 +343,16 @@ namespace hand
 		}
 
 		// ステージイベント
-		while (eventList_.hasActiveEvent(time_.sF()))
+		// プレイヤーが倒されていたら実行しない
+		if (not timePlayerDead_.isRunning())
 		{
-			const auto& row = eventList_.getRow();
-			doEvent_(row);
+			while (eventList_.hasActiveEvent(time_.sF()))
+			{
+				const auto& row = eventList_.getRow();
+				doEvent_(row);
 
-			eventList_.next();
+				eventList_.next();
+			}
 		}
 
 		// NightSky
@@ -609,7 +613,7 @@ namespace hand
 					{
 						timePlayerDead_.start();
 
-						currentBgm_().stop(2s);
+						StopAllBgm(2s);
 						bgm_ = 0;
 
 						break;
@@ -946,12 +950,16 @@ namespace hand
 		}
 		else if (textType == U"bgm")
 		{
+			StopAllBgm(3s);
+
 			const int bgmNum = ParseOr<int>(eventCsvRow[4], 0);
 
-			currentBgm_().stop(3s);
-			bgm_ = bgmNum;
-			currentBgm_().setLoop(true);
-			currentBgm_().play(3s, MixBus1);
+			if (bgmNum > 0)
+			{
+				bgm_ = bgmNum;
+				currentBgm_().setLoop(true);
+				currentBgm_().play(3s, MixBus1);
+			}
 		}
 		else if (textType == U"quake")
 		{

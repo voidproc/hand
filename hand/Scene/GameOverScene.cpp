@@ -2,6 +2,7 @@
 #include "SceneSize.h"
 #include "Theme.h"
 #include "Hiscore.h"
+#include "AudioPlay.h"
 
 namespace hand
 {
@@ -10,6 +11,9 @@ namespace hand
 		IScene{ init },
 		time_{ StartImmediately::Yes, GlobalClock::Get() }
 	{
+		// 無音のシーンなので一応 BGM を止めておく
+		StopAllBgm(0s);
+
 		SaveHiscore(getData());
 	}
 
