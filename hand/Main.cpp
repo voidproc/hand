@@ -16,7 +16,7 @@ void InitSivSystem()
 {
 	Scene::SetBackground(hand::Theme::Black);
 
-	auto title = U"The HAND of Salvation - 救いの手 | v1.0.0"_sv;
+	auto title = U"The HAND of Salvation - 救いの手 | v1.0.1"_sv;
 #ifdef DEBUG_MODE
 	Window::SetTitle(U"★DEBUG MODE★ - " + title);
 #else
@@ -78,7 +78,7 @@ void LoadAssets()
 	AudioAsset::Register(U"Bgm1", Audio::Stream, RES(U"audio/World_without_time.ogg"));
 	AudioAsset::Register(U"Bgm2", Audio::Stream, RES(U"audio/white_darkness.ogg"));
 	AudioAsset::Register(U"Bgm3", Audio::Stream, RES(U"audio/blurred_light.ogg"));
-	AudioAsset::Register(U"Ending", RES(U"audio/ending.ogg"));
+	AudioAsset::Register(U"Ending", Audio::Stream, RES(U"audio/ending.ogg"));
 	AudioAsset::Register(U"Quake", RES(U"audio/quake.ogg"));
 	AudioAsset::Register(U"NoiseFade", RES(U"audio/noisefade.ogg"));
 
