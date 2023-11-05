@@ -33,3 +33,8 @@ https://github.com/voidproc/hand
 - Windows 11
 - Visual Studio 2022
 - OpenSiv3D v0.6.12
+
+## 更新履歴
+- v1.0.1
+  - ゲームオーバー時などに BGM が流れ続けてしまう不具合を修正
+  - メモリ使用量を改善（オーディオ関連）

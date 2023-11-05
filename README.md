@@ -12,6 +12,7 @@ https://github.com/voidproc/hand
 このゲームは [バンダイナムコスタジオ杯 Siv3D ゲームジャム](https://bandainamcostudios.connpass.com/event/295239/) 参加作品です。
 
 ## ダウンロード
+- [v1.0.1（Windows 版）](https://github.com/voidproc/hand/releases/download/v1.0.1/hand.zip)
 - [v1.0.0（Windows 版）](https://github.com/voidproc/hand/releases/download/v1.0.0/hand.zip)
 
 ## 操作方法
@@ -44,3 +45,8 @@ https://github.com/voidproc/hand
 
 ## スクリーンショット
 ![Area 1](./screenshot/area1.png)
+
+## 更新履歴
+- v1.0.1
+  - ゲームオーバー時などに BGM が流れ続けてしまう不具合を修正
+  - メモリ使用量を改善（オーディオ関連）
