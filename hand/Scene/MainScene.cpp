@@ -245,6 +245,9 @@ namespace hand
 		// シーンエンド
 		if (timeEndScene_ > 2s + 4.5s)
 		{
+			// スコアを記録
+			saveCurrentResult_();
+
 			changeScene(U"EndingScene", 0s);
 			return;
 		}
@@ -339,6 +342,9 @@ namespace hand
 		// プレイヤーが倒されてから数秒後にシーン移行
 		if (timePlayerDead_ >= 4s)
 		{
+			// スコアを記録
+			saveCurrentResult_();
+
 			changeScene(U"GameOverScene", 0s);
 			return;
 		}
@@ -627,6 +633,12 @@ namespace hand
 				}
 			}
 		}
+	}
+
+	void MainScene::saveCurrentResult_()
+	{
+		getData().result.add(getData().difficulty, GameResult{ getData().score, getData().area });
+		getData().result.save(ResultList::ResultDataPath);
 	}
 
 	void MainScene::drawBG_() const

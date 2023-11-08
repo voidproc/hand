@@ -63,6 +63,20 @@ namespace hand
 		}
 	}
 
+	void ResultList::add(Difficulty difficulty, const GameResult& entry)
+	{
+		auto& result = result_[FromEnum(difficulty)];
+
+		result.push_back(entry);
+		sort_();
+
+		if (result.size() > EntryCount)
+		{
+			const auto nOver = result.size() - EntryCount;
+			result.pop_back_N(nOver);
+		}
+	}
+
 	void ResultList::sort_()
 	{
 		for (auto& r : result_)

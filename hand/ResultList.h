@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Area.h"
+#include "Difficulty.h"
 
 namespace hand
 {
@@ -20,6 +21,8 @@ namespace hand
 		void load(FilePathView dataPath);
 
 		void save(FilePathView dataPath);
+
+		void add(Difficulty difficulty, const GameResult& entry);
 
 	private:
 		void sort_();

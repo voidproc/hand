@@ -17,6 +17,7 @@ namespace hand
 	private:
 		void updateScoreRate_();
 		void checkCollision_();
+		void saveCurrentResult_();
 
 		void drawBG_() const;
 		void drawStageTitle_() const;
