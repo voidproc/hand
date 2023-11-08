@@ -25,4 +25,26 @@ namespace hand
 
 		return U"";
 	}
+
+	Difficulty DifficultyNext(Difficulty d)
+	{
+		switch (d)
+		{
+		case Difficulty::Normal: return Difficulty::Hard;
+		case Difficulty::Hard: return Difficulty::Easy;
+		case Difficulty::Easy: return Difficulty::Normal;
+		}
+		return Difficulty::Normal;
+	}
+
+	Difficulty DifficultyPrev(Difficulty d)
+	{
+		switch (d)
+		{
+		case Difficulty::Normal: return Difficulty::Easy;
+		case Difficulty::Hard: return Difficulty::Normal;
+		case Difficulty::Easy: return Difficulty::Hard;
+		}
+		return Difficulty::Normal;
+	}
 }

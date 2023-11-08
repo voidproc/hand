@@ -14,6 +14,7 @@ namespace hand
 	class ResultList
 	{
 	public:
+		static inline constexpr int EntryCount = 8;
 		static inline constexpr StringView ResultDataPath = U"score.dat"_sv;
 
 		ResultList();
@@ -23,6 +24,8 @@ namespace hand
 		void save(FilePathView dataPath);
 
 		void add(Difficulty difficulty, const GameResult& entry);
+
+		const GameResult& get(Difficulty difficulty, int index) const;
 
 	private:
 		void sort_();

@@ -2,11 +2,6 @@
 
 namespace hand
 {
-	namespace
-	{
-		constexpr int EntryCount = 8;
-	}
-
 	ResultList::ResultList()
 	{
 		result_.resize(3);
@@ -75,6 +70,11 @@ namespace hand
 			const auto nOver = result.size() - EntryCount;
 			result.pop_back_N(nOver);
 		}
+	}
+
+	const GameResult& ResultList::get(Difficulty difficulty, int index) const
+	{
+		return result_[FromEnum(difficulty)][index];
 	}
 
 	void ResultList::sort_()

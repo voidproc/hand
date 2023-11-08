@@ -11,5 +11,6 @@ namespace hand
 
 	String DifficultyToNameString(Difficulty d);
 	String DifficultyToDescriptionString(Difficulty d);
-
+	Difficulty DifficultyNext(Difficulty d);
+	Difficulty DifficultyPrev(Difficulty d);
 }

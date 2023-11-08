@@ -7,7 +7,7 @@ namespace hand
 {
 	namespace
 	{
-		constexpr int ItemCount = 3;
+		constexpr int ItemCount = 4;
 	}
 
 	TitleScene::TitleScene(const InitData& init)
@@ -67,6 +67,13 @@ namespace hand
 				}
 				else if (cursor_ == 2)
 				{
+					AudioAsset(U"Change").playOneShot();
+
+					changeScene(U"RankingScene", 0s);
+					return;
+				}
+				else if (cursor_ == 3)
+				{
 					System::Exit();
 					return;
 				}
@@ -97,7 +104,8 @@ namespace hand
 				{
 				case 0: return U"GAME START";
 				case 1: return U"CONFIGURATION";
-				case 2: return U"QUIT";
+				case 2: return U"RANKING";
+				case 3: return U"QUIT";
 				}
 				return U"";
 				};

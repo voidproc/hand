@@ -3,6 +3,7 @@
 #include "SplashScene.h"
 #include "TitleScene.h"
 #include "ConfigScene.h"
+#include "RankingScene.h"
 #include "MainScene.h"
 #include "GameOverScene.h"
 #include "EndingScene.h"
@@ -108,6 +109,7 @@ void Main()
 	app.add<SplashScene>(U"SplashScene");
 	app.add<TitleScene>(U"TitleScene");
 	app.add<ConfigScene>(U"ConfigScene");
+	app.add<RankingScene>(U"RankingScene");
 	app.add<MainScene>(U"MainScene");
 	app.add<GameOverScene>(U"GameOverScene");
 	app.add<EndingScene>(U"EndingScene");
