@@ -23,7 +23,7 @@ namespace hand
 
 	bool IsBullet(EnemyType type);
 
-	int EnemyScore(EnemyType type);
+	uint32 EnemyScore(EnemyType type);
 
 	int EnemyCoins(EnemyType type);
 

@@ -114,12 +114,14 @@ namespace hand
 		}
 
 		// ハイスコア
+		/*
 		if (getData().config.hiscore > 0)
 		{
 			const auto textScore = U"HISCORE {:08d}"_fmt(getData().config.hiscore);
 			FontAsset(U"H68Thin")(textScore).drawAt(SceneRect.bottomCenter() + Vec2{ 0, -7 + 1 }, Theme::Darker);
 			FontAsset(U"H68Thin")(textScore).drawAt(SceneRect.bottomCenter() + Vec2{ 0, -7 + 0 }, Theme::White);
 		}
+		*/
 
 		// フェードイン
 		{

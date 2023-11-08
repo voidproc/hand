@@ -117,6 +117,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Area.cpp" />
     <ClCompile Include="AssetPreload.cpp" />
     <ClCompile Include="AudioPlay.cpp" />
     <ClCompile Include="AudioVolume.cpp" />
@@ -125,10 +126,12 @@
     <ClCompile Include="Character\Item.cpp" />
     <ClCompile Include="Character\Player.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="Difficulty.cpp" />
     <ClCompile Include="EventList.cpp" />
     <ClCompile Include="Hiscore.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ResultList.cpp" />
     <ClCompile Include="Scene\ConfigScene.cpp" />
     <ClCompile Include="Scene\EndingScene.cpp" />
     <ClCompile Include="Scene\GameOverScene.cpp" />
@@ -335,6 +338,7 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Area.h" />
     <ClInclude Include="AssetPreload.h" />
     <ClInclude Include="AudioPlay.h" />
     <ClInclude Include="AudioVolume.h" />
@@ -345,6 +349,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="CustomClock.h" />
     <ClInclude Include="DebugMode.h" />
+    <ClInclude Include="Difficulty.h" />
     <ClInclude Include="EventList.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="Hiscore.h" />
@@ -352,6 +357,7 @@
     <ClInclude Include="MsgData.h" />
     <ClInclude Include="Objects.h" />
     <ClInclude Include="Res.h" />
+    <ClInclude Include="ResultList.h" />
     <ClInclude Include="SceneSize.h" />
     <ClInclude Include="Scene\ConfigScene.h" />
     <ClInclude Include="Scene\EndingScene.h" />

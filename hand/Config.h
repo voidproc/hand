@@ -21,7 +21,7 @@ namespace hand
 		// ゲームコントローラの ID
 		int controllerId;
 
-		int hiscore;
+		uint32 hiscore;
 
 		Config();
 

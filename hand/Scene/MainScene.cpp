@@ -324,6 +324,7 @@ namespace hand
 			if (enemy->type() == EnemyType::HandE && not enemy->isAlive())
 			{
 				getData().endingType = 0;
+				getData().area = Area::Clear0;
 				timeEndScene_.start();
 				AudioAsset(U"NoiseFade").playOneShot();
 			}
@@ -513,6 +514,7 @@ namespace hand
 						if (enemy->type() == EnemyType::HandE)
 						{
 							getData().endingType = 0;
+							getData().area = Area::Clear0;
 							timeEndScene_.start();
 							AudioAsset(U"NoiseFade").playOneShot();
 							break;
@@ -602,6 +604,7 @@ namespace hand
 					{
 						timeEndScene_.start();
 						getData().endingType = 1;
+						getData().area = Area::Clear1;
 						AudioAsset(U"NoiseFade").playOneShot();
 						break;
 					}
@@ -820,7 +823,7 @@ namespace hand
 
 	void MainScene::addScore_(double score)
 	{
-		getData().score += static_cast<int>(score / 10) * 10;
+		getData().score += static_cast<uint32>(score / 10) * 10;
 	}
 
 	void MainScene::addScoreRateGauge_(const Duration& gaugeAdd)
@@ -873,6 +876,9 @@ namespace hand
 		else if (textType == U"hand")
 		{
 			obj_.enemies.emplace_back(MakeEnemy<HandE, EnemyType::HandE>(obj_, pos));
+
+			// ボスに到達した
+			getData().area = Area::Area3Boss;
 		}
 		else if (textType == U"genbird1")
 		{
@@ -929,6 +935,13 @@ namespace hand
 		{
 			stage_ = ParseInt<int>(eventCsvRow[4]);
 			timeStageTitle_.restart();
+
+			switch (stage_)
+			{
+			case 1: getData().area = Area::Area1; break;
+			case 2: getData().area = Area::Area2; break;
+			case 3: getData().area = Area::Area3; break;
+			}
 
 #ifdef DEBUG_MODE
 			// [DEBUG]

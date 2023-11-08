@@ -11,6 +11,7 @@
 #include "DebugMode.h"
 #include "AudioVolume.h"
 #include "AssetPreload.h"
+#include "ResultList.h"
 
 void InitSivSystem()
 {
@@ -118,6 +119,10 @@ void Main()
 	auto data = app.get().get();
 	auto& config = data->config;
 	config.load(Config::ConfigFilePath);
+
+	// Result
+	auto& result = data->result;
+	result.load(ResultList::ResultDataPath);
 
 	// オーディオ音量初期化
 	ApplyAudioVolume(config.seVolume, config.bgmVolume);

@@ -40,7 +40,7 @@ namespace hand
 		return false;
 	}
 
-	int EnemyScore(EnemyType type)
+	uint32 EnemyScore(EnemyType type)
 	{
 		switch (type)
 		{

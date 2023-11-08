@@ -23,7 +23,7 @@ namespace hand
 		seVolume = ini.getOr<int>(U"SeVolume", 90);
 		bgmVolume = ini.getOr<int>(U"BgmVolume", 70);
 		controllerId = ini.getOr<int>(U"ControllerID", 0);
-		hiscore = ini.getOr<int>(U"Score", 0);
+		hiscore = ini.getOr<uint32>(U"Score", 0);
 	}
 
 	void Config::save(FilePathView iniPath)
