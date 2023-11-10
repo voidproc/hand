@@ -24,7 +24,6 @@ namespace hand
 		getData().score = 0;
 
 		timeCursor_.set(999s);
-		timeCursor_.start();
 	}
 
 	void TitleScene::update()
@@ -120,16 +119,6 @@ namespace hand
 			TextureAsset(U"ArrowLeft").drawAt(region.leftCenter().movedBy(-16, 0), ColorF{ Theme::Black, arrowAlpha });
 			TextureAsset(U"ArrowLeft").mirrored().drawAt(region.rightCenter().movedBy(16, 0), ColorF{ Theme::Black, arrowAlpha });
 		}
-
-		// ハイスコア
-		/*
-		if (getData().config.hiscore > 0)
-		{
-			const auto textScore = U"HISCORE {:08d}"_fmt(getData().config.hiscore);
-			FontAsset(U"H68Thin")(textScore).drawAt(SceneRect.bottomCenter() + Vec2{ 0, -7 + 1 }, Theme::Darker);
-			FontAsset(U"H68Thin")(textScore).drawAt(SceneRect.bottomCenter() + Vec2{ 0, -7 + 0 }, Theme::White);
-		}
-		*/
 
 		// フェードイン
 		{
