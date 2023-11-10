@@ -13,6 +13,7 @@ namespace hand
 
 	private:
 		Stopwatch time_;
+		Stopwatch timeCursor_;
 		Difficulty difficulty_;
 	};
 }

@@ -2,6 +2,7 @@
 #include "SceneSize.h"
 #include "Theme.h"
 #include "ScoreText.h"
+#include "TextVibration.h"
 
 namespace hand
 {
@@ -24,8 +25,10 @@ namespace hand
 		:
 		IScene{ init },
 		time_{ StartImmediately::Yes },
+		timeCursor_{ StartImmediately::No },
 		difficulty_{ Difficulty::Normal }
 	{
+		timeCursor_.set(999s);
 	}
 
 	void RankingScene::update()
@@ -33,12 +36,14 @@ namespace hand
 		if (getData().input.leftDown())
 		{
 			difficulty_ = DifficultyPrev(difficulty_);
+			timeCursor_.restart();
 
 			AudioAsset(U"Select").playOneShot();
 		}
 		else if (getData().input.rightDown())
 		{
 			difficulty_ = DifficultyNext(difficulty_);
+			timeCursor_.restart();
 
 			AudioAsset(U"Select").playOneShot();
 		}
@@ -61,7 +66,8 @@ namespace hand
 
 		// ヘッダ
 		const auto headerRect = Rect{ 0, 0, SceneWidth, 16 }.draw(Theme::Black);
-		FontAsset(U"H88")(U"RANKING - {}"_fmt(DifficultyToNameString(difficulty_))).drawAt(headerRect.center(), Theme::White);
+		FontAsset(U"H88")(U"RANKING - {}"_fmt(DifficultyToNameString(difficulty_)))
+			.drawAt(headerRect.center().movedBy(GetTextVibrationOnSelectionChange(timeCursor_.sF())), Theme::White);
 
 		// 矢印
 		const double arrowAlpha = Periodic::Square0_1(0.75s);

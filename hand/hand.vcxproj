@@ -145,6 +145,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextVibration.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="App\engine\texture\box-shadow\128.png" />
@@ -371,6 +372,7 @@
     <ClInclude Include="ScoreText.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TextVibration.h" />
     <ClInclude Include="Theme.h" />
   </ItemGroup>
   <ItemGroup>
