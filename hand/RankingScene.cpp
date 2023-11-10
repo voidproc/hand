@@ -25,10 +25,11 @@ namespace hand
 		:
 		IScene{ init },
 		time_{ StartImmediately::Yes },
-		timeCursor_{ StartImmediately::No },
+		timeVibHeader_{ StartImmediately::No },
+		timeSlide_{ StartImmediately::Yes },
 		difficulty_{ Difficulty::Normal }
 	{
-		timeCursor_.set(999s);
+		timeVibHeader_.set(999s);
 	}
 
 	void RankingScene::update()
@@ -36,14 +37,16 @@ namespace hand
 		if (getData().input.leftDown())
 		{
 			difficulty_ = DifficultyPrev(difficulty_);
-			timeCursor_.restart();
+			timeVibHeader_.restart();
+			timeSlide_.restart();
 
 			AudioAsset(U"Select").playOneShot();
 		}
 		else if (getData().input.rightDown())
 		{
 			difficulty_ = DifficultyNext(difficulty_);
-			timeCursor_.restart();
+			timeVibHeader_.restart();
+			timeSlide_.restart();
 
 			AudioAsset(U"Select").playOneShot();
 		}
@@ -66,8 +69,21 @@ namespace hand
 
 		// ヘッダ
 		const auto headerRect = Rect{ 0, 0, SceneWidth, 16 }.draw(Theme::Black);
+
+		// 選択難易度によってヘッダの色を変える
+		{
+			constexpr double GlowWidth = 48.0;
+			constexpr double GlowShear = 4.0;
+			const double shiftX = GlowWidth * (difficulty_ == Difficulty::Easy ? -1.0 : (difficulty_ == Difficulty::Hard ? 1.0 : 0.0));
+			const double alpha = Clamp(timeSlide_.sF() / 0.1, 0.0, 1.0);
+			const ColorF color0{ Theme::Darker, 0 * alpha };
+			const ColorF color1{ Theme::Darker, 0.75 * alpha };
+			headerRect.scaled(0.25, 1.0).shearedX(GlowShear).movedBy(shiftX - GlowWidth / 2 + GlowShear, 0).draw(color0, color1, color1, color0);
+			headerRect.scaled(0.25, 1.0).shearedX(GlowShear).movedBy(shiftX + GlowWidth / 2 - GlowShear, 0).draw(color1, color0, color0, color1);
+		}
+
 		FontAsset(U"H88")(U"RANKING - {}"_fmt(DifficultyToNameString(difficulty_)))
-			.drawAt(headerRect.center().movedBy(GetTextVibrationOnSelectionChange(timeCursor_.sF())), Theme::White);
+			.drawAt(headerRect.center().movedBy(GetTextVibrationOnSelectionChange(timeVibHeader_.sF())), Theme::White);
 
 		// 矢印
 		const double arrowAlpha = Periodic::Square0_1(0.75s);
@@ -87,19 +103,25 @@ namespace hand
 			const auto shadeRect = lineRect.movedBy(0, 8).setSize(lineRect.w, 4);
 			shadeRect.rounded(2.0).draw(ColorF{ Theme::Lighter, 0.5 });
 
-			// スコア
-			DrawScoreTextAt(lineCenter.movedBy(-8, 0), result.score);
+			// スコアなどはモード切替時にスライドしてくる
+			{
+				const double t = 1.0 - EaseOutExpo(Clamp((timeSlide_.sF() - iEntry * 0.03) / 0.3, 0.0, 1.0));
+				const Transformer2D translator{ Mat3x2::Translate(t * SceneWidth, 0) };
 
-			// 順位
-			const auto numRect = FontAsset(U"H68")(iEntry + 1)
-				.drawAt(lineRect.leftCenter().movedBy(6, 0), Theme::Black);
+				// スコア
+				DrawScoreTextAt(lineCenter.movedBy(-8, 0), result.score);
 
-			FontAsset(U"H68Thin")(GetOrdinal(iEntry + 1))
-				.draw(numRect.tr().movedBy(0, 1), Theme::Darker);
+				// 順位
+				const auto numRect = FontAsset(U"H68")(iEntry + 1)
+					.drawAt(lineRect.leftCenter().movedBy(6, 0), Theme::Black);
 
-			// エリア
-			FontAsset(U"H68Thin")(AreaToString(result.area))
-				.drawAt(lineRect.rightCenter().movedBy(-20, 1), Theme::Black);
+				FontAsset(U"H68Thin")(GetOrdinal(iEntry + 1))
+					.draw(numRect.tr().movedBy(0, 1), Theme::Darker);
+
+				// エリア
+				FontAsset(U"H68Thin")(AreaToString(result.area))
+					.drawAt(lineRect.rightCenter().movedBy(-20, 1), Theme::Black);
+			}
 		}
 	}
 }
