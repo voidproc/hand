@@ -211,6 +211,8 @@ namespace hand
 		timePlayerDead_{ StartImmediately::No, GlobalClock::Get() },
 		timerShake_{ 0.4s, StartImmediately::No, GlobalClock::Get() },
 		timerShakeLong_{ 5s, StartImmediately::No, GlobalClock::Get() },
+		timerGaugeAnim_{ 0.2s, StartImmediately::No, GlobalClock::Get() },
+		prevKarma_{ 0 },
 		scoreRateRaw_{ ScoreRateMin },
 		timeIncrScoreRate_{ StartImmediately::No, GlobalClock::Get() },
 		timerScoreRateGaugeDecr_{ ScoreRateDecrTime, StartImmediately::Yes, GlobalClock::Get() },
@@ -394,6 +396,14 @@ namespace hand
 				timerMsg_.restart();
 			}
 		}
+
+		// ゲージアニメーション
+		if (obj_.player.karma() - prevKarma_ < -1e-3 && not timerGaugeAnim_.isRunning())
+		{
+			timerGaugeAnim_.restart();
+		}
+
+		prevKarma_ = obj_.player.karma();
 
 		//
 		handExistsPrevFrame_ = not obj_.hands.isEmpty();
@@ -747,16 +757,15 @@ namespace hand
 		const Color karmaLabelColor = isKarmaLow ? Theme::Darker.lerp(Theme::Black, Periodic::Square0_1(0.3s, time_.sF())) : Theme::Black;
 
 		// カルマ
-		FontAsset(U"Goh")(U"業").draw(2, 0, Theme::Darker);
-		FontAsset(U"Goh")(U"業").draw(1, 0, karmaLabelColor);
-		FontAsset(U"Sub")(U"KARMA").draw(14, 7, karmaLabelColor);
+		//FontAsset(U"Goh")(U"業").draw(2, 0, Theme::Darker);
+		//FontAsset(U"Goh")(U"業").draw(1, 0, karmaLabelColor);
+		//FontAsset(U"Sub")(U"KARMA").draw(14, 7, karmaLabelColor);
 
-		// カルマゲージ枠
 		const Color dangerColor = (karma <= Player::KarmaDanger) ? Palette::White.lerp(Theme::Lighter, Periodic::Square0_1(0.3s, time_.sF())) : Palette::White;
-		const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1, dangerColor);
+		//const auto frameRegion = TextureAsset(U"KarmaGaugeFrame").draw(15, 1, dangerColor);
 
 		// カルマゲージ
-		int gaugeWidth = static_cast<int>(42 * karma / 100.0);
+		int gaugeWidth = static_cast<int>(47 * karma / 100.0);
 		if (karma > 1e-3 && gaugeWidth == 0)
 		{
 			gaugeWidth = 1;
@@ -764,10 +773,15 @@ namespace hand
 
 		if (isKarmaLow)
 		{
-			FontAsset(U"Sub")(U"EMPTY").drawAt(frameRegion.center().movedBy(9, 0), ColorF{ Theme::Black, Periodic::Square0_1(0.3s, time_.sF()) });
+			//FontAsset(U"Sub")(U"EMPTY").drawAt(frameRegion.center().movedBy(9, 0), ColorF{ Theme::Black, Periodic::Square0_1(0.3s, time_.sF()) });
 		}
 
-		TextureAsset(U"KarmaGauge")(0, 0, gaugeWidth, 10).draw(16, 1, dangerColor);
+		TextureAsset(U"KarmaGauge2")(0, 0, gaugeWidth, 16).draw(13, 0, dangerColor);
+
+		// カルマゲージ枠
+		auto frame = SpriteSheet::GetFrame(TextureAsset(U"KarmaGaugeFrame2"), 6, 0, timerGaugeAnim_.isRunning() ? 5 : 0, 0.09s, time_.sF());
+		frame.draw(0, 0, dangerColor);
+
 	}
 
 	void MainScene::drawScore_() const

@@ -56,6 +56,8 @@ void LoadAssets()
 	TextureAsset::Register(U"BgTree", RES(U"texture/bg_tree.png"));
 	TextureAsset::Register(U"KarmaGaugeFrame", RES(U"texture/karma_gauge_frame.png"));
 	TextureAsset::Register(U"KarmaGauge", RES(U"texture/karma_gauge.png"));
+	TextureAsset::Register(U"KarmaGauge2", RES(U"texture/karma_gauge2.png"));
+	TextureAsset::Register(U"KarmaGaugeFrame2", RES(U"texture/karma_gauge_frame2.png"));
 	TextureAsset::Register(U"Bird", RES(U"texture/bird.png"));
 	TextureAsset::Register(U"BirdB", RES(U"texture/bird_b.png"));
 	TextureAsset::Register(U"Money", RES(U"texture/money.png"));

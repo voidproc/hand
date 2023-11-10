@@ -61,6 +61,10 @@ namespace hand
 		Timer timerShake_;
 		Timer timerShakeLong_;
 
+		// ゲージアニメーション用
+		Timer timerGaugeAnim_;
+		double prevKarma_;
+
 		// スコアレート関係
 		// 敵の撃破時やアイテム取得時に加算されるスコアにかかる倍率（1.0～8.0）
 		// Handを維持するとレートが増加する
