@@ -8,9 +8,9 @@ namespace hand
 
 		for (int iEntry = 0; iEntry < EntryCount; ++iEntry)
 		{
-			result_[0].push_back(GameResult{ 2000u + 800 * iEntry, Area::Area1 });
-			result_[1].push_back(GameResult{ 1000u + 600 * iEntry, Area::Area1 });
-			result_[2].push_back(GameResult{ 4000u + 1200 * iEntry, Area::Area1 });
+			result_[0].push_back(GameResult{ 0, Area::Area1 });
+			result_[1].push_back(GameResult{ 0, Area::Area1 });
+			result_[2].push_back(GameResult{ 0, Area::Area1 });
 		}
 
 		sort_();
